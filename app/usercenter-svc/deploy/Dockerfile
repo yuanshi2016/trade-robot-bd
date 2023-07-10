@@ -1,9 +1,9 @@
 # 启动编译环境
-FROM golang:1.18 as builder
+FROM golang:1.19 as builder
 WORKDIR /usr/src/app
 #配置编译环境
 RUN go env -w GOPROXY="https://mirrors.aliyun.com/goproxy/,direct"
-ARG TARGET_PATH
+ARG TARGET_PATH="./app/usercenter-svc"
 
 # 拷贝源代码
 COPY ./go.mod ./

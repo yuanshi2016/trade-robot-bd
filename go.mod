@@ -1,6 +1,6 @@
 module trade-robot-bd
 
-go 1.18
+go 1.19
 
 require (
 	github.com/360EntSecGroup-Skylar/excelize/v2 v2.4.0
@@ -9,7 +9,6 @@ require (
 	github.com/aliyun/aliyun-oss-go-sdk v2.1.10+incompatible
 	github.com/bwmarrin/snowflake v0.3.0
 	github.com/chenjiandongx/ginprom v0.0.0-20210617023641-6c809602c38a
-	github.com/d4l3k/talib v0.0.0-20180425021108-1b10e6a1ad95
 	github.com/gin-contrib/pprof v1.3.0
 	github.com/gin-gonic/gin v1.9.0
 	github.com/globalsign/mgo v0.0.0-20181015135952-eeefdecb41b8
@@ -115,6 +114,5 @@ require (
 	golang.org/x/time v0.0.0-20191024005414-555d28b269f0 // indirect
 	google.golang.org/genproto v0.0.0-20210805201207-89edb61ffb67 // indirect
 	gopkg.in/ini.v1 v1.62.0 // indirect
-	gopkg.in/yaml.v2 v2.4.0 // indirect
 	gopkg.in/yaml.v3 v3.0.1 // indirect
 )

@@ -1,15 +1,16 @@
 # 启动编译环境
-FROM golang:1.18 as builder
+FROM golang:1.19 as builder
 WORKDIR /usr/src/app
 #配置编译环境
 RUN go env -w GOPROXY="https://mirrors.aliyun.com/goproxy/,direct"
-ARG TARGET_PATH
+ARG TARGET_PATH="./app/common-svc"
 
 # 拷贝源代码
 
 COPY ./go.mod ./
 COPY ./go.sum ./
 COPY . .
+
 RUN CGO_ENABLED=0  go build -o server $TARGET_PATH/cmd
 
 FROM alpine:3.12 as runner
