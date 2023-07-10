@@ -2,12 +2,11 @@ package cache
 
 import (
 	"encoding/json"
-	"fortune-bd/app/quote-svc/cron"
-	"fortune-bd/libs/cache"
-	"fortune-bd/libs/helper"
-	"fortune-bd/libs/logger"
 	"time"
-
+	"trade-robot-bd/app/quote-svc/cron"
+	"trade-robot-bd/libs/cache"
+	"trade-robot-bd/libs/helper"
+	"trade-robot-bd/libs/logger"
 )
 
 const (
@@ -30,7 +29,7 @@ func GetExchangeAccountList(userId string) []byte {
 	return result
 }
 
-func  GetHuobiQuote(symbol string) (*cron.Ticker, error) {
+func GetHuobiQuote(symbol string) (*cron.Ticker, error) {
 	data := &cron.Ticker{}
 	bytes, err := cache.Redis().HGet(cron.TickHuobiAll, symbol).Bytes()
 	if err != nil {

@@ -2,20 +2,20 @@ package service
 
 import (
 	"context"
-	"fortune-bd/api/response"
-	pb "fortune-bd/api/usercenter/v1"
-	walletpb "fortune-bd/api/wallet/v1"
-	"fortune-bd/app/usercenter-svc/internal/dao"
-	"fortune-bd/app/usercenter-svc/internal/model"
-	"fortune-bd/libs/bcrypt2"
-	"fortune-bd/libs/logger"
-	"fortune-bd/libs/message"
-	validate_code "fortune-bd/libs/validate-code"
 	"github.com/golang/protobuf/ptypes"
 	"golang.org/x/crypto/bcrypt"
 	"google.golang.org/protobuf/types/known/emptypb"
 	"google.golang.org/protobuf/types/known/timestamppb"
 	"time"
+	"trade-robot-bd/api/response"
+	pb "trade-robot-bd/api/usercenter/v1"
+	walletpb "trade-robot-bd/api/wallet/v1"
+	"trade-robot-bd/app/usercenter-svc/internal/dao"
+	"trade-robot-bd/app/usercenter-svc/internal/model"
+	"trade-robot-bd/libs/bcrypt2"
+	"trade-robot-bd/libs/logger"
+	"trade-robot-bd/libs/message"
+	validate_code "trade-robot-bd/libs/validate-code"
 )
 
 type UserService struct {
@@ -163,7 +163,7 @@ func (s *UserService) ForgetPassword(ctx context.Context, req *pb.ForgetPassword
 		return nil, response.NewUserSetPassErrMsg(errID)
 	}
 	validate_code.DeleteValidateCode(req.Phone)
-	return nil,nil
+	return nil, nil
 }
 func (s *UserService) UpdateUser(ctx context.Context, req *pb.UpdateUserReq) (*emptypb.Empty, error) {
 	user := s.dao.GetWqUserBaseByUID(req.GetUserId())
@@ -211,7 +211,7 @@ func (s *UserService) GetAllUserInfo(ctx context.Context, req *emptypb.Empty) (*
 			Avatar:         user.Avatar,
 			Phone:          user.Phone,
 			LoginCount:     int32(user.LoginCount),
-			LastLoginAt:      lastLogin,
+			LastLoginAt:    lastLogin,
 		})
 	}
 	return resp, nil

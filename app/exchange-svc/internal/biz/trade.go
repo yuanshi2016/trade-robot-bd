@@ -2,12 +2,12 @@ package biz
 
 import (
 	"encoding/json"
-	pb "fortune-bd/api/exchange/v1"
-	"fortune-bd/api/response"
-	"fortune-bd/app/exchange-svc/cache"
-	"fortune-bd/app/exchange-svc/internal/model"
-	"fortune-bd/libs/logger"
 	"time"
+	pb "trade-robot-bd/api/exchange/v1"
+	"trade-robot-bd/api/response"
+	"trade-robot-bd/app/exchange-svc/cache"
+	"trade-robot-bd/app/exchange-svc/internal/model"
+	"trade-robot-bd/libs/logger"
 )
 
 func (e *ExOrderRepo) GetTradeSymbols(exchange, symbol string) ([]*pb.Symbol, error) {
@@ -107,27 +107,27 @@ func (e *ExOrderRepo) CacheRateReturn() {
 	//index := 0
 	//userIdList := make(map[string]bool, 0)
 	//for _, profit := range profitList {
-		//user, err := client.GetUserService().GetUserInfo(context.Background(), &userPb.UserInfoReq{UserID: profit.UserID})
-		//if err != nil {
-		//	logger.Warnf("CacheRateReturn 查找用户信息失败 %v 用户id %s", err, profit.UserID)
-		//	continue
-		//}
-		//if _, ok := userIdList[user.UserID]; ok {
-		//	continue
-		//}
-		//userIdList[user.UserID] = true
-		//index += 1
-		//if index >= 21 {
-		//	continue
-		//}
-		//saveData = append(saveData, &model.RateRank{
-		//	ID:             index,
-		//	UserId:         user.UserID,
-		//	Avatar:         user.Avatar,
-		//	Name:           user.Name,
-		//	RateReturn:     decimal.NewFromFloat(profit.RateReturn).String() + "%",
-		//	RateReturnYear: decimal.NewFromFloat(profit.RateReturnYear).String() + "%",
-		//})
+	//user, err := client.GetUserService().GetUserInfo(context.Background(), &userPb.UserInfoReq{UserID: profit.UserID})
+	//if err != nil {
+	//	logger.Warnf("CacheRateReturn 查找用户信息失败 %v 用户id %s", err, profit.UserID)
+	//	continue
+	//}
+	//if _, ok := userIdList[user.UserID]; ok {
+	//	continue
+	//}
+	//userIdList[user.UserID] = true
+	//index += 1
+	//if index >= 21 {
+	//	continue
+	//}
+	//saveData = append(saveData, &model.RateRank{
+	//	ID:             index,
+	//	UserId:         user.UserID,
+	//	Avatar:         user.Avatar,
+	//	Name:           user.Name,
+	//	RateReturn:     decimal.NewFromFloat(profit.RateReturn).String() + "%",
+	//	RateReturnYear: decimal.NewFromFloat(profit.RateReturnYear).String() + "%",
+	//})
 	//}
 	marshal, err := json.Marshal(saveData)
 	if err != nil {

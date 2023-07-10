@@ -3,11 +3,11 @@ package huobi
 import (
 	"errors"
 	"fmt"
-	"fortune-bd/app/grid-strategy-svc/util/huobi/pkg/client"
-	"fortune-bd/app/grid-strategy-svc/util/huobi/pkg/getrequest"
 	"sort"
 	"strings"
 	"time"
+	"trade-robot-bd/app/grid-strategy-svc/util/huobi/pkg/client"
+	"trade-robot-bd/app/grid-strategy-svc/util/huobi/pkg/getrequest"
 
 	"github.com/zhufuyi/pkg/gohttp"
 )

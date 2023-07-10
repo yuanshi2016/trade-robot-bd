@@ -6,7 +6,7 @@ import (
 	"net/url"
 	"testing"
 	"time"
-	goex "wq-fotune-backend/pkg/goex"
+	goex "trade-robot-bd/libs/goex"
 )
 
 var (

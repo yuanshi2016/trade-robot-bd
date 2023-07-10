@@ -3,7 +3,7 @@ package allcoin
 import (
 	"net/http"
 	"testing"
-	"wq-fotune-backend/pkg/goex"
+	"trade-robot-bd/libs/goex"
 )
 
 var ac = New(http.DefaultClient, "", "")

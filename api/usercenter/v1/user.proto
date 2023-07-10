@@ -2,7 +2,7 @@ syntax = "proto3";
 
 package api.usercenter.v1;
 
-option go_package = "fortune-bd/api/usercenter/v1;v1";
+option go_package = "trade-robot-bd/api/usercenter/v1;v1";
 option java_multiple_files = true;
 option java_package = "api.usercenter.v1";
 import "google/protobuf/empty.proto";

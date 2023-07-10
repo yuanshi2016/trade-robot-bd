@@ -1,0 +1,1 @@
+scp "root@10.10.1.10:/root/trade-robot-bd/sources-fqN3f6IuAG/mocktest/*.*" ./mocktest

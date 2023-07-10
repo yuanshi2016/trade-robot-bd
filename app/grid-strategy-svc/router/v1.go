@@ -1,8 +1,8 @@
 package router
 
 import (
-	v1 "fortune-bd/app/grid-strategy-svc/router/v1"
 	"github.com/gin-gonic/gin"
+	v1 "trade-robot-bd/app/grid-strategy-svc/router/v1"
 )
 
 func v1api(rg *gin.RouterGroup) {

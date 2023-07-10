@@ -2,8 +2,8 @@ package cron
 
 import (
 	"time"
-	"wq-fotune-backend/libs/logger"
-	"wq-fotune-backend/libs/utils"
+	"trade-robot-bd/app/exchange-svc/utils"
+	"trade-robot-bd/libs/logger"
 )
 
 func (s *serviceCron) evaluationDaily() {

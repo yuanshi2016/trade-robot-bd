@@ -3,14 +3,13 @@ package service
 import (
 	"context"
 	"errors"
-	walletpb "fortune-bd/api/wallet/v1"
-	"fortune-bd/app/usercenter-svc/internal/model"
+	walletpb "trade-robot-bd/api/wallet/v1"
+	"trade-robot-bd/app/usercenter-svc/internal/model"
 )
 
 const (
 	errID = "user"
 )
-
 
 func (u *UserService) GetUserInfoByPhone(phone string) (*model.WqUserBase, error) {
 	user := u.dao.GetWqUserBaseByPhone(phone)

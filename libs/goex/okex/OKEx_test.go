@@ -5,15 +5,14 @@ import (
 	"net/http"
 	"testing"
 	"time"
-	"wq-fotune-backend/pkg/goex"
-	"wq-fotune-backend/pkg/goex/internal/logger"
+	"trade-robot-bd/libs/goex"
+	"trade-robot-bd/libs/goex/internal/logger"
 )
 
 func init() {
 	logger.Log.SetLevel(logger.DEBUG)
 }
 
-//
 var config2 = &goex.APIConfig{
 	Endpoint: "https://www.okex.me",
 	//HttpClient: &http.Client{

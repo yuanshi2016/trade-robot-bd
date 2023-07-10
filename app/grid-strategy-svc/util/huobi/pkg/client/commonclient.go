@@ -3,10 +3,10 @@ package client
 import (
 	"encoding/json"
 	"errors"
-	"fortune-bd/app/grid-strategy-svc/util/huobi/internal"
-	"fortune-bd/app/grid-strategy-svc/util/huobi/internal/requestbuilder"
-	"fortune-bd/app/grid-strategy-svc/util/huobi/pkg/getrequest"
-	"fortune-bd/app/grid-strategy-svc/util/huobi/pkg/response/common"
+	"trade-robot-bd/app/grid-strategy-svc/util/huobi/internal"
+	"trade-robot-bd/app/grid-strategy-svc/util/huobi/internal/requestbuilder"
+	"trade-robot-bd/app/grid-strategy-svc/util/huobi/pkg/getrequest"
+	"trade-robot-bd/app/grid-strategy-svc/util/huobi/pkg/response/common"
 )
 
 // Responsible to get common information

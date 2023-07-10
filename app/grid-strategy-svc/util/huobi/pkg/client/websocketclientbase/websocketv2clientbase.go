@@ -3,15 +3,15 @@ package websocketclientbase
 import (
 	"errors"
 	"fmt"
-	"fortune-bd/app/grid-strategy-svc/util/huobi/internal/gzip"
-	"fortune-bd/app/grid-strategy-svc/util/huobi/internal/model"
-	"fortune-bd/app/grid-strategy-svc/util/huobi/internal/requestbuilder"
-	"fortune-bd/app/grid-strategy-svc/util/huobi/pkg/response/auth"
-	"fortune-bd/app/grid-strategy-svc/util/huobi/pkg/response/base"
 	"github.com/gorilla/websocket"
 	"github.com/zhufuyi/pkg/logger"
 	"sync"
 	"time"
+	"trade-robot-bd/app/grid-strategy-svc/util/huobi/internal/gzip"
+	"trade-robot-bd/app/grid-strategy-svc/util/huobi/internal/model"
+	"trade-robot-bd/app/grid-strategy-svc/util/huobi/internal/requestbuilder"
+	"trade-robot-bd/app/grid-strategy-svc/util/huobi/pkg/response/auth"
+	"trade-robot-bd/app/grid-strategy-svc/util/huobi/pkg/response/base"
 )
 
 const (

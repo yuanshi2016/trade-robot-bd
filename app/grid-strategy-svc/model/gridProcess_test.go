@@ -2,10 +2,10 @@ package model
 
 import (
 	"fmt"
-	"fortune-bd/app/grid-strategy-svc/util/huobi"
 	"sync"
 	"testing"
 	"time"
+	"trade-robot-bd/app/grid-strategy-svc/util/huobi"
 
 	"github.com/globalsign/mgo/bson"
 	"github.com/k0kubun/pp"

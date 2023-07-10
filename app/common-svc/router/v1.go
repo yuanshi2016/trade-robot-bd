@@ -2,17 +2,16 @@ package router
 
 import (
 	"context"
-	pb "fortune-bd/api/common/v1"
-	"fortune-bd/api/response"
-	"fortune-bd/app/common-svc/internal/service"
-	"fortune-bd/libs/logger"
 	"github.com/gin-gonic/gin"
 	"github.com/go-kratos/kratos/v2/errors"
 	"github.com/golang/protobuf/jsonpb"
 	"github.com/golang/protobuf/ptypes/empty"
 	jsoniter "github.com/json-iterator/go"
+	pb "trade-robot-bd/api/common/v1"
+	"trade-robot-bd/api/response"
+	"trade-robot-bd/app/common-svc/internal/service"
+	"trade-robot-bd/libs/logger"
 )
-
 
 var (
 	commonService = service.NewCommonService()
@@ -60,7 +59,7 @@ func GetRateRank(c *gin.Context) {
 }
 
 func GetRateYearRank(c *gin.Context) {
-	rank, err := commonService.GetUserRateYearRank(context.Background(),nil)
+	rank, err := commonService.GetUserRateYearRank(context.Background(), nil)
 	if err != nil {
 		fromError := errors.FromError(err)
 		response.NewErrWithCodeAndMsg(c, fromError.Code, fromError.Message)

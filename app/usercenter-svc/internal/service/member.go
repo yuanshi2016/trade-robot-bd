@@ -2,9 +2,9 @@ package service
 
 import (
 	"context"
-	"fortune-bd/api/response"
-	pb "fortune-bd/api/usercenter/v1"
 	"google.golang.org/protobuf/types/known/emptypb"
+	"trade-robot-bd/api/response"
+	pb "trade-robot-bd/api/usercenter/v1"
 )
 
 // GetMembers 获取会员
@@ -36,7 +36,7 @@ func (s *UserService) GetPaymentMethod(ctx context.Context, req *emptypb.Empty) 
 	var resp = new(pb.GetPaymentMethodResp)
 	wqPayment := s.dao.GetPaymentWithState(1)
 	if len(wqPayment) == 0 {
-		return nil,response.NewWqPayNotFound(errID)
+		return nil, response.NewWqPayNotFound(errID)
 	}
 	for _, value := range wqPayment {
 		payment := &pb.Payment{

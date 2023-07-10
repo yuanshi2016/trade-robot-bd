@@ -3,17 +3,17 @@ package service
 import (
 	"context"
 	"fmt"
-	"fortune-bd/api/constant"
-	"fortune-bd/api/response"
-	"fortune-bd/app/wallet-svc/internal/biz"
-	"fortune-bd/libs/exchangeclient"
-	"fortune-bd/libs/logger"
 	"github.com/shopspring/decimal"
 	"strings"
+	"trade-robot-bd/api/constant"
+	"trade-robot-bd/api/response"
+	"trade-robot-bd/app/wallet-svc/internal/biz"
+	"trade-robot-bd/libs/exchangeclient"
+	"trade-robot-bd/libs/logger"
 
-	userpb "fortune-bd/api/usercenter/v1"
-	pb "fortune-bd/api/wallet/v1"
 	"google.golang.org/protobuf/types/known/emptypb"
+	userpb "trade-robot-bd/api/usercenter/v1"
+	pb "trade-robot-bd/api/wallet/v1"
 )
 
 var exchangeParam = map[string]string{constant.BINANCE: "", constant.HUOBI: ""}
@@ -55,7 +55,7 @@ func (s *WalletService) GetWalletIfc(ctx context.Context, req *pb.UidReq) (*pb.W
 	var resp = new(pb.WalletBalanceResp)
 	wallet, err := s.walletSrv.GetWalletByUID(req.UserId)
 	if err != nil {
-		return nil,  err
+		return nil, err
 	}
 	binance := exchangeclient.InitBinance(wallet.ApiKey, wallet.Secret)
 	spot, err := binance.GetAccountSpot()
@@ -188,7 +188,7 @@ func (s *WalletService) ConvertCoin(ctx context.Context, req *pb.ConvertCoinReq)
 	if req.From == biz.IFC {
 		resp.Describe = "可兑换usdt"
 		resp.Volume, _ = decimal.NewFromFloat(req.Volume).Mul(wqCoinUsdtPrice).RoundBank(2).Float64()
-		return resp,nil
+		return resp, nil
 	}
 	resp.Describe = "可兑换ifc"
 	resp.Volume, _ = decimal.NewFromFloat(req.Volume).Div(wqCoinUsdtPrice).RoundBank(8).Float64()

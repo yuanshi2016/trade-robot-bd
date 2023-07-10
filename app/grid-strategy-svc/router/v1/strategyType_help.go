@@ -2,9 +2,9 @@ package v1
 
 import (
 	"errors"
-	"fortune-bd/app/grid-strategy-svc/model"
 	"github.com/globalsign/mgo/bson"
 	"github.com/zhufuyi/logger"
+	"trade-robot-bd/app/grid-strategy-svc/model"
 )
 
 type gridType struct {

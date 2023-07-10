@@ -6,9 +6,9 @@ import (
 	"net/http"
 	"sort"
 
-	"wq-fotune-backend/pkg/goex"
-	. "wq-fotune-backend/pkg/goex"
-	"wq-fotune-backend/pkg/goex/internal/logger"
+	"trade-robot-bd/libs/goex"
+	. "trade-robot-bd/libs/goex"
+	"trade-robot-bd/libs/goex/internal/logger"
 )
 
 //www.coinbase.com or www.gdax.com
@@ -164,7 +164,7 @@ func (g *Gdax) GetKlineRecords(currency CurrencyPair, period, size, since int) (
 	return klines, nil
 }
 
-//非个人，整个交易所的交易记录
+// 非个人，整个交易所的交易记录
 func (g *Gdax) GetTrades(currencyPair CurrencyPair, since int64) ([]Trade, error) {
 	panic("not implement")
 }

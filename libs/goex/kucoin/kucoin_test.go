@@ -3,7 +3,7 @@ package kucoin
 import (
 	"testing"
 	"time"
-	"wq-fotune-backend/pkg/goex"
+	"trade-robot-bd/libs/goex"
 )
 
 var kc = New("", "", "")

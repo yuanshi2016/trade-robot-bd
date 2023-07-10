@@ -1,12 +1,11 @@
 package main
 
 import (
-	"fortune-bd/app/grid-strategy-svc/model"
-	"fortune-bd/app/grid-strategy-svc/server"
-	"fortune-bd/libs/env"
 	"os"
 	"os/signal"
-
+	"trade-robot-bd/app/grid-strategy-svc/model"
+	"trade-robot-bd/app/grid-strategy-svc/server"
+	"trade-robot-bd/libs/env"
 
 	"github.com/zhufuyi/pkg/logger"
 	"github.com/zhufuyi/pkg/mongo"
@@ -15,7 +14,6 @@ import (
 const (
 	port = "0.0.0.0:9530"
 )
-
 
 func main() {
 	initServer()

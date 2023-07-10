@@ -1,11 +1,10 @@
 package dao
 
 import (
-	"fortune-bd/app/wallet-svc/internal/model"
-	"fortune-bd/libs/cache"
-	"fortune-bd/libs/logger"
 	"github.com/jinzhu/gorm"
-
+	"trade-robot-bd/app/wallet-svc/internal/model"
+	"trade-robot-bd/libs/cache"
+	"trade-robot-bd/libs/logger"
 )
 
 type Dao struct {

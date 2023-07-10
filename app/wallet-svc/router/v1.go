@@ -2,22 +2,20 @@ package router
 
 import (
 	"context"
-	"fortune-bd/api/response"
-	pb "fortune-bd/api/wallet/v1"
-	"fortune-bd/app/wallet-svc/internal/service"
-	"fortune-bd/libs/jwt"
-	"fortune-bd/libs/middleware"
 	"github.com/gin-gonic/gin"
 	"github.com/go-kratos/kratos/v2/errors"
 	"github.com/golang/protobuf/jsonpb"
 	"log"
-
+	"trade-robot-bd/api/response"
+	pb "trade-robot-bd/api/wallet/v1"
+	"trade-robot-bd/app/wallet-svc/internal/service"
+	"trade-robot-bd/libs/jwt"
+	"trade-robot-bd/libs/middleware"
 )
 
 var (
 	walletService = service.NewWalletService()
 )
-
 
 func apiV1(group *gin.RouterGroup) {
 	group.POST("/strategyStartUpNotify", StrategyStarUpNotify)
@@ -32,9 +30,6 @@ func apiV1(group *gin.RouterGroup) {
 	group.POST("/withdrawal", CreateWithdrawal)
 	group.GET("/totalRebate", GetTotalRebate)
 }
-
-
-
 
 func StrategyStarUpNotify(c *gin.Context) {
 	var req pb.StrategyRunNotifyReq

@@ -1,8 +1,8 @@
 package dao
 
 import (
-	"fortune-bd/app/exchange-svc/internal/model"
-	"fortune-bd/libs/logger"
+	"trade-robot-bd/app/exchange-svc/internal/model"
+	"trade-robot-bd/libs/logger"
 )
 
 func (d *Dao) GetAllSymbolWithState(state int32, exchange, unit string) (symbols []*model.WqSymbol) {

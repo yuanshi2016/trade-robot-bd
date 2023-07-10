@@ -1,19 +1,20 @@
 pipeline{
     agent any
     environment{
-        HARBOR_HOST='192.168.5.5:8086'
-        HARBOR_ADDR='192.168.5.5:8086/mateforce'
+        HARBOR_HOST='harbor.local.com'
+        HARBOR_ADDR='harbor.local.com/mateforce'
         K8S_NAMESPACE='develop'
     }
     parameters {
-//         string(name: 'PROJECT_NAME', defaultValue: '', description: 'project name,same as the name ofdocker container')
-        string(name: 'CONTAINER_VERSION', defaultValue: '', description: 'docker container version number, SET when major version number changed')
+        string(name: 'PROJECT_NAME', defaultValue: 'common-svc', description: 'project name,same as the name ofdocker container')
+        string(name: 'CONTAINER_VERSION', defaultValue: 'common-svc', description: 'docker container version number, SET when major version number changed')
         // booleanParam(name: 'DEPLOYMENT_K8S', defaultValue: false, description: 'release deployment k8s')
     }
     stages {
         stage('Initial') {
             steps{
                 script {
+                        git branch: 'develop-kratos', credentialsId: '68dea4dd-3625-4d84-90aa-daf45f3a391a', url: 'git@github.com:yuanshi2016/trade-robot-bd.git'
                         env.DOCKER_IMAGE='${PROJECT_NAME}'
                          APP_NAME = "$PROJECT_NAME"
                          if (APP_NAME ==~ /^api-.*/) {
@@ -80,10 +81,11 @@ pipeline{
 void SendDingding(res)
 {
 	// 输入相应的手机号码，在钉钉群指定通知某个人
-	tel_num="13377000902"
-
+	tel_num="13008421234"
+	//加签 SEC21af6e1dbf64fc40892f9865976266f31b731a897aae6cab4045f3e748bc8c9b
+    //https://oapi.dingtalk.com/robot/send?access_token=dc01e09af1e07cd40a926e8e0d0624d78ecb7091b4f04847b87fee2ea45633e2
 	// 钉钉机器人的地址
-	dingding_url="https://oapi.dingtalk.com/robot/send\\?access_token\\=a5e1c5e003cc109af1ad0ff85a0d4ca35fee804da0b7e77c156fd24c9bc6a16d"
+	dingding_url="https://oapi.dingtalk.com/robot/send\\?access_token\\=dc01e09af1e07cd40a926e8e0d0624d78ecb7091b4f04847b87fee2ea45633e2"
 
     branchName=""
     if (env.GIT_BRANCH ==~ /^v([0-9])+\.([0-9])+\.([0-9])+.*/) {

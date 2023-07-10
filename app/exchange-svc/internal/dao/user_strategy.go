@@ -2,16 +2,13 @@ package dao
 
 import (
 	"context"
-	"fortune-bd/app/exchange-svc/internal/model"
-	"fortune-bd/libs/logger"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
 	"time"
-
+	"trade-robot-bd/app/exchange-svc/internal/model"
+	"trade-robot-bd/libs/logger"
 )
-
-
 
 func newCtx() (context.Context, context.CancelFunc) {
 	return context.WithTimeout(context.Background(), 3*time.Second)
@@ -60,7 +57,6 @@ func (d *Dao) GetUserStrategy(uid, strategyId string) (*model.GridStrategy, erro
 	return strategy, nil
 
 }
-
 
 func (d *Dao) GetUserStrategyByApiKey(uid, apiKey string) []*model.GridStrategy {
 

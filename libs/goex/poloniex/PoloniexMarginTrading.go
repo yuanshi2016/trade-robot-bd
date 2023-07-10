@@ -5,7 +5,7 @@ import (
 	"errors"
 	"log"
 	"net/url"
-	. "wq-fotune-backend/pkg/goex"
+	. "trade-robot-bd/libs/goex"
 )
 
 type PoloniexGenericResponse struct {

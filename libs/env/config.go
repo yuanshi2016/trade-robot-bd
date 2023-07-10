@@ -2,9 +2,7 @@ package env
 
 import (
 	"net/http"
-	"net/url"
 	"os"
-	"strings"
 )
 
 const (
@@ -24,7 +22,7 @@ var (
 	RunMode   = configMap.getValue(runMode)
 	RedisAddr = configMap.getValue(redisAddr)
 	RedisPWD  = configMap.getValue(redisPWD)
-	DbDSN    = configMap.getValue(dbDSN)
+	DbDSN     = configMap.getValue(dbDSN)
 	EtcdAddr  = configMap.getValue(etcdAddr)
 	MongoAddr = configMap.getValue(mongoAddr)
 
@@ -39,7 +37,8 @@ var (
 	NotifyStatisticsURL = "https://yun.mateforce.cn/test/exchange/v1/forward-offer/orderGrid"
 	// 启动策略通知接口
 	NotifyStrategyStartUpURL = "https://yun.mateforce.cn/test/wallet/v1/wallet/strategyStartUpNotify"
-	ProxyAddr                = "socks5://192.168.5.5:20170"
+	//ProxyAddr                = ""
+	ProxyAddr = "socks5://10.10.1.3:10801"
 
 	EXCHANGE_SRV_NAME = "exchange-order.srv"
 	USER_SRV_NAME     = "usercenter.srv"
@@ -75,13 +74,13 @@ func (env envConfig) getValue(key string) string {
 
 func GetProxyHttpClient() *http.Client {
 	client := &http.Client{}
-	client.Transport = &http.Transport{
-		Proxy: func(req *http.Request) (*url.URL, error) {
-			return &url.URL{
-				Scheme: "socks5",
-				Host:   strings.Split(ProxyAddr, "//")[1],
-			}, nil
-		},
-	}
+	//client.Transport = &http.Transport{
+	//	Proxy: func(req *http.Request) (*url.URL, error) {
+	//		return &url.URL{
+	//			Scheme: "socks5",
+	//			Host:   strings.Split(ProxyAddr, "//")[1],
+	//		}, nil
+	//	},
+	//}
 	return client
 }

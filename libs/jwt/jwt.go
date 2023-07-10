@@ -4,9 +4,9 @@ import (
 	"crypto/sha256"
 	"encoding/base64"
 	"fmt"
-	"fortune-bd/libs/encoding"
 	"strings"
 	"time"
+	"trade-robot-bd/libs/encoding"
 )
 
 var (
@@ -60,7 +60,7 @@ func (t *JWT) SignedString(secret string) (string, error) {
 	return strings.Join([]string{string(header), string(payload), string(signature)}, "."), nil
 }
 
-//JWTParse 解析token字符串并验证签名，如果一切正常，将设置有效负载
+// JWTParse 解析token字符串并验证签名，如果一切正常，将设置有效负载
 func (t *JWT) JWTParse(token, secret string) error {
 	s := strings.Split(token, ".")
 	if len(s) != 3 {
@@ -80,7 +80,7 @@ func (t *JWT) JWTParse(token, secret string) error {
 	return encoding.Base64DecodeJSON(base64.RawURLEncoding, []byte(payload), &t.Payload)
 }
 
-//Expired checks if access token is expired
+// Expired checks if access token is expired
 func (t *JWT) Expired() bool {
 	return time.Now().After(time.Unix(t.Payload.ExpireTime, 0))
 }

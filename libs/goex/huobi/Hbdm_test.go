@@ -1,9 +1,9 @@
 package huobi
 
 import (
-	"fortune-bd/libs/goex"
 	"testing"
 	"time"
+	"trade-robot-bd/libs/goex"
 )
 
 var dm = NewHbdm(&goex.APIConfig{

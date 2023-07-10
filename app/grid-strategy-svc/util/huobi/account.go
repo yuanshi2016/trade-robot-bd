@@ -3,8 +3,8 @@ package huobi
 import (
 	"errors"
 	"fmt"
-	"fortune-bd/app/grid-strategy-svc/util/huobi/pkg/client"
 	"strconv"
+	"trade-robot-bd/app/grid-strategy-svc/util/huobi/pkg/client"
 )
 
 const (
@@ -28,7 +28,7 @@ const (
 //	GetHistoryOrdersInfo(symbol string, states string, types string) (interface{}, error)
 //}
 
-//Account 账号密钥
+// Account 账号密钥
 type Account struct {
 	AccessKey   string `json:"accessKey"`
 	SecretKey   string `json:"secretKey"`

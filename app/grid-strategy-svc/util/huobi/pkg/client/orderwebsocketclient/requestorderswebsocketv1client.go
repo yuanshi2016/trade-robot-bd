@@ -2,10 +2,10 @@ package orderwebsocketclient
 
 import (
 	"encoding/json"
-	"fortune-bd/app/grid-strategy-svc/util/huobi/pkg/client/websocketclientbase"
-	"fortune-bd/app/grid-strategy-svc/util/huobi/pkg/getrequest"
-	"fortune-bd/app/grid-strategy-svc/util/huobi/pkg/postrequest"
-	"fortune-bd/app/grid-strategy-svc/util/huobi/pkg/response/order"
+	"trade-robot-bd/app/grid-strategy-svc/util/huobi/pkg/client/websocketclientbase"
+	"trade-robot-bd/app/grid-strategy-svc/util/huobi/pkg/getrequest"
+	"trade-robot-bd/app/grid-strategy-svc/util/huobi/pkg/postrequest"
+	"trade-robot-bd/app/grid-strategy-svc/util/huobi/pkg/response/order"
 )
 
 // Responsible to handle orders request from WebSocket

@@ -5,7 +5,7 @@ import (
 	"net/http"
 	"sort"
 	"strings"
-	. "wq-fotune-backend/pkg/goex"
+	. "trade-robot-bd/libs/goex"
 )
 
 var (
@@ -102,7 +102,7 @@ func (g *Gate) GetKlineRecords(currency CurrencyPair, period, size, since int) (
 	panic("not implement")
 }
 
-//非个人，整个交易所的交易记录
+// 非个人，整个交易所的交易记录
 func (g *Gate) GetTrades(currencyPair CurrencyPair, since int64) ([]Trade, error) {
 	panic("not implement")
 }

@@ -4,14 +4,14 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	"fortune-bd/libs/logger"
 	"net/http"
 	"net/url"
 	"sort"
 	"strings"
 	"time"
+	"trade-robot-bd/libs/logger"
 
-	. "fortune-bd/libs/goex"
+	. "trade-robot-bd/libs/goex"
 )
 
 type Hbdm struct {
@@ -309,7 +309,7 @@ func (dm *Hbdm) GetUnfinishFutureOrders(currencyPair CurrencyPair, contractType 
 		ords = append(ords, FutureOrder{
 			ContractName: contractType,
 			Currency:     currencyPair,
-			OType:        dm.adaptOffsetDirectionToOpenType(ord.Offset, ord.Direction),
+			OType:        TradeSide(dm.adaptOffsetDirectionToOpenType(ord.Offset, ord.Direction)),
 			OrderID2:     fmt.Sprint(ord.OrderId),
 			OrderID:      ord.OrderId,
 			Amount:       ord.Volume,
@@ -356,7 +356,7 @@ func (dm *Hbdm) GetFutureOrders(orderIds []string, currencyPair CurrencyPair, co
 		ords = append(ords, FutureOrder{
 			ContractName: contractType,
 			Currency:     currencyPair,
-			OType:        dm.adaptOffsetDirectionToOpenType(ord.Offset, ord.Direction),
+			OType:        TradeSide(dm.adaptOffsetDirectionToOpenType(ord.Offset, ord.Direction)),
 			OrderID2:     fmt.Sprint(ord.OrderId),
 			OrderID:      ord.OrderId,
 			Amount:       ord.Volume,

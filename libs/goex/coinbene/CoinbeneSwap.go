@@ -9,7 +9,7 @@ import (
 	"strings"
 	"time"
 
-	. "wq-fotune-backend/pkg/goex"
+	. "trade-robot-bd/libs/goex"
 )
 
 type baseResp struct {

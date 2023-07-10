@@ -10,7 +10,7 @@ import (
 	"strconv"
 	"strings"
 	"time"
-	. "fortune-bd/libs/goex"
+	. "trade-robot-bd/libs/goex"
 )
 
 const (

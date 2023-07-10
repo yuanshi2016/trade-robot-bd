@@ -3,8 +3,8 @@ package orderwebsocketclient
 import (
 	"encoding/json"
 	"fmt"
-	"fortune-bd/app/grid-strategy-svc/util/huobi/pkg/client/websocketclientbase"
-	"fortune-bd/app/grid-strategy-svc/util/huobi/pkg/response/order"
+	"trade-robot-bd/app/grid-strategy-svc/util/huobi/pkg/client/websocketclientbase"
+	"trade-robot-bd/app/grid-strategy-svc/util/huobi/pkg/response/order"
 
 	"github.com/zhufuyi/pkg/logger"
 )

@@ -10,8 +10,8 @@ import (
 	"strings"
 	"sync"
 	"time"
-	. "wq-fotune-backend/pkg/goex"
-	"wq-fotune-backend/pkg/goex/internal/logger"
+	. "trade-robot-bd/libs/goex"
+	"trade-robot-bd/libs/goex/internal/logger"
 )
 
 const baseUrl = "https://www.okex.com"
@@ -92,7 +92,7 @@ func (ok *OKEx) adaptOrderState(state int) TradeStatus {
 }
 
 /*
- Get a http request body is a json string and a byte array.
+Get a http request body is a json string and a byte array.
 */
 func (ok *OKEx) BuildRequestBody(params interface{}) (string, *bytes.Reader, error) {
 	if params == nil {
@@ -119,8 +119,9 @@ func (ok *OKEx) doParamSign(httpMethod, uri, requestBody string) (string, string
 }
 
 /*
- Get a iso time
-  eg: 2018-03-16T18:02:48.284Z
+Get a iso time
+
+	eg: 2018-03-16T18:02:48.284Z
 */
 func (ok *OKEx) IsoTime() string {
 	utcTime := time.Now().UTC()

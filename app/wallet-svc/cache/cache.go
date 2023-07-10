@@ -2,10 +2,10 @@ package cache
 
 import (
 	"errors"
-	"fortune-bd/libs/cache"
-	"fortune-bd/libs/logger"
 	"github.com/go-redis/redis"
 	"time"
+	"trade-robot-bd/libs/cache"
+	"trade-robot-bd/libs/logger"
 )
 
 type Service struct {

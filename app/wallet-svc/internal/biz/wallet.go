@@ -3,18 +3,17 @@ package biz
 import (
 	"context"
 	"fmt"
-	"fortune-bd/api/response"
-	"fortune-bd/app/wallet-svc/cache"
-	"fortune-bd/app/wallet-svc/internal/model"
-	"fortune-bd/libs/exchangeclient"
-	"fortune-bd/libs/helper"
-	"fortune-bd/libs/logger"
 	"github.com/golang/protobuf/ptypes/empty"
 	"github.com/jinzhu/gorm"
 	"github.com/shopspring/decimal"
 	"strings"
 	"time"
-
+	"trade-robot-bd/api/response"
+	"trade-robot-bd/app/wallet-svc/cache"
+	"trade-robot-bd/app/wallet-svc/internal/model"
+	"trade-robot-bd/libs/exchangeclient"
+	"trade-robot-bd/libs/helper"
+	"trade-robot-bd/libs/logger"
 )
 
 const (
@@ -72,7 +71,6 @@ func (w *WalletRepo) GetWalletByUID(userID string) (*model.WqWallet, error) {
 	}
 	return walletInfo, nil
 }
-
 
 func (w *WalletRepo) GetWqCoinInfo() (*model.WqCoinInfo, error) {
 	info, err := w.dao.GetWqCoinInfo()

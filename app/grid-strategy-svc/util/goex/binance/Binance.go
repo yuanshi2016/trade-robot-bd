@@ -3,19 +3,18 @@ package binance
 import (
 	"errors"
 	"fmt"
-	"fortune-bd/libs/env"
 	"log"
-	"net"
 	"net/http"
 	"net/url"
 	"sort"
 	"strconv"
 	"strings"
 	"time"
+	"trade-robot-bd/libs/env"
 
-	. "fortune-bd/app/grid-strategy-svc/util/goex"
 	"github.com/json-iterator/go"
 	"github.com/shopspring/decimal"
+	. "trade-robot-bd/app/grid-strategy-svc/util/goex"
 )
 
 const (
@@ -628,8 +627,8 @@ func (bn *Binance) GetKlineRecords(currency CurrencyPair, period, size, since in
 
 }
 
-//非个人，整个交易所的交易记录
-//注意：since is fromId
+// 非个人，整个交易所的交易记录
+// 注意：since is fromId
 func (bn *Binance) GetTrades(currencyPair CurrencyPair, since int64) ([]Trade, error) {
 	param := url.Values{}
 	param.Set("symbol", currencyPair.ToSymbol(""))
@@ -1285,13 +1284,10 @@ func Get3CyclePriceRange(symbol string, interval int, proxyAddr ...string) (floa
 }
 
 func getTransport(proxyAddr ...string) *http.Transport {
-	transport := &http.Transport{
-		Dial: (&net.Dialer{Timeout: 10 * time.Second}).Dial,
-	}
+	transport := &http.Transport{}
 	if len(proxyAddr) > 0 && proxyAddr[0] != "" {
 		transport = &http.Transport{
 			Proxy: func(req *http.Request) (*url.URL, error) { return url.Parse(proxyAddr[0]) },
-			Dial:  (&net.Dialer{Timeout: 10 * time.Second}).Dial,
 		}
 	}
 

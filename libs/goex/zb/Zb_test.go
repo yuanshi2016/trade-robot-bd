@@ -3,7 +3,7 @@ package zb
 import (
 	"net/http"
 	"testing"
-	"wq-fotune-backend/pkg/goex"
+	"trade-robot-bd/libs/goex"
 )
 
 var (

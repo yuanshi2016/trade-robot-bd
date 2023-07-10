@@ -11,7 +11,7 @@ import (
 	"sort"
 	"strconv"
 	"time"
-	. "wq-fotune-backend/pkg/goex"
+	. "trade-robot-bd/libs/goex"
 )
 
 type Bithumb struct {
@@ -339,7 +339,7 @@ func (bit *Bithumb) GetKlineRecords(currency CurrencyPair, period, size, since i
 	panic("not implement")
 }
 
-//非个人，整个交易所的交易记录
+// 非个人，整个交易所的交易记录
 func (bit *Bithumb) GetTrades(currencyPair CurrencyPair, since int64) ([]Trade, error) {
 	panic("not implement")
 }

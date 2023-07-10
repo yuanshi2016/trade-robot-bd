@@ -1,9 +1,9 @@
 package dao
 
 import (
-	"fortune-bd/libs/cache"
 	"github.com/jinzhu/gorm"
 	"go.mongodb.org/mongo-driver/mongo"
+	"trade-robot-bd/libs/cache"
 )
 
 type Dao struct {
@@ -13,7 +13,7 @@ type Dao struct {
 
 func New() *Dao {
 	return &Dao{
-		db:   cache.Mysql(),
+		db:    cache.Mysql(),
 		mongo: cache.Mongo(),
 	}
 }

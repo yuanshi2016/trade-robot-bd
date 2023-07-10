@@ -2,13 +2,12 @@ package cron
 
 import (
 	"fmt"
-	"fortune-bd/libs/cache"
-	"fortune-bd/libs/exchangeclient"
-	"fortune-bd/libs/logger"
 	"log"
 	"strings"
 	"time"
-
+	"trade-robot-bd/libs/cache"
+	"trade-robot-bd/libs/exchangeclient"
+	"trade-robot-bd/libs/logger"
 )
 
 var TickHuobiAll = "tick:huobi:all"

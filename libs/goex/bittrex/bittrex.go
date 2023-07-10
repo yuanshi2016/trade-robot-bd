@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"net/http"
 	"sort"
-	. "wq-fotune-backend/pkg/goex"
+	. "trade-robot-bd/libs/goex"
 )
 
 type Bittrex struct {
@@ -109,7 +109,7 @@ func (bx *Bittrex) GetKlineRecords(currency CurrencyPair, period, size, since in
 	panic("not implement")
 }
 
-//非个人，整个交易所的交易记录
+// 非个人，整个交易所的交易记录
 func (bx *Bittrex) GetTrades(currencyPair CurrencyPair, since int64) ([]Trade, error) {
 	panic("not implement")
 }

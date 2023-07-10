@@ -1,8 +1,8 @@
 package biz
 
 import (
-	"fortune-bd/app/exchange-svc/internal/model"
 	"go.mongodb.org/mongo-driver/bson"
+	"trade-robot-bd/app/exchange-svc/internal/model"
 )
 
 func (e *ExOrderRepo) GetUserStrategyOfRun() []*model.GridStrategy {

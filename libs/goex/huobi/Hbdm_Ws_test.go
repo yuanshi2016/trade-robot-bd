@@ -4,7 +4,7 @@ import (
 	"log"
 	"testing"
 	"time"
-	"wq-fotune-backend/pkg/goex"
+	"trade-robot-bd/libs/goex"
 )
 
 func TestNewHbdmWs(t *testing.T) {

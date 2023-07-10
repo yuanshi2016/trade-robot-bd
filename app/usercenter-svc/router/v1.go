@@ -2,18 +2,17 @@ package router
 
 import (
 	"context"
-	"fortune-bd/api/response"
-	pb "fortune-bd/api/usercenter/v1"
-	"fortune-bd/app/usercenter-svc/internal/service"
-	"fortune-bd/libs/jwt"
-	"fortune-bd/libs/logger"
-	"fortune-bd/libs/middleware"
-	"fortune-bd/libs/validate-code/phone"
 	"github.com/gin-gonic/gin"
 	"github.com/go-kratos/kratos/v2/errors"
 	"github.com/golang/protobuf/ptypes"
 	"github.com/golang/protobuf/ptypes/empty"
-
+	"trade-robot-bd/api/response"
+	pb "trade-robot-bd/api/usercenter/v1"
+	"trade-robot-bd/app/usercenter-svc/internal/service"
+	"trade-robot-bd/libs/jwt"
+	"trade-robot-bd/libs/logger"
+	"trade-robot-bd/libs/middleware"
+	"trade-robot-bd/libs/validate-code/phone"
 )
 
 var (
@@ -46,7 +45,7 @@ func Login(c *gin.Context) {
 		Phone:    req.Phone,
 		Password: req.Password,
 	}
-	user,err := userService.Login(context.Background(), loginReq)
+	user, err := userService.Login(context.Background(), loginReq)
 	if err != nil {
 		fromError := errors.FromError(err)
 		logger.Errorf("userService.Login  调用失败 %v", err.Error())
@@ -132,7 +131,7 @@ func ResetPassword(c *gin.Context) {
 	claims, _ := c.Get("claims")
 	jwtP := claims.(*jwt.JWTPayload)
 	resetReq := &pb.ChangePasswordReq{UserId: jwtP.UserID, Password: req.Password, ConfirmPassword: req.ConfirmPassword}
-	if _,err := userService.ResetPassword(context.Background(), resetReq); err != nil {
+	if _, err := userService.ResetPassword(context.Background(), resetReq); err != nil {
 		fromError := errors.FromError(err)
 		response.NewErrWithCodeAndMsg(c, fromError.Code, fromError.Message)
 		return

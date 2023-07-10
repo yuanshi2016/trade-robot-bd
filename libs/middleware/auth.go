@@ -1,8 +1,8 @@
 package middleware
 
 import (
-	"fortune-bd/libs/jwt"
 	"time"
+	"trade-robot-bd/libs/jwt"
 )
 
 const (

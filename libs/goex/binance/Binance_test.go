@@ -1,13 +1,12 @@
 package binance
 
 import (
-	"fortune-bd/libs/goex"
 	"log"
-	"net"
 	"net/http"
 	"net/url"
 	"testing"
 	"time"
+	"trade-robot-bd/libs/goex"
 )
 
 var ba = NewWithConfig(
@@ -17,9 +16,6 @@ var ba = NewWithConfig(
 				Proxy: func(req *http.Request) (*url.URL, error) {
 					return url.Parse("socks5://127.0.0.1:7891")
 				},
-				Dial: (&net.Dialer{
-					Timeout: 10 * time.Second,
-				}).Dial,
 			},
 			Timeout: 10 * time.Second,
 		},

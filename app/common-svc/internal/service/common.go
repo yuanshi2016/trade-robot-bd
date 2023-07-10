@@ -4,29 +4,28 @@ import (
 	"context"
 	"encoding/base64"
 	"fmt"
-	"fortune-bd/api/response"
-	"fortune-bd/app/common-svc/cache"
-	"fortune-bd/app/common-svc/internal/dao"
-	"fortune-bd/libs/env"
-	"fortune-bd/libs/logger"
-	"fortune-bd/libs/oss"
 	jsoniter "github.com/json-iterator/go"
 	"log"
 	"strings"
 	"time"
+	"trade-robot-bd/api/response"
+	"trade-robot-bd/app/common-svc/cache"
+	"trade-robot-bd/app/common-svc/internal/dao"
+	"trade-robot-bd/libs/env"
+	"trade-robot-bd/libs/logger"
+	"trade-robot-bd/libs/oss"
 
-	pb "fortune-bd/api/common/v1"
 	"google.golang.org/protobuf/types/known/emptypb"
+	pb "trade-robot-bd/api/common/v1"
 )
 
 const (
 	errID = "common"
 )
 
-
 type CommonService struct {
 	pb.UnimplementedCommonServer
-	dao      *dao.Dao
+	dao *dao.Dao
 }
 
 func NewCommonService() *CommonService {

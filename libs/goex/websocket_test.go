@@ -4,7 +4,7 @@ import (
 	"encoding/json"
 	"testing"
 	"time"
-	. "fortune-bd/libs/goex/internal/logger"
+	. "trade-robot-bd/libs/goex/internal/logger"
 )
 
 func Test_time(t *testing.T) {

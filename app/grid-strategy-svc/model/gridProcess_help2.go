@@ -3,14 +3,13 @@ package model
 import (
 	"errors"
 	"fmt"
-	"fortune-bd/app/grid-strategy-svc/util/goex"
-	"fortune-bd/app/grid-strategy-svc/util/goex/binance"
-	"fortune-bd/app/grid-strategy-svc/util/grid"
-	"fortune-bd/app/grid-strategy-svc/util/huobi"
-	"fortune-bd/libs/env"
 	"strings"
 	"time"
-
+	"trade-robot-bd/app/grid-strategy-svc/util/goex"
+	"trade-robot-bd/app/grid-strategy-svc/util/goex/binance"
+	"trade-robot-bd/app/grid-strategy-svc/util/grid"
+	"trade-robot-bd/app/grid-strategy-svc/util/huobi"
+	"trade-robot-bd/libs/env"
 
 	"strconv"
 
@@ -124,7 +123,7 @@ func GenNewGrid(exchange string, symbol string, totalSum float64, gridNum int, m
 	return grids, nil
 }
 
-//  撤单
+// 撤单
 func cancelLimitOrder(gs *GridStrategy, exchangeAccount goex.Accounter) ([]string, error) {
 	if exchangeAccount == nil {
 		return []string{}, errors.New("not found account")
@@ -240,10 +239,10 @@ func CalculatePosition(exchange string, symbol string, gsid string, exchangeAcco
 
 	logger.Infof("gsid=%s, calculate position=%v, need close position %v, quantityPrecision=%d", gsid, totalPosition, positionSize, el.QuantityPrecision)
 
-	return  positionSize, nil
+	return positionSize, nil
 }
 
-//  获取货币可撤单的仓位
+// 获取货币可撤单的仓位
 func getCurrencyPosition(exchange string, symbol string, totalPosition float64, exchangeAccount goex.Accounter) float64 {
 	needClosePosition := totalPosition
 	feesRate := 0.0

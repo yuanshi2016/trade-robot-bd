@@ -4,7 +4,7 @@ import "time"
 
 //
 import (
-	. "wq-fotune-backend/pkg/goex"
+	. "trade-robot-bd/libs/goex"
 )
 
 func adaptKLinePeriod(period KlinePeriod) int {

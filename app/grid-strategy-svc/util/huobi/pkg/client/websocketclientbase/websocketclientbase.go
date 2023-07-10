@@ -2,13 +2,13 @@ package websocketclientbase
 
 import (
 	"fmt"
-	"fortune-bd/app/grid-strategy-svc/util/huobi/internal/gzip"
-	"fortune-bd/app/grid-strategy-svc/util/huobi/internal/model"
 	"github.com/gorilla/websocket"
 	"github.com/zhufuyi/pkg/logger"
 	"strings"
 	"sync"
 	"time"
+	"trade-robot-bd/app/grid-strategy-svc/util/huobi/internal/gzip"
+	"trade-robot-bd/app/grid-strategy-svc/util/huobi/internal/model"
 )
 
 const (

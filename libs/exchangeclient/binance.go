@@ -2,8 +2,8 @@ package exchangeclient
 
 import (
 	"errors"
-	"fortune-bd/libs/goex"
-	"fortune-bd/libs/goex/binance"
+	"trade-robot-bd/libs/goex"
+	"trade-robot-bd/libs/goex/binance"
 )
 
 type Binance struct {

@@ -5,11 +5,11 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	. "fortune-bd/libs/goex"
-	"fortune-bd/libs/goex/internal/logger"
 	"strings"
 	"sync"
 	"time"
+	. "trade-robot-bd/libs/goex"
+	"trade-robot-bd/libs/goex/internal/logger"
 )
 
 type SpotWs struct {

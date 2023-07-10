@@ -1,6 +1,6 @@
 package biz
 
-import "fortune-bd/app/exchange-svc/internal/evaluation"
+import "trade-robot-bd/app/exchange-svc/internal/evaluation"
 
 func getEvaDirection(direction string) string {
 	switch direction {

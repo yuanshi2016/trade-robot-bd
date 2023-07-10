@@ -4,14 +4,14 @@ import (
 	"bytes"
 	"errors"
 	"fmt"
-	"fortune-bd/libs/helper"
 	"github.com/json-iterator/go"
 	"log"
 	"strconv"
 	"strings"
 	"time"
+	. "trade-robot-bd/libs/goex"
+	"trade-robot-bd/libs/helper"
 	"unsafe"
-	. "fortune-bd/libs/goex"
 )
 
 var json = jsoniter.ConfigCompatibleWithStandardLibrary
@@ -20,10 +20,10 @@ type BinanceWs struct {
 	baseURL         string
 	combinedBaseURL string
 	proxyUrl        string
-	tickerCallback  func(*Ticker)
-	depthCallback   func(*Depth)
-	tradeCallback   func(*Trade)
-	klineCallback   func(*Kline, int)
+	TickerCallback  func(*Ticker)
+	DepthCallback   func(*Depth)
+	TradeCallback   func(*Trade)
+	KlineCallback   func(*Kline, int)
 	wsConns         []*WsConn
 }
 
@@ -46,7 +46,7 @@ type DiffDepth struct {
 	FirstUpdateID int64 `json:"U"`
 }
 
-var _INERNAL_KLINE_PERIOD_REVERTER = map[string]int{
+var InernalKlinePeriodReverter = map[string]int{
 	"1m":  KLINE_PERIOD_1MIN,
 	"3m":  KLINE_PERIOD_3MIN,
 	"5m":  KLINE_PERIOD_5MIN,
@@ -64,10 +64,28 @@ var _INERNAL_KLINE_PERIOD_REVERTER = map[string]int{
 	"1M":  KLINE_PERIOD_1MONTH,
 }
 
-func NewBinanceWs() *BinanceWs {
+const (
+	baseWsUrl         = "wss://stream.binance.com"
+	baseDeliveryWsUrl = "wss://dstream.binance.com"
+	baseFuturesWsUrl  = "wss://fstream.binance.com"
+)
+
+func NewBinanceWs(config *APIConfig) *BinanceWs {
 	bnWs := &BinanceWs{}
-	bnWs.baseURL = "wss://stream.binance.com:9443/ws"
-	bnWs.combinedBaseURL = "wss://stream.binance.com:9443/stream?streams="
+	if config.Endpoint == "" {
+		switch config.ClientType {
+		case "d":
+			config.Endpoint = baseDeliveryWsUrl
+			break
+		case "f":
+			config.Endpoint = baseFuturesWsUrl
+			break
+		default:
+			config.Endpoint = baseWsUrl
+		}
+	}
+	bnWs.baseURL = fmt.Sprintf("%s/ws", config.Endpoint)
+	bnWs.combinedBaseURL = fmt.Sprintf("%s/stream?streams=", config.Endpoint)
 	return bnWs
 }
 
@@ -84,15 +102,15 @@ func (bnWs *BinanceWs) SetCombinedBaseURL(combinedBaseURL string) {
 }
 
 func (bnWs *BinanceWs) SetCallbacks(
-	tickerCallback func(*Ticker),
-	depthCallback func(*Depth),
-	tradeCallback func(*Trade),
-	klineCallback func(*Kline, int),
+	TickerCallback func(*Ticker),
+	DepthCallback func(*Depth),
+	TradeCallback func(*Trade),
+	KlineCallback func(*Kline, int),
 ) {
-	bnWs.tickerCallback = tickerCallback
-	bnWs.depthCallback = depthCallback
-	bnWs.tradeCallback = tradeCallback
-	bnWs.klineCallback = klineCallback
+	bnWs.TickerCallback = TickerCallback
+	bnWs.DepthCallback = DepthCallback
+	bnWs.TradeCallback = TradeCallback
+	bnWs.KlineCallback = KlineCallback
 }
 
 func (bnWs *BinanceWs) Subscribe(endpoint string, handle func(msg []byte) error) *WsConn {
@@ -115,7 +133,7 @@ func (bnWs *BinanceWs) Close() {
 }
 
 func (bnWs *BinanceWs) SubscribeDepth(pair CurrencyPair, size int) error {
-	if bnWs.depthCallback == nil {
+	if bnWs.DepthCallback == nil {
 		return errors.New("please set depth callback func")
 	}
 	if size != 5 && size != 10 && size != 20 {
@@ -137,7 +155,7 @@ func (bnWs *BinanceWs) SubscribeDepth(pair CurrencyPair, size int) error {
 		depth := bnWs.parseDepthData(rawDepth.Bids, rawDepth.Asks)
 		depth.Pair = pair
 		depth.UTime = time.Now()
-		bnWs.depthCallback(depth)
+		bnWs.DepthCallback(depth)
 		return nil
 	}
 	bnWs.Subscribe(endpoint, handle)
@@ -145,7 +163,7 @@ func (bnWs *BinanceWs) SubscribeDepth(pair CurrencyPair, size int) error {
 }
 
 func (bnWs *BinanceWs) SubscribeTicker(pair CurrencyPair) error {
-	if bnWs.tickerCallback == nil {
+	if bnWs.TickerCallback == nil {
 		return errors.New("please set ticker callback func")
 	}
 	endpoint := fmt.Sprintf("%s/%s@ticker", bnWs.baseURL, strings.ToLower(pair.ToSymbol("")))
@@ -167,7 +185,7 @@ func (bnWs *BinanceWs) SubscribeTicker(pair CurrencyPair) error {
 		case "24hrTicker":
 			tick := bnWs.parseTickerData(datamap)
 			tick.Pair = pair
-			bnWs.tickerCallback(tick)
+			bnWs.TickerCallback(tick)
 			return nil
 		default:
 			return errors.New("unknown message " + msgType)
@@ -176,9 +194,39 @@ func (bnWs *BinanceWs) SubscribeTicker(pair CurrencyPair) error {
 	bnWs.Subscribe(endpoint, handle)
 	return nil
 }
+func (bnWs *BinanceWs) SubscribeContractInfo(pair CurrencyPair) error {
 
+	endpoint := fmt.Sprintf("%s/!contractInfo", bnWs.baseURL)
+	fmt.Println(endpoint)
+	handle := func(msg []byte) error {
+		fmt.Println(string(msg))
+		datamap := make(map[string]interface{})
+		err := json.Unmarshal(msg, &datamap)
+		if err != nil {
+			fmt.Println("json unmarshal error for ", string(msg))
+			return err
+		}
+		msgType, isOk := datamap["e"].(string)
+		if !isOk {
+			return errors.New("no message type")
+		}
+		fmt.Println(msgType)
+		//switch msgType {
+		//case "24hrTicker":
+		//	tick := bnWs.parseTickerData(datamap)
+		//	tick.Pair = pair
+		//	bnWs.TickerCallback(tick)
+		//	return nil
+		//default:
+		//	return errors.New("unknown message " + msgType)
+		//}
+		return nil
+	}
+	bnWs.Subscribe(endpoint, handle).SendMessage([]byte("!contractInfo"))
+	return nil
+}
 func (bnWs *BinanceWs) SubscribeTrade(pair CurrencyPair) error {
-	if bnWs.tradeCallback == nil {
+	if bnWs.TradeCallback == nil {
 		return errors.New("please set trade callback func")
 	}
 	endpoint := fmt.Sprintf("%s/%s@trade", bnWs.baseURL, strings.ToLower(pair.ToSymbol("")))
@@ -214,7 +262,7 @@ func (bnWs *BinanceWs) SubscribeTrade(pair CurrencyPair) error {
 				SellerOrderID: ToInt64(datamap["a"]),
 			}
 			trade.Pair = pair
-			bnWs.tradeCallback((*Trade)(unsafe.Pointer(trade)))
+			bnWs.TradeCallback((*Trade)(unsafe.Pointer(trade)))
 			return nil
 		default:
 			return errors.New("unknown message " + msgType)
@@ -225,7 +273,7 @@ func (bnWs *BinanceWs) SubscribeTrade(pair CurrencyPair) error {
 }
 
 func (bnWs *BinanceWs) SubscribeKline(pair CurrencyPair, period int) error {
-	if bnWs.klineCallback == nil {
+	if bnWs.KlineCallback == nil {
 		return errors.New("place set kline callback func")
 	}
 	periodS, isOk := _INERNAL_KLINE_PERIOD_CONVERTER[period]
@@ -233,7 +281,6 @@ func (bnWs *BinanceWs) SubscribeKline(pair CurrencyPair, period int) error {
 		periodS = "M1"
 	}
 	endpoint := fmt.Sprintf("%s/%s@kline_%s", bnWs.baseURL, strings.ToLower(pair.ToSymbol("")), periodS)
-
 	handle := func(msg []byte) error {
 		datamap := make(map[string]interface{})
 		err := json.Unmarshal(msg, &datamap)
@@ -246,14 +293,13 @@ func (bnWs *BinanceWs) SubscribeKline(pair CurrencyPair, period int) error {
 		if !isOk {
 			return errors.New("no message type")
 		}
-
 		switch msgType {
 		case "kline":
 			k := datamap["k"].(map[string]interface{})
-			period := _INERNAL_KLINE_PERIOD_REVERTER[k["i"].(string)]
+			period := InernalKlinePeriodReverter[k["i"].(string)]
 			kline := bnWs.parseKlineData(k)
 			kline.Pair = pair
-			bnWs.klineCallback(kline, period)
+			bnWs.KlineCallback(kline, period)
 			return nil
 		default:
 			return errors.New("unknown message " + msgType)
@@ -300,12 +346,12 @@ func (bnWs *BinanceWs) parseKlineData(k map[string]interface{}) *Kline {
 	return kline
 }
 
-func (bnWs *BinanceWs) SubscribeAggTrade(pair CurrencyPair, tradeCallback func(*Trade)) error {
-	if tradeCallback == nil {
+// SubscribeAggTrade 订阅交易记录-【】
+func (bnWs *BinanceWs) SubscribeAggTrade(pair CurrencyPair, TradeCallback func(*Trade)) error {
+	if TradeCallback == nil {
 		return errors.New("please set trade callback func")
 	}
 	endpoint := fmt.Sprintf("%s/%s@aggTrade", bnWs.baseURL, strings.ToLower(pair.ToSymbol("")))
-
 	handle := func(msg []byte) error {
 		datamap := make(map[string]interface{})
 		err := json.Unmarshal(msg, &datamap)
@@ -322,7 +368,7 @@ func (bnWs *BinanceWs) SubscribeAggTrade(pair CurrencyPair, tradeCallback func(*
 		switch msgType {
 		case "aggTrade":
 			side := BUY
-			if datamap["m"].(bool) == false {
+			if datamap["m"].(bool) {
 				side = SELL
 			}
 			aggTrade := &AggTrade{
@@ -338,7 +384,7 @@ func (bnWs *BinanceWs) SubscribeAggTrade(pair CurrencyPair, tradeCallback func(*
 				TradeTime:             int64(ToUint64(datamap["T"])),
 			}
 			aggTrade.Pair = pair
-			tradeCallback((*Trade)(unsafe.Pointer(aggTrade)))
+			TradeCallback((*Trade)(unsafe.Pointer(aggTrade)))
 			return nil
 		default:
 			return errors.New("unknown message " + msgType)
@@ -348,8 +394,8 @@ func (bnWs *BinanceWs) SubscribeAggTrade(pair CurrencyPair, tradeCallback func(*
 	return nil
 }
 
-func (bnWs *BinanceWs) SubscribeDiffDepth(pair CurrencyPair, depthCallback func(*Depth)) error {
-	if depthCallback == nil {
+func (bnWs *BinanceWs) SubscribeDiffDepth(pair CurrencyPair, DepthCallback func(*Depth)) error {
+	if DepthCallback == nil {
 		return errors.New("please set depth callback func")
 	}
 	endpoint := fmt.Sprintf("%s/%s@depth", bnWs.baseURL, strings.ToLower(pair.ToSymbol("")))
@@ -380,7 +426,7 @@ func (bnWs *BinanceWs) SubscribeDiffDepth(pair CurrencyPair, depthCallback func(
 
 		diffDepth.Pair = pair
 		diffDepth.UTime = time.Unix(0, rawDepth.Time*int64(time.Millisecond))
-		depthCallback((*Depth)(unsafe.Pointer(diffDepth)))
+		DepthCallback((*Depth)(unsafe.Pointer(diffDepth)))
 		return nil
 	}
 	bnWs.Subscribe(endpoint, handle)
@@ -388,8 +434,8 @@ func (bnWs *BinanceWs) SubscribeDiffDepth(pair CurrencyPair, depthCallback func(
 }
 
 // SubscribeExecutionReport executionReport
-func (bnWs *BinanceWs) SubscribeExecutionReport(lKey string, depthCallback func(*Order)) error {
-	if depthCallback == nil {
+func (bnWs *BinanceWs) SubscribeExecutionReport(lKey string, DepthCallback func(*Order)) error {
+	if DepthCallback == nil {
 		return errors.New("please set depth callback func")
 	}
 	endpoint := fmt.Sprintf("%s/%s", bnWs.baseURL, lKey)
@@ -466,7 +512,7 @@ func (bnWs *BinanceWs) SubscribeExecutionReport(lKey string, depthCallback func(
 				}
 			}
 
-			depthCallback(order)
+			DepthCallback(order)
 		}
 		return nil
 	}
@@ -475,7 +521,7 @@ func (bnWs *BinanceWs) SubscribeExecutionReport(lKey string, depthCallback func(
 }
 
 func (bnWs *BinanceWs) exitHandler(c *WsConn) {
-	pingTicker := time.NewTicker(10 * time.Minute)
+	pingTicker := time.NewTicker(2 * time.Minute)
 	pongTicker := time.NewTicker(time.Second)
 	defer pingTicker.Stop()
 	defer pongTicker.Stop()

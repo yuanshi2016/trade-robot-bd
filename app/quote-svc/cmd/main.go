@@ -1,14 +1,14 @@
 package main
 
 import (
-	"fortune-bd/app/quote-svc/internal/service"
-	"fortune-bd/app/quote-svc/server"
-	"fortune-bd/libs/env"
 	"github.com/go-kratos/etcd/registry"
 	"github.com/go-kratos/kratos/v2"
 	etcd "go.etcd.io/etcd/client/v3"
 	"log"
 	"os"
+	"trade-robot-bd/app/quote-svc/internal/service"
+	"trade-robot-bd/app/quote-svc/server"
+	"trade-robot-bd/libs/env"
 )
 
 var (

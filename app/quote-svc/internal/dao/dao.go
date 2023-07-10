@@ -1,8 +1,8 @@
 package dao
 
 import (
-	"fortune-bd/libs/cache"
 	"github.com/go-redis/redis"
+	"trade-robot-bd/libs/cache"
 )
 
 type Dao struct {

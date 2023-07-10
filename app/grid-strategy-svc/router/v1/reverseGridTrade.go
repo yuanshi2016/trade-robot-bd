@@ -2,9 +2,9 @@ package v1
 
 import (
 	"fmt"
-	"fortune-bd/app/grid-strategy-svc/model"
-	"fortune-bd/app/grid-strategy-svc/util/goex"
-	"fortune-bd/libs/env"
+	"trade-robot-bd/app/grid-strategy-svc/model"
+	"trade-robot-bd/app/grid-strategy-svc/util/goex"
+	"trade-robot-bd/libs/env"
 
 	"github.com/gin-gonic/gin"
 	"github.com/zhufuyi/logger"

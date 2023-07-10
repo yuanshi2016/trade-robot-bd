@@ -2,12 +2,11 @@ package cron
 
 import (
 	"fmt"
-	"fortune-bd/libs/cache"
-	"fortune-bd/libs/exchangeclient"
-	"fortune-bd/libs/logger"
 	"strings"
 	"time"
-
+	"trade-robot-bd/libs/cache"
+	"trade-robot-bd/libs/exchangeclient"
+	"trade-robot-bd/libs/logger"
 )
 
 var TickBinanceAll = "tick:binance:all"

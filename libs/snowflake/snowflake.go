@@ -1,9 +1,9 @@
 package snowflake
 
 import (
-	"fortune-bd/libs/logger"
 	"github.com/bwmarrin/snowflake"
 	"os"
+	"trade-robot-bd/libs/logger"
 )
 
 var SNode *snowflake.Node

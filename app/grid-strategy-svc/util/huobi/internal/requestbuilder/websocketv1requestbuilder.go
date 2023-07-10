@@ -1,11 +1,10 @@
 package requestbuilder
 
 import (
-	"fortune-bd/app/grid-strategy-svc/util/huobi/internal/model"
-	"fortune-bd/app/grid-strategy-svc/util/huobi/pkg/getrequest"
-	"fortune-bd/app/grid-strategy-svc/util/huobi/pkg/postrequest"
 	"time"
-
+	"trade-robot-bd/app/grid-strategy-svc/util/huobi/internal/model"
+	"trade-robot-bd/app/grid-strategy-svc/util/huobi/pkg/getrequest"
+	"trade-robot-bd/app/grid-strategy-svc/util/huobi/pkg/postrequest"
 )
 
 type WebSocketV1RequestBuilder struct {

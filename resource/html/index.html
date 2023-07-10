@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title></title>
+</head>
+<style>
+
+</style>
+<body>
+<ul id="list">
+    {{range $index, $element := .data}}
+    <li data-table="table{{$index}}">{{$index}}: {{$element.Symbol}} [{{$element.KlineLast.Close}}],止损率:{{$element.StopLossRate}} 初始余额:{{$element.MockDetail.OldUsd}}, 当前余额:{{$element.MockDetail.Usd}} 交易次数:{{$element.MockDetail.TradeNum}}</li>
+    {{end}}
+</ul>
+
+<div id="table-container"></div>
+{{range $index, $element := .data}}
+<table id="table{{$index}}"  style="display: none;">
+    <thead>
+    <tr>
+        <th>方向</th>
+        <th>强平价格</th>
+        <th>开仓价格</th>
+        <th>开仓时间</th>
+        <th>闭仓价格</th>
+        <th>闭仓时间</th>
+        <th>本次收益</th>
+        <th>余额快照</th>
+    </tr>
+    </thead>
+    <tbody id="table-body">
+    {{ if ne $element.MockDetail.BuyOrder nil }}
+    <tr id="tr--2">
+        <td>
+            {{ if eq $element.MockDetail.BuyOrder.Direction 1 }}
+            做多
+            {{ else }}
+            做空
+            {{ end }}
+        </td>
+        <td>{{$element.MockDetail.BuyOrder.Liquidation}}</td>
+        <td>{{$element.MockDetail.BuyOrder.Open}}</td>
+        <td>{{$element.MockDetail.BuyOrder.BidTime}}</td>
+        <td>{{$element.MockDetail.BuyOrder.Close}}</td>
+        <td>{{$element.MockDetail.BuyOrder.AskTime }}</td>
+        <td>{{$element.MockDetail.BuyOrder.NetGainUSd}}</td>
+        <td>{{$element.MockDetail.BuyOrder.Usd}}</td>
+    </tr>
+    {{ end}}
+    {{ if ne $element.MockDetail.SellOrder nil }}
+    <tr id="tr--1">
+        <td>
+            {{ if eq $element.MockDetail.SellOrder.Direction 1 }}
+            做多
+            {{ else }}
+            做空
+            {{ end }}
+        </td>
+        <td>{{$element.MockDetail.SellOrder.Liquidation}}</td>
+        <td>{{$element.MockDetail.SellOrder.Open}}</td>
+        <td>{{$element.MockDetail.SellOrder.BidTime}}</td>
+        <td>{{$element.MockDetail.SellOrder.Close}}</td>
+        <td>{{$element.MockDetail.SellOrder.AskTime }}</td>
+        <td>{{$element.MockDetail.SellOrder.NetGainUSd}}</td>
+        <td>{{$element.MockDetail.SellOrder.Usd}}</td>
+    </tr>
+    {{ end}}
+
+    {{range $i, $item := $element.MockDetail.HistoryOrder}}
+    <tr id="tr-{{$index}}-{{$i}}">
+        <td>
+            {{ if eq $item.Direction 1 }}
+            做多
+            {{ else }}
+            做空
+            {{ end }}
+        </td>
+        <td>{{$item.Liquidation}}</td>
+        <td>{{$item.Open}}</td>
+        <td>{{$item.BidTime}}</td>
+        <td>{{$item.Close}}</td>
+        <td>{{$item.AskTime }}</td>
+        <td>{{$item.NetGainUSd}}</td>
+        <td>{{$item.Usd}}</td>
+    </tr>
+    {{end}}
+    </tbody>
+</table>
+{{end}}
+<script src="https://s3.pstatp.com/cdn/expire-1-M/jquery/3.2.1/jquery.min.js"></script>
+<script>
+    Date.prototype.format = function(format) {
+        /*
+         * eg:format="YYYY-MM-dd hh:mm:ss";
+
+         */
+        var o = {
+            "M+" :this.getMonth() + 1, // month
+            "d+" :this.getDate(), // day
+            "h+" :this.getHours(), // hour
+            "m+" :this.getMinutes(), // minute
+            "s+" :this.getSeconds(), // second
+            "q+" :Math.floor((this.getMonth() + 3) / 3), // quarter
+            "S" :this.getMilliseconds()
+            // millisecond
+        }
+        if (/(y+)/.test(format)) {
+            format = format.replace(RegExp.$1, (this.getFullYear() + "")
+                .substr(4 - RegExp.$1.length));
+        }
+        for ( var k in o) {
+            if (new RegExp("(" + k + ")").test(format)) {
+                format = format.replace(RegExp.$1, RegExp.$1.length == 1 ? o[k]
+                    : ("00" + o[k]).substr(("" + o[k]).length));
+            }
+        }
+        return format;
+    }
+
+    var list = document.getElementById('list');
+    var tableContainer = document.getElementById('table-container');
+    function formatTimestamp(timestamp) {
+        var date = new Date(timestamp * 1000);
+        return date.format("MM-dd hh:mm");
+    }
+    list.addEventListener('click', function (event) {
+        var clickedItem = event.target;
+        console.log(clickedItem)
+        var tableId = clickedItem.dataset.table;
+
+        // 将之前展示的表格隐藏起来
+        tableContainer.innerHTML = '';
+
+        // 克隆并显示对应的表格
+        var table = document.getElementById(tableId).cloneNode(true);
+        table.style.display = 'block';
+        tableContainer.appendChild(table);
+        $("#table-container table #table-body tr").each((i,item)=>{
+            var td1 = $(item).find("td:eq(1)")
+            var td3 = $(item).find("td:eq(3)")
+            var td5 = $(item).find("td:eq(5)")
+            var td6 = $(item).find("td:eq(6)")
+            var td7 = $(item).find("td:eq(7)")
+            td1.text(new Number(td1.text()).toFixed(4))
+            td6.text(new Number(td6.text()).toFixed(4))
+            td7.text(new Number(td7.text()).toFixed(4))
+            td3.text(formatTimestamp(td3.text()))
+            td5.text(formatTimestamp(td5.text()))
+        })
+    });
+
+
+</script>
+</body>
+</html>

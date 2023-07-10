@@ -1,6 +1,6 @@
 package account
 
-import "fortune-bd/app/grid-strategy-svc/util/huobi/pkg/response/base"
+import "trade-robot-bd/app/grid-strategy-svc/util/huobi/pkg/response/base"
 
 type SubscribeAccountV2Response struct {
 	base.WebSocketV2ResponseBase

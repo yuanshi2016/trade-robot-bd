@@ -1,8 +1,6 @@
 package server
 
 import (
-	"fortune-bd/app/grid-strategy-svc/router"
-	"fortune-bd/libs/logger"
 	"github.com/chenjiandongx/ginprom"
 	"github.com/gin-contrib/pprof"
 	"github.com/gin-gonic/gin"
@@ -11,7 +9,8 @@ import (
 	"log"
 	"net/http"
 	"time"
-
+	"trade-robot-bd/app/grid-strategy-svc/router"
+	"trade-robot-bd/libs/logger"
 )
 
 func RunHttp(port string) {

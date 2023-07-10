@@ -3,11 +3,11 @@ package v1
 import (
 	"errors"
 	"fmt"
-	"fortune-bd/app/grid-strategy-svc/model"
-	"fortune-bd/app/grid-strategy-svc/util/goex"
-	"fortune-bd/app/grid-strategy-svc/util/goex/binance"
-	"fortune-bd/app/grid-strategy-svc/util/grid"
-	"fortune-bd/app/grid-strategy-svc/util/huobi"
+	"trade-robot-bd/app/grid-strategy-svc/model"
+	"trade-robot-bd/app/grid-strategy-svc/util/goex"
+	"trade-robot-bd/app/grid-strategy-svc/util/goex/binance"
+	"trade-robot-bd/app/grid-strategy-svc/util/grid"
+	"trade-robot-bd/app/grid-strategy-svc/util/huobi"
 
 	"github.com/zhufuyi/logger"
 
@@ -147,7 +147,7 @@ func calculateAnchorCurrencyPosition(gsid string) float64 {
 	return sellQuantity - buyQuantity
 }
 
-//  获取货币可撤单的仓位
+// 获取货币可撤单的仓位
 func getAnchorCurrencyPosition(exchange string, symbol string, totalPosition float64, exchangeAccount goex.Accounter) float64 {
 	needClosePosition := totalPosition
 	feesRate := 0.0

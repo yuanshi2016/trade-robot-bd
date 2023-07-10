@@ -6,8 +6,8 @@ import (
 	"sort"
 	"testing"
 	"time"
-	"wq-fotune-backend/app/grid-strategy-srv/util/goex"
-	"wq-fotune-backend/libs/env"
+	"trade-robot-bd/app/grid-strategy-svc/util/goex"
+	"trade-robot-bd/libs/env"
 
 	"strings"
 
@@ -16,7 +16,7 @@ import (
 
 var ba = NewWithConfig(
 	&goex.APIConfig{
-		HttpClient: env.GetProxyHttpClient(),
+		HttpClient:   env.GetProxyHttpClient(),
 		Endpoint:     GLOBAL_API_BASE_URL,
 		ApiKey:       "p3nbQkUhKsD2vD6Nt6tsv5OQ8OK8IJVGrjDD6ZDx28Iganzha3gVIN6UOPTIWXR2",
 		ApiSecretKey: "HvgxFc2dtMYYKmgWjm90E7mEWrzbJfNyZ4yhPwbW0n0VBom4l9iJHlB96HPLcWq3",

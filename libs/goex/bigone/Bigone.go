@@ -9,7 +9,7 @@ import (
 
 	"github.com/google/uuid"
 	"github.com/nubo/jwt"
-	"wq-fotune-backend/pkg/goex"
+	"trade-robot-bd/libs/goex"
 )
 
 const (
@@ -475,7 +475,7 @@ func (bo *Bigone) GetKlineRecords(currency goex.CurrencyPair, period, size, sinc
 	panic("not implements")
 }
 
-//非个人，整个交易所的交易记录
+// 非个人，整个交易所的交易记录
 func (bo *Bigone) GetTrades(currencyPair goex.CurrencyPair, since int64) ([]goex.Trade, error) {
 	panic("not implements")
 }

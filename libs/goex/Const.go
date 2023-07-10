@@ -7,6 +7,12 @@ import (
 type TradeSide int
 
 const (
+	OPEN_BUY   = 1 + iota //开多
+	OPEN_SELL             //开空
+	CLOSE_BUY             //平多
+	CLOSE_SELL            //平空
+)
+const (
 	BUY TradeSide = 1 + iota
 	SELL
 	BUY_MARKET
@@ -46,16 +52,9 @@ const (
 	ORDER_FAIL
 )
 
-const (
-	OPEN_BUY   = 1 + iota //开多
-	OPEN_SELL             //开空
-	CLOSE_BUY             //平多
-	CLOSE_SELL            //平空
-)
-
 type KlinePeriod int
 
-//k线周期
+// k线周期
 const (
 	KLINE_PERIOD_1MIN = 1 + iota
 	KLINE_PERIOD_3MIN
@@ -121,7 +120,7 @@ var (
 	SWAP_CONTRACT       = "swap"       //永续合约
 )
 
-//exchanges const
+// exchanges const
 const (
 	KUCOIN       = "kucoin.com"
 	OKCOIN_COM   = "okcoin.com"

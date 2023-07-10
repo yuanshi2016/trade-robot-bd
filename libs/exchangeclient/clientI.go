@@ -1,13 +1,12 @@
 package exchangeclient
 
 import (
-	"fortune-bd/libs/env"
-	"fortune-bd/libs/goex"
 	"net/http"
 	"net/url"
 	"strings"
 	"time"
-
+	"trade-robot-bd/libs/env"
+	"trade-robot-bd/libs/goex"
 )
 
 type ExClientI interface {
@@ -16,7 +15,7 @@ type ExClientI interface {
 	CheckIfApiValid() error
 }
 
-//todo 代理
+// todo 代理
 var (
 	client = &http.Client{
 		Timeout: time.Second * 5,

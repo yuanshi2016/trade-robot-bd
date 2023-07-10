@@ -5,11 +5,11 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	. "fortune-bd/app/grid-strategy-svc/util/goex"
 	"log"
 	"strconv"
 	"strings"
 	"time"
+	. "trade-robot-bd/app/grid-strategy-svc/util/goex"
 	"unsafe"
 
 	"github.com/json-iterator/go"
@@ -48,7 +48,7 @@ type DiffDepth struct {
 	FirstUpdateID int64 `json:"U"`
 }
 
-var _INERNAL_KLINE_PERIOD_REVERTER = map[string]int{
+var InernalKlinePeriodReverter = map[string]int{
 	"1m":  KLINE_PERIOD_1MIN,
 	"3m":  KLINE_PERIOD_3MIN,
 	"5m":  KLINE_PERIOD_5MIN,
@@ -275,7 +275,7 @@ func (bnWs *BinanceWs) SubscribeKline(pair CurrencyPair, period int) error {
 		switch msgType {
 		case "kline":
 			k := datamap["k"].(map[string]interface{})
-			period := _INERNAL_KLINE_PERIOD_REVERTER[k["i"].(string)]
+			period := InernalKlinePeriodReverter[k["i"].(string)]
 			kline := bnWs.parseKlineData(k)
 			kline.Pair = pair
 			bnWs.klineCallback(kline, period)
@@ -412,7 +412,7 @@ func (bnWs *BinanceWs) SubscribeDiffDepth(pair CurrencyPair, depthCallback func(
 	return nil
 }
 
-//executionReport
+// executionReport
 func (bnWs *BinanceWs) SubscribeExecutionReport(lKey string, depthCallback func(*Order)) error {
 	if depthCallback == nil {
 		return errors.New("please set depth callback func")

@@ -12,7 +12,7 @@ import (
 	"strings"
 	"time"
 
-	. "wq-fotune-backend/pkg/goex"
+	. "trade-robot-bd/libs/goex"
 )
 
 type CoinEx struct {
@@ -242,7 +242,7 @@ func (coinex *CoinEx) GetKlineRecords(currency CurrencyPair, period, size, since
 	panic("not implement")
 }
 
-//非个人，整个交易所的交易记录
+// 非个人，整个交易所的交易记录
 func (coinex *CoinEx) GetTrades(currencyPair CurrencyPair, since int64) ([]Trade, error) {
 	panic("not implement")
 }

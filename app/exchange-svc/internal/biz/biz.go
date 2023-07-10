@@ -1,8 +1,8 @@
 package biz
 
 import (
-	"fortune-bd/app/exchange-svc/internal/dao"
 	"github.com/go-redis/redis"
+	"trade-robot-bd/app/exchange-svc/internal/dao"
 )
 
 const (
@@ -10,12 +10,12 @@ const (
 )
 
 type ExOrderRepo struct {
-	dao          *dao.Dao
+	dao *dao.Dao
 }
 
 func NewExOrderRepo() *ExOrderRepo {
 	return &ExOrderRepo{
-		dao:          dao.New(),
+		dao: dao.New(),
 	}
 }
 
@@ -26,6 +26,6 @@ type ForwardOfferRepo struct {
 
 func NewForwardOfferRepo() *ForwardOfferRepo {
 	return &ForwardOfferRepo{
-		dao:          dao.New(),
+		dao: dao.New(),
 	}
 }

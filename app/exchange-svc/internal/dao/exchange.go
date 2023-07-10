@@ -1,10 +1,9 @@
 package dao
 
 import (
-	"fortune-bd/app/exchange-svc/internal/model"
-	"fortune-bd/libs/logger"
 	"github.com/jinzhu/gorm"
-
+	"trade-robot-bd/app/exchange-svc/internal/model"
+	"trade-robot-bd/libs/logger"
 )
 
 func (d *Dao) GetExchangeInfo() (exchangeList []*model.WqExchange) {

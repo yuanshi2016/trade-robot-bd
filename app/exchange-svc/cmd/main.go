@@ -1,20 +1,18 @@
 package main
 
 import (
-	"fortune-bd/app/exchange-svc/internal/service"
-	"fortune-bd/app/exchange-svc/server"
-	"fortune-bd/libs/env"
 	"github.com/go-kratos/etcd/registry"
 	"github.com/go-kratos/kratos/v2"
 	etcd "go.etcd.io/etcd/client/v3"
 	"log"
-	"os"
+	"trade-robot-bd/app/exchange-svc/internal/service"
+	"trade-robot-bd/app/exchange-svc/server"
+	"trade-robot-bd/libs/env"
 )
 
 var (
 	id, _ = os.Hostname()
 )
-
 
 func main() {
 	log.Println("id:", id)

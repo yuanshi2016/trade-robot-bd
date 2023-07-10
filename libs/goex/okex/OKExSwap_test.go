@@ -5,7 +5,7 @@ import (
 	"net/url"
 	"testing"
 	"time"
-	"wq-fotune-backend/pkg/goex"
+	"trade-robot-bd/libs/goex"
 )
 
 var config = &goex.APIConfig{

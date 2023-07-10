@@ -13,7 +13,7 @@ import (
 	"sort"
 	"strings"
 	"time"
-	. "wq-fotune-backend/pkg/goex"
+	. "trade-robot-bd/libs/goex"
 )
 
 type BaseResponse struct {
@@ -274,7 +274,7 @@ func (k *Kraken) GetKlineRecords(currency CurrencyPair, period, size, since int)
 	panic("")
 }
 
-//非个人，整个交易所的交易记录
+// 非个人，整个交易所的交易记录
 func (k *Kraken) GetTrades(currencyPair CurrencyPair, since int64) ([]Trade, error) {
 	panic("")
 }

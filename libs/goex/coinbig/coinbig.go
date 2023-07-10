@@ -3,7 +3,7 @@ package coinbig
 import (
 	"net/http"
 	"net/url"
-	. "wq-fotune-backend/pkg/goex"
+	. "trade-robot-bd/libs/goex"
 
 	"bytes"
 	"encoding/json"
@@ -448,7 +448,7 @@ func (cb *CoinBig) GetKlineRecords(currency CurrencyPair, period, size, since in
 	panic("not implement")
 }
 
-//非个人，整个交易所的交易记录
+// 非个人，整个交易所的交易记录
 func (cb *CoinBig) GetTrades(currencyPair CurrencyPair, since int64) ([]Trade, error) {
 	panic("not implement")
 }

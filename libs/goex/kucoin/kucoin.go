@@ -1,10 +1,9 @@
 package kucoin
 
 import (
-	"github.com/Kucoin/kucoin-go-sdk"
 	"time"
-	. "wq-fotune-backend/pkg/goex"
-	log "wq-fotune-backend/pkg/goex/internal/logger"
+	. "trade-robot-bd/libs/goex"
+	log "trade-robot-bd/libs/goex/internal/logger"
 )
 
 func New(apiKey, apiSecret, apiPassphrase string) *KuCoin {

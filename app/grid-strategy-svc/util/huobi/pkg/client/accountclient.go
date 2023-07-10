@@ -4,14 +4,13 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	"fortune-bd/app/grid-strategy-svc/util/huobi/internal"
-	"fortune-bd/app/grid-strategy-svc/util/huobi/internal/requestbuilder"
-	"fortune-bd/app/grid-strategy-svc/util/huobi/pkg/getrequest"
-	"fortune-bd/app/grid-strategy-svc/util/huobi/pkg/postrequest"
-	"fortune-bd/app/grid-strategy-svc/util/huobi/pkg/response/account"
 	"strconv"
 	"strings"
-
+	"trade-robot-bd/app/grid-strategy-svc/util/huobi/internal"
+	"trade-robot-bd/app/grid-strategy-svc/util/huobi/internal/requestbuilder"
+	"trade-robot-bd/app/grid-strategy-svc/util/huobi/pkg/getrequest"
+	"trade-robot-bd/app/grid-strategy-svc/util/huobi/pkg/postrequest"
+	"trade-robot-bd/app/grid-strategy-svc/util/huobi/pkg/response/account"
 )
 
 // Responsible to operate account

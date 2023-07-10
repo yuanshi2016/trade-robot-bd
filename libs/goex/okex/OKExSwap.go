@@ -12,7 +12,7 @@ import (
 	"time"
 
 	"github.com/google/uuid"
-	. "wq-fotune-backend/pkg/goex"
+	. "trade-robot-bd/libs/goex"
 )
 
 const (
@@ -555,8 +555,10 @@ func (ok *OKExSwap) GetKlineRecords(contractType string, currency CurrencyPair, 
 	return ok.GetKlineRecords2(contractType, currency, sinceTime.Format(time.RFC3339), "", strconv.Itoa(granularity))
 }
 
-/**
-  since : 单位秒,开始时间
+/*
+*
+
+	since : 单位秒,开始时间
 */
 func (ok *OKExSwap) GetKlineRecords2(contractType string, currency CurrencyPair, start, end, period string) ([]FutureKline, error) {
 	urlPath := "/api/swap/v3/instruments/%s/candles?%s"
@@ -713,9 +715,9 @@ func (ok *OKExSwap) GetMarginLevel(currencyPair CurrencyPair) (*MarginLeverage, 
 }
 
 // marginmode
-//1:逐仓-多仓
-//2:逐仓-空仓
-//3:全仓
+// 1:逐仓-多仓
+// 2:逐仓-空仓
+// 3:全仓
 func (ok *OKExSwap) SetMarginLevel(currencyPair CurrencyPair, level, marginMode int) (*MarginLeverage, error) {
 	var resp MarginLeverage
 	uri := fmt.Sprintf("/api/swap/v3/accounts/%s/leverage", ok.adaptContractType(currencyPair))

@@ -1,9 +1,9 @@
 package model
 
 import (
-	"fortune-bd/app/grid-strategy-svc/util/grid"
 	"github.com/globalsign/mgo/bson"
 	"github.com/zhufuyi/pkg/mongo"
+	"trade-robot-bd/app/grid-strategy-svc/util/grid"
 )
 
 // GridPendingOrderCollectionName 表名

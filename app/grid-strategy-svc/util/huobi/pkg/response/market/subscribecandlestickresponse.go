@@ -1,8 +1,8 @@
 package market
 
 import (
-	"fortune-bd/app/grid-strategy-svc/util/huobi/pkg/response/base"
 	"github.com/shopspring/decimal"
+	"trade-robot-bd/app/grid-strategy-svc/util/huobi/pkg/response/base"
 )
 
 type SubscribeCandlestickResponse struct {

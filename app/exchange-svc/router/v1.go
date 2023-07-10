@@ -2,28 +2,27 @@ package router
 
 import (
 	"context"
-	pb "fortune-bd/api/exchange/v1"
-	"fortune-bd/api/response"
-	"fortune-bd/app/exchange-svc/internal/service"
-	"fortune-bd/libs/jwt"
-	"fortune-bd/libs/logger"
-	"fortune-bd/libs/middleware"
 	"github.com/gin-gonic/gin"
 	"github.com/go-kratos/kratos/v2/errors"
 	"github.com/golang/protobuf/jsonpb"
 	"github.com/golang/protobuf/ptypes/empty"
 	jsoniter "github.com/json-iterator/go"
 	"strconv"
-
+	pb "trade-robot-bd/api/exchange/v1"
+	"trade-robot-bd/api/response"
+	"trade-robot-bd/app/exchange-svc/internal/service"
+	"trade-robot-bd/libs/jwt"
+	"trade-robot-bd/libs/logger"
+	"trade-robot-bd/libs/middleware"
 )
 
 var s *service.ExOrderService
 
-func getService() *service.ExOrderService{
+func getService() *service.ExOrderService {
 	if s == nil {
 		s = service.NewExOrderService()
 	}
-	return  s
+	return s
 }
 
 func apiV1(group *gin.RouterGroup) {
@@ -65,7 +64,7 @@ func AddProfitHandler(c *gin.Context) {
 }
 
 func GetSymbolRankHandler(c *gin.Context) {
-	resp,err := getService().GetSymbolRankWithRateYear(context.Background(), &empty.Empty{})
+	resp, err := getService().GetSymbolRankWithRateYear(context.Background(), &empty.Empty{})
 	if err != nil {
 		fromError := errors.FromError(err)
 		response.NewErrWithCodeAndMsg(c, fromError.Code, fromError.Message)
@@ -241,7 +240,7 @@ func DeleteExApiHandler(c *gin.Context) {
 		return
 	}
 	req := &pb.UserApiReq{ApiId: int64(i), UserId: jwtP.UserID}
-	_ ,err = getService().DeleteExchangeApi(context.Background(), req)
+	_, err = getService().DeleteExchangeApi(context.Background(), req)
 	if err != nil {
 		fromError := errors.FromError(err)
 		response.NewErrWithCodeAndMsg(c, fromError.Code, fromError.Message)

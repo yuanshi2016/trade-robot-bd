@@ -1,20 +1,22 @@
 package binance
 
 import (
-	"fortune-bd/libs/goex"
+	"fmt"
 	"log"
+	"sync"
 	"testing"
 	"time"
+	"trade-robot-bd/libs/goex"
 	"unsafe"
 )
 
-var bnWs = NewBinanceWs()
+var bnWs = NewBinanceWs(&goex.APIConfig{})
 
 func init() {
-	bnWs.proxyUrl = "socks5://127.0.0.1:7891"
-	//bnWs.SetBaseUrl("wss://fstream.binancezh.com/ws")
-	bnWs.SetCombinedBaseURL("wss://fstream.binancezh.com/stream?streams=boz16htWU3gjF7hkoRUG3EZponFxRpbQ3XDDUywmKO80krZAzoY13tzAuKIQ")
-	bnWs.SetCallbacks(printfTicker, printfDepth, printfTrade, printfKline)
+	//bnWs.proxyUrl = "socks5://10.10.1.3:12528"
+	bnWs.SetBaseUrl("wss://dstream.binance.com/ws")
+	//bnWs.SetCombinedBaseURL("wss://fstream.binancezh.com/stream?streams=boz16htWU3gjF7hkoRUG3EZponFxRpbQ3XDDUywmKO80krZAzoY13tzAuKIQ")
+	//bnWs.SetCallbacks(printfTicker, printfDepth, printfTrade, printfKline)
 }
 
 func printfTicker(ticker *goex.Ticker) {
@@ -37,8 +39,10 @@ func printfKline(kline *goex.Kline, period int) {
 	log.Println("kline:", kline)
 }
 
+// go test -run TestBinanceWs_SubscribeTicker
 func TestBinanceWs_SubscribeTicker(t *testing.T) {
-	bnWs.SubscribeTicker(goex.BTC_USDT)
+	err := bnWs.SubscribeTicker(goex.BNB_USD)
+	fmt.Println(err)
 	time.Sleep(time.Second * 5)
 }
 
@@ -58,8 +62,16 @@ func TestBinanceWs_GetTradesWithWs(t *testing.T) {
 	time.Sleep(time.Second * 5)
 }
 
+// go test -run TestBinanceWs_SubscribeAggTrade
+
 func TestBinanceWs_SubscribeAggTrade(t *testing.T) {
-	bnWs.SubscribeAggTrade(goex.BTC_USDT, printfAggTrade)
+	var bg = new(sync.WaitGroup)
+	bg.Add(1)
+	err := bnWs.SubscribeAggTrade(goex.BNB_USD, printfAggTrade)
+	if err != nil {
+		log.Fatal("运行失败", err)
+	}
+	bg.Wait()
 	time.Sleep(time.Second * 5)
 }
 

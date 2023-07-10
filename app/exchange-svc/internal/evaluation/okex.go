@@ -1,10 +1,10 @@
 package evaluation
 
 import (
-	"fortune-bd/app/exchange-svc/utils"
-	"fortune-bd/libs/logger"
 	"github.com/shopspring/decimal"
 	"strings"
+	"trade-robot-bd/app/exchange-svc/utils"
+	"trade-robot-bd/libs/logger"
 )
 
 type Okex struct {

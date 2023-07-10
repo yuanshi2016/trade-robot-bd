@@ -3,14 +3,14 @@ package huobi
 import (
 	"errors"
 	"fmt"
-	"fortune-bd/app/grid-strategy-svc/util/goex"
-	"fortune-bd/app/grid-strategy-svc/util/huobi/pkg/client"
-	"fortune-bd/app/grid-strategy-svc/util/huobi/pkg/client/orderwebsocketclient"
-	"fortune-bd/app/grid-strategy-svc/util/huobi/pkg/client/websocketclientbase"
-	"fortune-bd/app/grid-strategy-svc/util/huobi/pkg/getrequest"
-	"fortune-bd/app/grid-strategy-svc/util/huobi/pkg/postrequest"
-	"fortune-bd/app/grid-strategy-svc/util/huobi/pkg/response/auth"
-	"fortune-bd/app/grid-strategy-svc/util/huobi/pkg/response/order"
+	"trade-robot-bd/app/grid-strategy-svc/util/goex"
+	"trade-robot-bd/app/grid-strategy-svc/util/huobi/pkg/client"
+	"trade-robot-bd/app/grid-strategy-svc/util/huobi/pkg/client/orderwebsocketclient"
+	"trade-robot-bd/app/grid-strategy-svc/util/huobi/pkg/client/websocketclientbase"
+	"trade-robot-bd/app/grid-strategy-svc/util/huobi/pkg/getrequest"
+	"trade-robot-bd/app/grid-strategy-svc/util/huobi/pkg/postrequest"
+	"trade-robot-bd/app/grid-strategy-svc/util/huobi/pkg/response/auth"
+	"trade-robot-bd/app/grid-strategy-svc/util/huobi/pkg/response/order"
 
 	"github.com/zhufuyi/pkg/krand"
 	"github.com/zhufuyi/pkg/logger"
@@ -188,7 +188,7 @@ type OrderInfo struct {
 	Operator   string `json:"operator"`  // 止盈止损订单触发价运算符	gte,lte
 }
 
-//GetOrder 获取订单信息
+// GetOrder 获取订单信息
 func (a *Account) GetOrder(orderID string) (*OrderInfo, error) {
 	cli := new(client.OrderClient).Init(a.AccessKey, a.SecretKey, host)
 	resp, err := cli.GetOrderById(orderID)

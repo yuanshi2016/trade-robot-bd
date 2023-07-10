@@ -3,18 +3,20 @@ package goex
 import (
 	"errors"
 	"fmt"
-	"fortune-bd/libs/goex/internal/logger"
 	"reflect"
 	"time"
+	"trade-robot-bd/libs/goex/internal/logger"
 )
 
-/**
-  本函数只适合，返回两个参数的API重试调用，其中一个参数必须是error
-  @retry  重试次数
-  @delay  每次重试延迟时间间隔
-  @method 调用的函数，比如: api.GetTicker ,注意：不是api.GetTicker(...)
-  @params 参数,顺序一定要按照实际调用函数入参顺序一样
-  @return 返回
+/*
+*
+
+	本函数只适合，返回两个参数的API重试调用，其中一个参数必须是error
+	@retry  重试次数
+	@delay  每次重试延迟时间间隔
+	@method 调用的函数，比如: api.GetTicker ,注意：不是api.GetTicker(...)
+	@params 参数,顺序一定要按照实际调用函数入参顺序一样
+	@return 返回
 */
 func RE(retry int, delay time.Duration, method interface{}, params ...interface{}) interface{} {
 

@@ -2,12 +2,6 @@ package router
 
 import (
 	"context"
-	"fortune-bd/api/constant"
-	pb "fortune-bd/api/quote/v1"
-	"fortune-bd/api/response"
-	"fortune-bd/app/quote-svc/cron"
-	"fortune-bd/app/quote-svc/internal/service"
-	"fortune-bd/libs/logger"
 	"github.com/gin-gonic/gin"
 	"github.com/go-kratos/kratos/v2/errors"
 	"github.com/gorilla/websocket"
@@ -15,11 +9,17 @@ import (
 	"log"
 	"net/http"
 	"time"
+	"trade-robot-bd/api/constant"
+	pb "trade-robot-bd/api/quote/v1"
+	"trade-robot-bd/api/response"
+	"trade-robot-bd/app/quote-svc/cron"
+	"trade-robot-bd/app/quote-svc/internal/service"
+	"trade-robot-bd/libs/logger"
 )
 
 var (
 	quoteService = service.NewQuoteService()
-	upGrader = websocket.Upgrader{
+	upGrader     = websocket.Upgrader{
 		CheckOrigin: func(r *http.Request) bool {
 			return true
 		},

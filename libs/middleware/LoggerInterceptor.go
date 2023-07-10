@@ -3,12 +3,12 @@ package middleware
 import (
 	"bytes"
 	"fmt"
-	"fortune-bd/libs/logger"
 	"github.com/gin-gonic/gin"
 	"io/ioutil"
 	"net/http"
 	"strings"
 	"time"
+	"trade-robot-bd/libs/logger"
 )
 
 const limitSize = 300

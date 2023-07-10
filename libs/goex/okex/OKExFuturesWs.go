@@ -9,8 +9,8 @@ import (
 	"strconv"
 	"strings"
 	"time"
-	. "wq-fotune-backend/pkg/goex"
-	"wq-fotune-backend/pkg/goex/internal/logger"
+	. "trade-robot-bd/libs/goex"
+	"trade-robot-bd/libs/goex/internal/logger"
 )
 
 type OKExV3FuturesWs struct {

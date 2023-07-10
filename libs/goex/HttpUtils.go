@@ -5,15 +5,15 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	"fortune-bd/libs/env"
-	"fortune-bd/libs/goex/internal/logger"
-	"io/ioutil"
+	"io"
 	"log"
 	"net/http"
 	"net/url"
 	"os"
 	"strings"
 	"time"
+	"trade-robot-bd/libs/env"
+	"trade-robot-bd/libs/goex/internal/logger"
 
 	"github.com/valyala/fasthttp"
 	"github.com/valyala/fasthttp/fasthttpproxy"
@@ -89,14 +89,7 @@ func NewHttpRequest(client *http.Client, reqType string, reqUrl string, postData
 			req.Header.Add(k, v)
 		}
 	}
-	client.Transport = &http.Transport{
-		Proxy: func(req *http.Request) (*url.URL, error) {
-			return &url.URL{
-				Scheme: "socks5",
-				Host:   strings.Split(env.ProxyAddr, "//")[1],
-			}, nil
-		},
-	}
+	client.Transport = env.GetProxyHttpClient().Transport
 	resp, err := client.Do(req)
 	if err != nil {
 		return nil, err
@@ -104,7 +97,7 @@ func NewHttpRequest(client *http.Client, reqType string, reqUrl string, postData
 
 	defer resp.Body.Close()
 
-	bodyData, err := ioutil.ReadAll(resp.Body)
+	bodyData, err := io.ReadAll(resp.Body)
 	if err != nil {
 		return nil, err
 	}
@@ -218,7 +211,7 @@ func HttpPostForm3(client *http.Client, reqUrl string, postData string, headers 
 	return NewHttpRequest(client, "POST", reqUrl, postData, headers)
 }
 
-func HttpPostForm4(client *http.Client, reqUrl string, postData map[string]string, headers map[string]string) ([]byte, error) {
+func HttpPostForm4(client *http.Client, reqUrl string, postData interface{}, headers map[string]string) ([]byte, error) {
 	if headers == nil {
 		headers = map[string]string{}
 	}

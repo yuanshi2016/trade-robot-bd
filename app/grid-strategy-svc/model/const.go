@@ -2,11 +2,10 @@ package model
 
 import (
 	"fmt"
-	"fortune-bd/app/grid-strategy-svc/util/goex/binance"
-	"fortune-bd/app/grid-strategy-svc/util/huobi"
 	"strconv"
 	"strings"
-
+	"trade-robot-bd/app/grid-strategy-svc/util/goex/binance"
+	"trade-robot-bd/app/grid-strategy-svc/util/huobi"
 )
 
 const (

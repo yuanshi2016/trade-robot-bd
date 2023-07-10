@@ -27,7 +27,7 @@ spec:
         - env:
           - name: GIN_MODE
             value: debug
-          image: 192.168.5.5:8086/mateforce/exchange-svc:VERSION_NUMBER
+          image: harbor.local.com/mateforce/exchange-svc:VERSION_NUMBER
           imagePullPolicy: Always
           name: exchange-svc
           resources:

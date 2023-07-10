@@ -1,9 +1,9 @@
 package middleware
 
 import (
-	"fortune-bd/api/response"
-	"fortune-bd/libs/jwt"
 	"github.com/gin-gonic/gin"
+	"trade-robot-bd/api/response"
+	"trade-robot-bd/libs/jwt"
 )
 
 func JWTAuth() gin.HandlerFunc {

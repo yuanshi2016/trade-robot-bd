@@ -4,7 +4,6 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	"fortune-bd/libs/logger"
 	"github.com/gorilla/websocket"
 	"net/http"
 	"net/http/httputil"
@@ -12,7 +11,8 @@ import (
 	"strings"
 	"sync"
 	"time"
-	. "fortune-bd/libs/goex/internal/logger"
+	. "trade-robot-bd/libs/goex/internal/logger"
+	"trade-robot-bd/libs/logger"
 )
 
 type WsConfig struct {
@@ -57,7 +57,7 @@ func NewWsBuilder() *WsBuilder {
 	return &WsBuilder{&WsConfig{
 		ReqHeaders:        make(map[string][]string, 1),
 		reconnectInterval: time.Second * 10,
-		IsAutoReconnect: true,
+		IsAutoReconnect:   true,
 	}}
 }
 

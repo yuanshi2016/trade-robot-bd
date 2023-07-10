@@ -2,13 +2,12 @@ package v1
 
 import (
 	"fmt"
-	"fortune-bd/app/grid-strategy-svc/model"
-	"fortune-bd/app/grid-strategy-svc/util/goex"
-	"fortune-bd/app/grid-strategy-svc/util/grid"
-	"fortune-bd/libs/env"
 	"github.com/shopspring/decimal"
 	"strings"
-
+	"trade-robot-bd/app/grid-strategy-svc/model"
+	"trade-robot-bd/app/grid-strategy-svc/util/goex"
+	"trade-robot-bd/app/grid-strategy-svc/util/grid"
+	"trade-robot-bd/libs/env"
 
 	"github.com/gin-gonic/gin"
 	"github.com/globalsign/mgo/bson"
@@ -110,7 +109,6 @@ func StartupGridStrategy(c *gin.Context) {
 
 	render.OK(c)
 }
-
 
 func changeCount(grid *grid.Grid) {
 	splitArr := strings.Split(fmt.Sprint(grid.SellQuantity), ".")
@@ -512,7 +510,7 @@ func GetStrategySimple(c *gin.Context) {
 	})
 }
 
-//GetStrategyTotal 获取一共有多少个网格策略在运行
+// GetStrategyTotal 获取一共有多少个网格策略在运行
 func GetStrategyTotal(c *gin.Context) {
 	gps := model.GetStrategyCaches()
 

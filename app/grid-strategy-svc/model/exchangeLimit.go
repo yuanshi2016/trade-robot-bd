@@ -1,10 +1,10 @@
 package model
 
 import (
-	"fortune-bd/app/grid-strategy-svc/util/goex"
 	"strings"
 	"sync"
 	"time"
+	"trade-robot-bd/app/grid-strategy-svc/util/goex"
 
 	"fmt"
 
@@ -31,7 +31,7 @@ type ExchangeLimit struct {
 	VolumeLimit       float64 `json:"volumeLimit" bson:"volumeLimit"`             // 买卖最小金额
 	PricePrecision    int     `json:"pricePrecision" bson:"pricePrecision"`       // 价格精度
 	QuantityPrecision int     `json:"quantityPrecision" bson:"quantityPrecision"` // 数量精度
-	LeverageRatio     float64 `json:"leverage_ratio" bson:"leverage_ratio"`         // 最大杠杆比例
+	LeverageRatio     float64 `json:"leverage_ratio" bson:"leverage_ratio"`       // 最大杠杆比例
 }
 
 // Insert 插入一条新的记录
@@ -133,7 +133,7 @@ type LimitValues struct {
 	VolumeLimit       float64 `json:"volumeLimit"`       // 买卖最小金额
 	PricePrecision    int     `json:"pricePrecision"`    // 价格精度
 	QuantityPrecision int     `json:"quantityPrecision"` // 数量精度
-	LeverageRatio     float64 `json:"leverage_ratio"`     // 最大杠杆比例
+	LeverageRatio     float64 `json:"leverage_ratio"`    // 最大杠杆比例
 }
 
 // GetVolumePrecision 获取最小交易金额小数点位数(只针对币本位)

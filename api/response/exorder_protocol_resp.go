@@ -1,8 +1,8 @@
 package response
 
 import (
-	pb "fortune-bd/api/exchange/v1"
 	"time"
+	pb "trade-robot-bd/api/exchange/v1"
 )
 
 type ExchangeResp struct {

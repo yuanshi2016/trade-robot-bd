@@ -8,7 +8,7 @@ import (
 	"strconv"
 	"strings"
 
-	. "wq-fotune-backend/pkg/goex"
+	. "trade-robot-bd/libs/goex"
 )
 
 type LendBookItem struct {

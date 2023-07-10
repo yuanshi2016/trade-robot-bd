@@ -8,11 +8,14 @@ import (
 	"sync"
 	"time"
 
-	. "fortune-bd/libs/goex"
+	. "trade-robot-bd/libs/goex"
 )
 
+// U本位合约
 const (
-	baseUrl = "https://fapi.binance.com"
+	baseUrl         = "https://api.binance.com"
+	baseDeliveryUrl = "https://dapi.binance.com"
+	baseFuturesUrl  = "https://fapi.binance.com"
 )
 
 type BinanceSwap struct {
@@ -21,17 +24,29 @@ type BinanceSwap struct {
 
 func NewBinanceSwap(config *APIConfig) *BinanceSwap {
 	if config.Endpoint == "" {
-		config.Endpoint = baseUrl
+		switch config.ClientType {
+		case "d":
+			config.Endpoint = baseDeliveryUrl
+			break
+		case "f":
+			config.Endpoint = baseFuturesUrl
+			break
+		default:
+			config.Endpoint = baseUrl
+		}
 	}
+
 	bs := &BinanceSwap{
 		Binance: Binance{
 			baseUrl:    config.Endpoint,
 			accessKey:  config.ApiKey,
-			apiV1:      config.Endpoint + "/fapi/v1/",
+			apiV1:      config.Endpoint + "/" + config.ClientType + "api/v1/",
 			secretKey:  config.ApiSecretKey,
+			clientType: config.ClientType,
 			httpClient: config.HttpClient,
 		},
 	}
+
 	bs.setTimeOffset()
 	return bs
 }
@@ -73,7 +88,8 @@ func (bs *BinanceSwap) GetFutureEstimatedPrice(currencyPair CurrencyPair) (float
 	panic("not supported.")
 }
 
-/**
+// GetFutureTicker
+/*
  * 期货行情
  * @param currency_pair   btc_usd:比特币    ltc_usd :莱特币
  * @param contractType  合约类型: this_week:当周   next_week:下周   month:当月   quarter:季度
@@ -264,7 +280,7 @@ func (bs *BinanceSwap) GetFutureUserinfo(currencyPair ...CurrencyPair) (*FutureA
 	return acc, nil
 }
 
-// transferType - 1: 现货账户向合约账户划转 2: 合约账户向现货账户划转
+// Transfer Type - 1: 现货账户向合约账户划转 2: 合约账户向现货账户划转
 func (bs *BinanceSwap) Transfer(currency Currency, transferType int, amount float64) (int64, error) {
 	params := url.Values{}
 
@@ -289,7 +305,8 @@ func (bs *BinanceSwap) Transfer(currency Currency, transferType int, amount floa
 	return ToInt64(respmap["tranId"]), nil
 }
 
-/**
+// PlaceFutureOrder
+/*
  * @deprecated
  * 期货下单
  * @param currencyPair   btc_usd:比特币    ltc_usd :莱特币
@@ -299,7 +316,7 @@ func (bs *BinanceSwap) Transfer(currency Currency, transferType int, amount floa
  * @param openType   1:开多   2:开空   3:平多   4:平空
  * @param matchPrice  是否为对手价 0:不是    1:是   ,当取值为1时,price无效
  */
-func (bs *BinanceSwap) PlaceFutureOrder(currencyPair CurrencyPair, contractType, price, amount string, openType, matchPrice, leverRate int) (string, error) {
+func (bs *BinanceSwap) PlaceFutureOrder(currencyPair CurrencyPair, contractType, price, amount string, openType TradeSide, matchPrice, leverRate int) (string, error) {
 
 	pair := bs.adaptCurrencyPair(currencyPair)
 	path := bs.apiV1 + ORDER_URI
@@ -308,9 +325,9 @@ func (bs *BinanceSwap) PlaceFutureOrder(currencyPair CurrencyPair, contractType,
 	params.Set("quantity", amount)
 
 	switch openType {
-	case OPEN_BUY, CLOSE_SELL:
+	case BUY, BUY_MARKET:
 		params.Set("side", "BUY")
-	case OPEN_SELL, CLOSE_BUY:
+	case SELL, SELL_MARKET:
 		params.Set("side", "SELL")
 	}
 	if matchPrice == 0 {
@@ -341,13 +358,13 @@ func (bs *BinanceSwap) PlaceFutureOrder(currencyPair CurrencyPair, contractType,
 	return strconv.Itoa(orderId), nil
 }
 
-/**
- * 取消订单
- * @param symbol   btc_usd:比特币    ltc_usd :莱特币
- * @param contractType    合约类型: this_week:当周   next_week:下周   month:当月   quarter:季度
- * @param orderId   订单ID
-
- */
+/*
+*
+  - 取消订单
+  - @param symbol   btc_usd:比特币    ltc_usd :莱特币
+  - @param contractType    合约类型: this_week:当周   next_week:下周   month:当月   quarter:季度
+  - @param orderId   订单ID
+*/
 func (bs *BinanceSwap) FutureCancelOrder(currencyPair CurrencyPair, contractType, orderId string) (bool, error) {
 	currencyPair = bs.adaptCurrencyPair(currencyPair)
 	path := bs.apiV1 + ORDER_URI
@@ -582,9 +599,9 @@ func (bs *BinanceSwap) parseOrder(rsp map[string]interface{}) *FutureOrder {
 	order.Status = bs.parseOrderStatus(status)
 	order.OrderID = ToInt64(rsp["orderId"])
 	order.OrderID2 = strconv.Itoa(int(order.OrderID))
-	order.OType = OPEN_BUY
+	order.OType = BUY
 	if rsp["side"].(string) == "SELL" {
-		order.OType = OPEN_SELL
+		order.OType = SELL
 	}
 
 	//GTC - Good Till Cancel 成交为止
@@ -684,7 +701,7 @@ func (bs *BinanceSwap) GetDeliveryTime() (int, int, int, int) {
 /**
  * 获取K线数据
  */
-func (bs *BinanceSwap) GetKlineRecords(contractType string, currency CurrencyPair, period, size, since int) ([]FutureKline, error) {
+func (bs *BinanceSwap) GetKlineRecords(currency CurrencyPair, period, size, since int) ([]*Kline, error) {
 	currency2 := bs.adaptCurrencyPair(currency)
 	params := url.Values{}
 	params.Set("symbol", currency2.ToSymbol(""))
@@ -700,19 +717,21 @@ func (bs *BinanceSwap) GetKlineRecords(contractType string, currency CurrencyPai
 	if err != nil {
 		return nil, err
 	}
-	var klineRecords []FutureKline
+	var klineRecords []*Kline
 
 	for _, _record := range klines {
-		r := Kline{Pair: currency}
+		r := &Kline{Pair: currency}
 		record := _record.([]interface{})
-		r.Timestamp = int64(record[0].(float64)) / 1000 //to unix timestramp
+		r.Timestamp = int64(record[0].(float64)) //to unix timestramp
 		r.Open = ToFloat64(record[1])
 		r.High = ToFloat64(record[2])
 		r.Low = ToFloat64(record[3])
 		r.Close = ToFloat64(record[4])
 		r.Vol = ToFloat64(record[5])
-
-		klineRecords = append(klineRecords, FutureKline{Kline: &r})
+		r.CloseTime = ToInt64(record[6])
+		r.Count = ToInt64(record[8])
+		r.QuoteVolume = ToFloat64(record[9])
+		klineRecords = append(klineRecords, r)
 	}
 
 	return klineRecords, nil
@@ -731,4 +750,17 @@ func (bs *BinanceSwap) GetServerTime() (int64, error) {
 
 func (bs *BinanceSwap) adaptCurrencyPair(pair CurrencyPair) CurrencyPair {
 	return pair.AdaptUsdToUsdt()
+}
+func (bn *BinanceSwap) GetExchangeInfo() (*ExchangeInfo, error) {
+	resp, err := HttpGet5(bn.httpClient, bn.fapiV1+"exchangeInfo", nil)
+	if err != nil {
+		return nil, err
+	}
+	info := &ExchangeInfo{}
+	err = json.Unmarshal(resp, info)
+	if err != nil {
+		return nil, err
+	}
+
+	return info, nil
 }

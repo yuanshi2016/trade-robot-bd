@@ -4,8 +4,8 @@ import (
 	"net/http"
 	"testing"
 
-	"wq-fotune-backend/pkg/goex"
-	"wq-fotune-backend/pkg/goex/internal/logger"
+	"trade-robot-bd/libs/goex"
+	"trade-robot-bd/libs/goex/internal/logger"
 )
 
 var gdax = New(http.DefaultClient, "", "")

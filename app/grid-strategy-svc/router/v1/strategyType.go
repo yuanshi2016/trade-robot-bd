@@ -1,11 +1,11 @@
 package v1
 
 import (
-	"fortune-bd/app/grid-strategy-svc/model"
 	"github.com/gin-gonic/gin"
 	"github.com/globalsign/mgo/bson"
 	"github.com/zhufuyi/pkg/logger"
 	"github.com/zhufuyi/pkg/render"
+	"trade-robot-bd/app/grid-strategy-svc/model"
 )
 
 // CreateStrategyType 添加策略类型

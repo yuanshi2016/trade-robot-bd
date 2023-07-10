@@ -1,9 +1,9 @@
 package exchangeclient
 
 import (
-	"fortune-bd/libs/goex"
-	"fortune-bd/libs/goex/huobi"
-	"fortune-bd/libs/logger"
+	"trade-robot-bd/libs/goex"
+	"trade-robot-bd/libs/goex/huobi"
+	"trade-robot-bd/libs/logger"
 )
 
 var (

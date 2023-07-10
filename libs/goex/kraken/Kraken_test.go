@@ -4,7 +4,7 @@ import (
 	"github.com/stretchr/testify/assert"
 	"net/http"
 	"testing"
-	"wq-fotune-backend/pkg/goex"
+	"trade-robot-bd/libs/goex"
 )
 
 var k = New(http.DefaultClient, "", "")

@@ -5,18 +5,17 @@ import (
 	"encoding/hex"
 	"errors"
 	"fmt"
-	"fortune-bd/app/grid-strategy-svc/util/gocrypto"
-	"fortune-bd/app/grid-strategy-svc/util/goex"
-	"fortune-bd/app/grid-strategy-svc/util/goex/binance"
-	"fortune-bd/app/grid-strategy-svc/util/grid"
-	"fortune-bd/app/grid-strategy-svc/util/huobi"
-	"fortune-bd/app/grid-strategy-svc/util/huobi/pkg/client/orderwebsocketclient"
-	"fortune-bd/libs/env"
 	"strconv"
 	"strings"
 	"sync"
 	"time"
-
+	"trade-robot-bd/app/grid-strategy-svc/util/gocrypto"
+	"trade-robot-bd/app/grid-strategy-svc/util/goex"
+	"trade-robot-bd/app/grid-strategy-svc/util/goex/binance"
+	"trade-robot-bd/app/grid-strategy-svc/util/grid"
+	"trade-robot-bd/app/grid-strategy-svc/util/huobi"
+	"trade-robot-bd/app/grid-strategy-svc/util/huobi/pkg/client/orderwebsocketclient"
+	"trade-robot-bd/libs/env"
 
 	"github.com/globalsign/mgo/bson"
 	"github.com/zhufuyi/pkg/gohttp"
@@ -24,7 +23,7 @@ import (
 	"github.com/zhufuyi/pkg/logger"
 )
 
-//  已运行的网格策略信息，用户.交易所作为key，对象GridProcess作为值
+// 已运行的网格策略信息，用户.交易所作为key，对象GridProcess作为值
 var strategyRunInfo = new(sync.Map)
 
 // StrategyCacheKey 运行策略key

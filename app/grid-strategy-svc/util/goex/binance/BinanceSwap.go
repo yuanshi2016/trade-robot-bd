@@ -8,7 +8,7 @@ import (
 	"sync"
 	"time"
 
-	. "fortune-bd/app/grid-strategy-svc/util/goex"
+	. "trade-robot-bd/app/grid-strategy-svc/util/goex"
 )
 
 const (
@@ -341,13 +341,13 @@ func (bs *BinanceSwap) PlaceFutureOrder(currencyPair CurrencyPair, contractType,
 	return strconv.Itoa(orderId), nil
 }
 
-/**
- * 取消订单
- * @param symbol   btc_usd:比特币    ltc_usd :莱特币
- * @param contractType    合约类型: this_week:当周   next_week:下周   month:当月   quarter:季度
- * @param orderId   订单ID
-
- */
+/*
+*
+  - 取消订单
+  - @param symbol   btc_usd:比特币    ltc_usd :莱特币
+  - @param contractType    合约类型: this_week:当周   next_week:下周   month:当月   quarter:季度
+  - @param orderId   订单ID
+*/
 func (bs *BinanceSwap) FutureCancelOrder(currencyPair CurrencyPair, contractType, orderId string) (bool, error) {
 	currencyPair = bs.adaptCurrencyPair(currencyPair)
 	path := bs.apiV1 + ORDER_URI

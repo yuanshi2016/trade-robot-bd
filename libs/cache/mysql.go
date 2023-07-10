@@ -1,13 +1,13 @@
 package cache
 
 import (
-	"fortune-bd/libs/env"
-	"fortune-bd/libs/logger"
 	_ "github.com/go-sql-driver/mysql"
 	"github.com/jinzhu/gorm"
 	"log"
-
+	"trade-robot-bd/libs/env"
+	"trade-robot-bd/libs/logger"
 )
+
 var db *gorm.DB
 
 func Mysql() *gorm.DB {

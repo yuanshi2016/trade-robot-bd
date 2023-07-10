@@ -2,15 +2,15 @@ package service
 
 import (
 	"context"
-	"fortune-bd/api/constant"
-	"fortune-bd/api/response"
-	"fortune-bd/app/quote-svc/cron"
-	"fortune-bd/libs/logger"
 	jsoniter "github.com/json-iterator/go"
 	"time"
+	"trade-robot-bd/api/constant"
+	"trade-robot-bd/api/response"
+	"trade-robot-bd/app/quote-svc/cron"
+	"trade-robot-bd/libs/logger"
 
-	pb "fortune-bd/api/quote/v1"
 	"google.golang.org/protobuf/types/known/emptypb"
+	pb "trade-robot-bd/api/quote/v1"
 )
 
 const (

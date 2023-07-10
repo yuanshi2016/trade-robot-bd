@@ -1,6 +1,6 @@
 package bitfinex
 
-import . "wq-fotune-backend/pkg/goex"
+import . "trade-robot-bd/libs/goex"
 
 type MarginLimits struct {
 	Pair              string  `json:"on_pair"`

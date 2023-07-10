@@ -2,11 +2,10 @@ package v1
 
 import (
 	"fmt"
-	"fortune-bd/app/grid-strategy-svc/model"
-	"fortune-bd/app/grid-strategy-svc/util/grid"
 	"testing"
 	"time"
-
+	"trade-robot-bd/app/grid-strategy-svc/model"
+	"trade-robot-bd/app/grid-strategy-svc/util/grid"
 
 	"strconv"
 

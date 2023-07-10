@@ -1,16 +1,15 @@
 package cache
 
 import (
-	"fortune-bd/libs/env"
-	"fortune-bd/libs/logger"
 	"github.com/go-redis/redis"
 	"time"
-
+	"trade-robot-bd/libs/env"
+	"trade-robot-bd/libs/logger"
 )
 
 var rdb *redis.Client
 
-func Redis() *redis.Client{
+func Redis() *redis.Client {
 	if rdb == nil {
 		rdb = InitRedisClient(env.RedisAddr, env.RedisPWD)
 	}
@@ -29,7 +28,6 @@ func InitRedisClient(host string, password string) *redis.Client {
 	}
 	return redis.NewClient(options)
 }
-
 
 func CacheSet(key string, value interface{}, expiration time.Duration) error {
 	if err := rdb.Set(key, value, expiration).Err(); err != nil {

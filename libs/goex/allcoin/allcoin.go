@@ -9,7 +9,7 @@ import (
 	"sort"
 	"strings"
 	"time"
-	. "wq-fotune-backend/pkg/goex"
+	. "trade-robot-bd/libs/goex"
 )
 
 const (
@@ -449,7 +449,7 @@ func (ac *Allcoin) GetKlineRecords(currency CurrencyPair, period, size, since in
 	panic("not implements")
 }
 
-//非个人，整个交易所的交易记录
+// 非个人，整个交易所的交易记录
 func (ac *Allcoin) GetTrades(currencyPair CurrencyPair, since int64) ([]Trade, error) {
 	panic("not implements")
 }

@@ -12,8 +12,8 @@ import (
 	"strings"
 	"time"
 
-	. "fortune-bd/libs/goex"
-	. "fortune-bd/libs/goex/internal/logger"
+	. "trade-robot-bd/libs/goex"
+	. "trade-robot-bd/libs/goex/internal/logger"
 )
 
 var HBPOINT = NewCurrency("HBPOINT", "")
@@ -578,7 +578,7 @@ func (hbpro *HuoBiPro) GetDepth(size int, currency CurrencyPair) (*Depth, error)
 	return dep, nil
 }
 
-//倒序
+// 倒序
 func (hbpro *HuoBiPro) GetKlineRecords(currency CurrencyPair, period, size, since int) ([]Kline, error) {
 	url := hbpro.baseUrl + "/market/history/kline?period=%s&size=%d&symbol=%s"
 	symbol := strings.ToLower(currency.AdaptUsdToUsdt().ToSymbol(""))
@@ -613,8 +613,8 @@ func (hbpro *HuoBiPro) GetKlineRecords(currency CurrencyPair, period, size, sinc
 	return klines, nil
 }
 
-//非个人，整个交易所的交易记录
-//https://github.com/huobiapi/API_Docs/wiki/REST_api_reference#get-markettrade-获取-trade-detail-数据
+// 非个人，整个交易所的交易记录
+// https://github.com/huobiapi/API_Docs/wiki/REST_api_reference#get-markettrade-获取-trade-detail-数据
 func (hbpro *HuoBiPro) GetTrades(currencyPair CurrencyPair, since int64) ([]Trade, error) {
 	var (
 		trades []Trade

@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"net/http"
 	"testing"
-	"wq-fotune-backend/pkg/goex"
+	"trade-robot-bd/libs/goex"
 )
 
 var coinex = New(http.DefaultClient, "", "")

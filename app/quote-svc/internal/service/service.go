@@ -2,13 +2,13 @@ package service
 
 import (
 	"context"
-	"fortune-bd/api/constant"
-	pb "fortune-bd/api/quote/v1"
-	"fortune-bd/app/quote-svc/cron"
-	"fortune-bd/app/quote-svc/internal/dao"
-	"fortune-bd/libs/logger"
 	jsoniter "github.com/json-iterator/go"
 	"time"
+	"trade-robot-bd/api/constant"
+	pb "trade-robot-bd/api/quote/v1"
+	"trade-robot-bd/app/quote-svc/cron"
+	"trade-robot-bd/app/quote-svc/internal/dao"
+	"trade-robot-bd/libs/logger"
 )
 
 type QuoteService struct {

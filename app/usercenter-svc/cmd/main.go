@@ -2,23 +2,21 @@ package main
 
 import (
 	"context"
-	"fortune-bd/app/usercenter-svc/internal/service"
-	"fortune-bd/app/usercenter-svc/server"
-	"fortune-bd/libs/env"
-	"fortune-bd/libs/logger"
 	"github.com/go-kratos/etcd/registry"
-	"github.com/go-kratos/kratos/v2"
 	etcd "go.etcd.io/etcd/client/v3"
 	"log"
 	"os"
 	"os/signal"
 	"syscall"
+	"trade-robot-bd/app/usercenter-svc/internal/service"
+	"trade-robot-bd/app/usercenter-svc/server"
+	"trade-robot-bd/libs/env"
+	"trade-robot-bd/libs/logger"
 )
 
 var (
 	id, _ = os.Hostname()
 )
-
 
 func main() {
 	log.Println("id:", id)
@@ -53,7 +51,7 @@ func main() {
 
 func wait() {
 	c := make(chan os.Signal)
-	signal.Notify(c, os.Interrupt,syscall.SIGTERM)
+	signal.Notify(c, os.Interrupt, syscall.SIGTERM)
 	<-c
 	logger.Info("服务已关闭")
 }

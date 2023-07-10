@@ -1,10 +1,9 @@
 package dao
 
 import (
-	"fortune-bd/app/exchange-svc/internal/model"
-	"fortune-bd/libs/logger"
 	"go.mongodb.org/mongo-driver/bson"
-
+	"trade-robot-bd/app/exchange-svc/internal/model"
+	"trade-robot-bd/libs/logger"
 )
 
 func (d *Dao) TradeCount(uid, strategyID string) (count int32, err error) {

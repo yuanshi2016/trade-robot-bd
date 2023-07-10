@@ -5,7 +5,6 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	"fortune-bd/app/grid-strategy-svc/util/goex/internal/logger"
 	"github.com/valyala/fasthttp"
 	"github.com/valyala/fasthttp/fasthttpproxy"
 	"io/ioutil"
@@ -15,6 +14,7 @@ import (
 	"os"
 	"strings"
 	"time"
+	"trade-robot-bd/app/grid-strategy-svc/util/goex/internal/logger"
 )
 
 var (

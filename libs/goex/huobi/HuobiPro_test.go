@@ -7,8 +7,8 @@ import (
 	"net/url"
 	"testing"
 	"time"
-	"wq-fotune-backend/pkg/goex"
-	"wq-fotune-backend/pkg/goex/internal/logger"
+	"trade-robot-bd/libs/goex"
+	"trade-robot-bd/libs/goex/internal/logger"
 )
 
 var httpProxyClient = &http.Client{
@@ -30,7 +30,6 @@ var (
 	secretkey = ""
 )
 
-//
 var hbpro = NewHuoBiProSpot(httpProxyClient, apikey, secretkey)
 
 func init() {
@@ -57,7 +56,7 @@ func TestHuobiPro_GetAccountInfo(t *testing.T) {
 	t.Log(info)
 }
 
-//获取点卡剩余
+// 获取点卡剩余
 func TestHuoBiPro_GetPoint(t *testing.T) {
 	return
 	point := NewHuoBiProPoint(httpProxyClient, apikey, secretkey)
@@ -65,7 +64,7 @@ func TestHuoBiPro_GetPoint(t *testing.T) {
 	t.Log(acc.SubAccounts[HBPOINT])
 }
 
-//获取现货资产信息
+// 获取现货资产信息
 func TestHuobiPro_GetAccount(t *testing.T) {
 	return
 	acc, err := hbpro.GetAccount()

@@ -1,0 +1,2 @@
+#CGO_ENABLED=1 GOOS=linux GOARCH=amd64 CC="x86_64-linux-musl-cc"  go build -ldflags="-L/usr/local/include -lta_lib -Wl" main.go
+CGO_ENABLED=0 GOOS=linux GOARCH=amd64 CC=x86_64-linux-musl-gcc CGO_LDFLAGS="-static" go build main.go

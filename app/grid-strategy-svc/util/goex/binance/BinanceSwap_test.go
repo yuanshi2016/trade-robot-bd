@@ -1,12 +1,11 @@
 package binance
 
 import (
-	"net"
 	"net/http"
 	"net/url"
 	"testing"
 	"time"
-	"wq-fotune-backend/app/grid-strategy-srv/util/goex"
+	"trade-robot-bd/app/grid-strategy-svc/util/goex"
 )
 
 var bs = NewBinanceSwap(&goex.APIConfig{
@@ -17,9 +16,6 @@ var bs = NewBinanceSwap(&goex.APIConfig{
 				return url.Parse("socks5://127.0.0.1:1080")
 				return nil, nil
 			},
-			Dial: (&net.Dialer{
-				Timeout: 10 * time.Second,
-			}).Dial,
 		},
 		Timeout: 10 * time.Second,
 	},

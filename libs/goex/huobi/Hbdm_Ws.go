@@ -5,11 +5,11 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	"fortune-bd/libs/logger"
 	"strings"
 	"sync"
 	"time"
-	. "fortune-bd/libs/goex"
+	. "trade-robot-bd/libs/goex"
+	"trade-robot-bd/libs/logger"
 )
 
 type WsResponse struct {
@@ -30,16 +30,16 @@ type TradeResponse struct {
 	}
 }
 
-//"id": 1539842340,
-//"mrid": 268041138,
-//"open": 6740.47,
-//"close": 7800,
-//"high": 7800,
-//"low": 6726.13,
-//"amount": 477.1200312075244664773339914558562673572,
-//"vol": 32414,
-//"count": 1716
-//}
+// "id": 1539842340,
+// "mrid": 268041138,
+// "open": 6740.47,
+// "close": 7800,
+// "high": 7800,
+// "low": 6726.13,
+// "amount": 477.1200312075244664773339914558562673572,
+// "vol": 32414,
+// "count": 1716
+// }
 type DetailResponse struct {
 	Id     int64
 	Open   float64

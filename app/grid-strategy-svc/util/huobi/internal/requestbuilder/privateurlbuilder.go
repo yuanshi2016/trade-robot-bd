@@ -2,9 +2,9 @@ package requestbuilder
 
 import (
 	"fmt"
-	"fortune-bd/app/grid-strategy-svc/util/huobi/pkg/getrequest"
 	"net/url"
 	"time"
+	"trade-robot-bd/app/grid-strategy-svc/util/huobi/pkg/getrequest"
 )
 
 type PrivateUrlBuilder struct {

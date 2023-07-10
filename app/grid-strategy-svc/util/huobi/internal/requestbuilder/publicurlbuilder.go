@@ -2,7 +2,7 @@ package requestbuilder
 
 import (
 	"fmt"
-	"fortune-bd/app/grid-strategy-svc/util/huobi/pkg/getrequest"
+	"trade-robot-bd/app/grid-strategy-svc/util/huobi/pkg/getrequest"
 )
 
 type PublicUrlBuilder struct {

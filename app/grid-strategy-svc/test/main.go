@@ -3,9 +3,9 @@ package main
 import (
 	"flag"
 	"fmt"
-	"fortune-bd/app/grid-strategy-svc/model"
 	"io/ioutil"
 	"time"
+	"trade-robot-bd/app/grid-strategy-svc/model"
 
 	"github.com/json-iterator/go"
 	"github.com/zhufuyi/pkg/mongo"
