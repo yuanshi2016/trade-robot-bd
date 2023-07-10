@@ -2,8 +2,9 @@ package main
 
 import (
 	"context"
-	"github.com/go-kratos/etcd/registry"
-	etcd "go.etcd.io/etcd/client/v3"
+	"github.com/go-kratos/kratos/contrib/registry/etcd/v2"
+	"github.com/go-kratos/kratos/v2"
+	clientv3 "go.etcd.io/etcd/client/v3"
 	"log"
 	"os"
 	"os/signal"
@@ -19,14 +20,22 @@ var (
 )
 
 func main() {
+	/**
+	  go run app/common-svc/cmd/main.go
+	  		go run app/exchange-svc/cmd/main.go
+	  		go run app/grid-strategy-svc/cmd/main.go
+	  		go run app/quote-svc/cmd/main.go
+	  		go run app/usercenter-svc/cmd/main.go
+	  		go run app/wallet-svc/cmd/main.go
+	*/
 	log.Println("id:", id)
-	client, err := etcd.New(etcd.Config{
+	client, err := clientv3.New(clientv3.Config{
 		Endpoints: []string{env.EtcdAddr},
 	})
 	if err != nil {
 		log.Fatal(err)
 	}
-	r := registry.New(client)
+	r := etcd.New(client)
 	grpcServers := server.NewGRPCServers(service.NewUserService())
 	httpServer := server.NewHTTPServer()
 	defer func() {
@@ -35,7 +44,7 @@ func main() {
 	}()
 	app := kratos.New(
 		kratos.ID(id),
-		kratos.Name(env.USER_SRV_NAME),
+		kratos.Name(env.UserSrvName),
 		kratos.Version("1.0.0"),
 		kratos.Metadata(map[string]string{}),
 		kratos.Server(

@@ -4,6 +4,7 @@ import (
 	"github.com/gin-contrib/pprof"
 	"github.com/gin-gonic/gin"
 	kgin "github.com/go-kratos/gin"
+	"github.com/go-kratos/kratos/middleware/recovery/v2"
 	"github.com/go-kratos/kratos/v2/transport/http"
 	"time"
 	"trade-robot-bd/app/exchange-svc/router"

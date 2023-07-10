@@ -1,8 +1,9 @@
 package main
 
 import (
-	"github.com/go-kratos/etcd/registry"
-	etcd "go.etcd.io/etcd/client/v3"
+	"github.com/go-kratos/kratos/contrib/registry/etcd/v2"
+	"github.com/go-kratos/kratos/v2"
+	clientv3 "go.etcd.io/etcd/client/v3"
 	"log"
 	"os"
 	"trade-robot-bd/app/wallet-svc/internal/biz"
@@ -21,18 +22,18 @@ var (
 
 func main() {
 	log.Println("id:", id)
-	client, err := etcd.New(etcd.Config{
+	client, err := clientv3.New(clientv3.Config{
 		Endpoints: []string{env.EtcdAddr},
 	})
 	if err != nil {
 		log.Fatal(err)
 	}
-	r := registry.New(client)
+	r := etcd.New(client)
 	grpcServers := server.NewGRPCServers(service.NewWalletService())
 	httpServer := server.NewHTTPServer()
 	app := kratos.New(
 		kratos.ID(id),
-		kratos.Name(env.WALLET_SRV_NAME),
+		kratos.Name(env.WalletSrvName),
 		kratos.Version("1.0.0"),
 		kratos.Metadata(map[string]string{}),
 		kratos.Server(

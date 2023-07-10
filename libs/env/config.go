@@ -2,7 +2,9 @@ package env
 
 import (
 	"net/http"
+	"net/url"
 	"os"
+	"strings"
 )
 
 const (
@@ -27,24 +29,24 @@ var (
 	MongoAddr = configMap.getValue(mongoAddr)
 
 	GridNum = 10
-	// 上报异常到消息中心URL
+	// MsgCenterURL 上报异常到消息中心URL
 	MsgCenterURL = "http://localhost:20080/v1/dataCollect/systemMsg"
-	// 获取交易所访问授权信息URL，url后面需要加参数 /:userid/:apikey
+	// ExchangeAccessURL 获取交易所访问授权信息URL，url后面需要加参数 /:userid/:apikey
 	ExchangeAccessURL = "https://yun.mateforce.cn/test/exchange/v1/exchange/apiInfo"
-	// 获取统计信息URL url后面需要加参数 /:user_id/:strategyId
+	// StatisticalInfoURL 获取统计信息URL url后面需要加参数 /:user_id/:strategyId
 	StatisticalInfoURL = "https://yun.mateforce.cn/test/exchange/v1/user/strategy/evaluationNoAuth"
-	// 通知统计URL
+	// NotifyStatisticsURL 通知统计URL
 	NotifyStatisticsURL = "https://yun.mateforce.cn/test/exchange/v1/forward-offer/orderGrid"
-	// 启动策略通知接口
+	// NotifyStrategyStartUpURL 启动策略通知接口
 	NotifyStrategyStartUpURL = "https://yun.mateforce.cn/test/wallet/v1/wallet/strategyStartUpNotify"
 	//ProxyAddr                = ""
 	ProxyAddr = "socks5://10.10.1.3:10801"
 
-	EXCHANGE_SRV_NAME = "exchange-order.srv"
-	USER_SRV_NAME     = "usercenter.srv"
-	WALLET_SRV_NAME   = "wallet.srv"
-	QUOTE_SRV_NAME    = "quote.srv"
-	COMMON_SRV_NAME   = "common.srv"
+	ExchangeSrvName = "exchange-order.srv"
+	UserSrvName     = "usercenter.srv"
+	WalletSrvName   = "wallet.srv"
+	QuoteSrvName    = "quote.srv"
+	CommonSrvName   = "common.srv"
 )
 
 type envConfig map[string]string
@@ -74,13 +76,13 @@ func (env envConfig) getValue(key string) string {
 
 func GetProxyHttpClient() *http.Client {
 	client := &http.Client{}
-	//client.Transport = &http.Transport{
-	//	Proxy: func(req *http.Request) (*url.URL, error) {
-	//		return &url.URL{
-	//			Scheme: "socks5",
-	//			Host:   strings.Split(ProxyAddr, "//")[1],
-	//		}, nil
-	//	},
-	//}
+	client.Transport = &http.Transport{
+		Proxy: func(req *http.Request) (*url.URL, error) {
+			return &url.URL{
+				Scheme: "socks5",
+				Host:   strings.Split(ProxyAddr, "//")[1],
+			}, nil
+		},
+	}
 	return client
 }

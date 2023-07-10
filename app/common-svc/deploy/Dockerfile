@@ -11,9 +11,9 @@ COPY ./go.mod ./
 COPY ./go.sum ./
 COPY . .
 
-RUN CGO_ENABLED=0  go build -o server ${TARGET_PATH}/cmd
+RUN CGO_ENABLED=0  go build -o server ./app/common-svc/cmd
 
-FROM alpine:3.12 as runner
+FROM alpine:latest as runner
 COPY --from=builder /usr/share/zoneinfo/Asia/Shanghai /etc/localtime
 COPY --from=builder /etc/ssl/certs/ca-certificates.crt /etc/ssl/certs/
 COPY --from=builder /usr/src/app/server /opt/app/

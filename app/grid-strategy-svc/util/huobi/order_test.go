@@ -4,13 +4,13 @@ package huobi
 
 import (
 	"fmt"
-	"testing"
 	"github.com/k0kubun/pp"
 	"github.com/zhufuyi/pkg/krand"
 	"github.com/zhufuyi/pkg/logger"
-	"wq-fotune-backend/app/grid-strategy-srv/util/huobi/pkg/client/orderwebsocketclient"
-	"wq-fotune-backend/app/grid-strategy-srv/util/huobi/pkg/response/auth"
-	"wq-fotune-backend/app/grid-strategy-srv/util/huobi/pkg/response/order"
+	"testing"
+	"trade-robot-bd/app/grid-strategy-svc/util/huobi/pkg/client/orderwebsocketclient"
+	"trade-robot-bd/app/grid-strategy-svc/util/huobi/pkg/response/auth"
+	"trade-robot-bd/app/grid-strategy-svc/util/huobi/pkg/response/order"
 )
 
 func TestPlaceLimitOrder(t *testing.T) {

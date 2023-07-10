@@ -1,9 +1,10 @@
 package main
 
 import (
-	"github.com/go-kratos/etcd/registry"
+	"github.com/go-kratos/kratos/contrib/registry/etcd/v2"
+
 	"github.com/go-kratos/kratos/v2"
-	etcd "go.etcd.io/etcd/client/v3"
+	clientv3 "go.etcd.io/etcd/client/v3"
 	"log"
 	"os"
 	"trade-robot-bd/app/common-svc/internal/service"
@@ -17,18 +18,19 @@ var (
 
 func main() {
 	log.Println("id:", id)
-	client, err := etcd.New(etcd.Config{
+	client, err := clientv3.New(clientv3.Config{
 		Endpoints: []string{env.EtcdAddr},
 	})
+
 	if err != nil {
 		log.Fatal(err)
 	}
-	r := registry.New(client)
+	r := etcd.New(client)
 	grpcServers := server.NewGRPCServers(service.NewCommonService())
 	httpServer := server.NewHTTPServer()
 	app := kratos.New(
 		kratos.ID(id),
-		kratos.Name(env.EXCHANGE_SRV_NAME),
+		kratos.Name(env.CommonSrvName),
 		kratos.Version("1.0.0"),
 		kratos.Metadata(map[string]string{}),
 		kratos.Server(
@@ -37,6 +39,7 @@ func main() {
 		),
 		kratos.Registrar(r),
 	)
+
 	if err := app.Run(); err != nil {
 		log.Fatal(err)
 	}
