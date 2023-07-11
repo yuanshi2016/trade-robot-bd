@@ -10,8 +10,7 @@ ARG TARGET_PATH="./app/common-svc"
 COPY ./go.mod ./
 COPY ./go.sum ./
 COPY . .
-
-RUN CGO_ENABLED=0  go build -o server /usr/src/app/common-svc/cmd
+RUN CGO_ENABLED=0  go build -o server ./app/common-svc/cmd
 
 FROM alpine:latest as runner
 COPY --from=builder /usr/share/zoneinfo/Asia/Shanghai /etc/localtime

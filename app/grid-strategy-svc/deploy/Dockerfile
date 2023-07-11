@@ -9,7 +9,7 @@ ARG TARGET_PATH="./app/grid-strategy-svc"
 COPY ./go.mod ./
 COPY ./go.sum ./
 COPY . .
-RUN CGO_ENABLED=0  go build -o server /usr/src/app/grid-strategy-svc/cmd
+RUN CGO_ENABLED=0  go build -o server ./app/grid-strategy-svc/cmd
 
 FROM alpine:latest as runner
 COPY --from=builder /usr/share/zoneinfo/Asia/Shanghai /etc/localtime
