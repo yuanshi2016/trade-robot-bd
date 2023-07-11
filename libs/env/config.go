@@ -32,13 +32,13 @@ var (
 	// MsgCenterURL 上报异常到消息中心URL
 	MsgCenterURL = "http://localhost:20080/v1/dataCollect/systemMsg"
 	// ExchangeAccessURL 获取交易所访问授权信息URL，url后面需要加参数 /:userid/:apikey
-	ExchangeAccessURL = "https://yun.mateforce.cn/test/exchange/v1/exchange/apiInfo"
+	ExchangeAccessURL = "https://yun.local.com/test/exchange/v1/exchange/apiInfo"
 	// StatisticalInfoURL 获取统计信息URL url后面需要加参数 /:user_id/:strategyId
-	StatisticalInfoURL = "https://yun.mateforce.cn/test/exchange/v1/user/strategy/evaluationNoAuth"
+	StatisticalInfoURL = "https://yun.local.com/test/exchange/v1/user/strategy/evaluationNoAuth"
 	// NotifyStatisticsURL 通知统计URL
-	NotifyStatisticsURL = "https://yun.mateforce.cn/test/exchange/v1/forward-offer/orderGrid"
+	NotifyStatisticsURL = "https://yun.local.com/test/exchange/v1/forward-offer/orderGrid"
 	// NotifyStrategyStartUpURL 启动策略通知接口
-	NotifyStrategyStartUpURL = "https://yun.mateforce.cn/test/wallet/v1/wallet/strategyStartUpNotify"
+	NotifyStrategyStartUpURL = "https://yun.local.com/test/wallet/v1/wallet/strategyStartUpNotify"
 	//ProxyAddr                = ""
 	ProxyAddr = "socks5://10.10.1.3:10801"
 

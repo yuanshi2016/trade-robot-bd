@@ -98,7 +98,7 @@ metadata:
     nginx.org/websocket-services: exchange-svc
 spec:
   rules:
-    - host: yun.mateforce.cn
+    - host: yun.local.com
       http:
         paths:
           - path: /exchange
