@@ -40,7 +40,7 @@ pipeline{
             }
             steps("Start Build") {
                 sh "docker login -u admin -p QQabc123++ ${HARBOR_HOST}"
-                sh "docker build --build-arg TARGET_PATH=${TARGET_PATH} -t ${HARBOR_ADDR}/${DOCKER_IMAGE}:${APP_VERSION} -f ${TARGET_PATH}/deploy/Dockerfile ."
+                sh "docker build --build-arg GOPROXY=https://mirrors.aliyun.com/goproxy/ TARGET_PATH=${TARGET_PATH} -t ${HARBOR_ADDR}/${DOCKER_IMAGE}:${APP_VERSION} -f ${TARGET_PATH}/deploy/Dockerfile ."
                 sh "docker push ${HARBOR_ADDR}/${DOCKER_IMAGE}:${APP_VERSION}"
                 sh "docker rmi ${HARBOR_ADDR}/${DOCKER_IMAGE}:${APP_VERSION} -f"
             }
