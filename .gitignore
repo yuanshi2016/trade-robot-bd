@@ -3,3 +3,6 @@
 .DS_Store
 
 dist/
+/mocktest
+/.cargo
+/resource/local_cert

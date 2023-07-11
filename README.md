@@ -24,10 +24,15 @@
 
 ## 环境安装
 
+
 # docker相关
 ```shell
 #显示容器信息
 docker ps --format "table {{.ID}}\t{{.Names}}\t{{.Status}}\t{{.Ports}}"
+
+#镜像推送
+docker tag trade_rebot_builder:latest harbor.local.com/mateforce/trade_rebot_builder:latest
+docker push harbor.local.com/mateforce/trade_rebot_builder:latest
 ```
 #### 安装rancher
 ```shell
