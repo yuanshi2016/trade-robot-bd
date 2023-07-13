@@ -567,7 +567,7 @@ func (m *WhereCycleOne) SubKline(bn *binance.BinanceWs, bnt *binance.BinanceSwap
 }
 
 // OnLineKline 读取在线K线数据
-func (m *WhereCycleOne) OnLineKline(bn *binance.BinanceWs, bnt *binance.BinanceSwap) {
+func (m *WhereCycleOne) OnLineKline(bnt *binance.BinanceSwap) {
 	var err error
 	m.kLineData, err = bnt.GetKlineRecords(m.Symbol, goex.KLINE_PERIOD_5MIN, 167, 0)
 	if err == nil && len(m.kLineData) > 0 {

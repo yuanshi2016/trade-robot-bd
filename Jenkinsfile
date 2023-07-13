@@ -1,22 +1,24 @@
 pipeline{
     agent any
     environment{
-        HARBOR_HOST='harbor.local.com'
-        HARBOR_ADDR='harbor.local.com/mateforce'
+        HARBOR_HOST='harbor.local_100.com'
+        HARBOR_ADDR='harbor.local_100.com/mateforce'
         K8S_NAMESPACE='develop'
     }
     parameters {
-        string(name: 'PROJECT_NAME', defaultValue: 'common-svc', description: 'project name,same as the name ofdocker container')
-        string(name: 'CONTAINER_VERSION', defaultValue: 'common-svc', description: 'docker container version number, SET when major version number changed')
+//         string(name: 'PROJECT_NAME', defaultValue: 'common-svc', description: 'project name,same as the name ofdocker container')
+        string(name: 'CONTAINER_VERSION', defaultValue: '', description: 'docker container version number, SET when major version number changed')
         // booleanParam(name: 'DEPLOYMENT_K8S', defaultValue: false, description: 'release deployment k8s')
     }
     stages {
         stage('Initial') {
             steps{
                 script {
+                        sh "export KUBECONFIG=/root/.kube/config.yaml"
                         git branch: 'develop-kratos', credentialsId: '68dea4dd-3625-4d84-90aa-daf45f3a391a', url: 'git@github.com:yuanshi2016/trade-robot-bd.git'
-                        env.DOCKER_IMAGE='${PROJECT_NAME}'
-                         APP_NAME = "$PROJECT_NAME"
+                        PROJECT_NAME = env.JOB_NAME.split('/')[1]
+                        DOCKER_IMAGE = env.JOB_NAME.split('/')[1]
+                         APP_NAME = env.JOB_NAME.split('/')[1]
                          if (APP_NAME ==~ /^api-.*/) {
                              env.TARGET_PATH = "./${APP_NAME}"
                          } else {
@@ -24,7 +26,8 @@ pipeline{
                          }
                           // 脚本式创建一个环境变量
                         if (params.CONTAINER_VERSION == '') {
-                            env.APP_VERSION = sh(returnStdout:true,script:"/home/jenkins-build-tools gen -p ${params.PROJECT_NAME}").trim()
+                                env.APP_VERSION=PROJECT_NAME
+//                             env.APP_VERSION = sh(returnStdout:true,script:"/home/jenkins-build-tools gen -p ${params.PROJECT_NAME}").trim()
                         }else {
                             env.APP_VERSION ="${params.CONTAINER_VERSION}-alpha"
                         }
@@ -40,8 +43,8 @@ pipeline{
             }
             steps("Start Build") {
                 sh "docker login -u admin -p QQabc123++ ${HARBOR_HOST}"
-                sh "docker build --build-arg GOPROXY=https://mirrors.aliyun.com/goproxy/ TARGET_PATH=${TARGET_PATH} -t ${HARBOR_ADDR}/${DOCKER_IMAGE}:${APP_VERSION} -f ${TARGET_PATH}/deploy/Dockerfile ."
-                sh "docker tag ${DOCKER_IMAGE}:${APP_VERSION} ${HARBOR_ADDR}/${DOCKER_IMAGE}:${APP_VERSION}"
+                sh "docker build --build-arg TARGET_PATH=${TARGET_PATH} -t ${HARBOR_ADDR}/${DOCKER_IMAGE}:${APP_VERSION} -f ${TARGET_PATH}/deploy/Dockerfile ."
+//                 sh "docker tag ${DOCKER_IMAGE}:${APP_VERSION} ${HARBOR_ADDR}/${DOCKER_IMAGE}:${APP_VERSION}"
                 sh "docker push ${HARBOR_ADDR}/${DOCKER_IMAGE}:${APP_VERSION}"
                 sh "docker rmi ${HARBOR_ADDR}/${DOCKER_IMAGE}:${APP_VERSION} -f"
             }
@@ -57,7 +60,7 @@ pipeline{
                 script {
                         sh "export KUBECONFIG=${env.KUBECONFIG}"
                         sh "sed -i 's/VERSION_NUMBER/${APP_VERSION}/g' ${TARGET_PATH}/deploy/k8s-deployment.yml"
-                        sh "kubectl apply -f ${TARGET_PATH}/deploy/k8s-deployment.yml --namespace=develop"
+                        sh "kubectl --kubeconfig /root/.kube/config.yaml apply -f ${TARGET_PATH}/deploy/k8s-deployment.yml --namespace=${K8S_NAMESPACE}"
                 }
             }
         }

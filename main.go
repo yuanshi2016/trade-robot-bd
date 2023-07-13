@@ -71,7 +71,9 @@ func main() {
 	//bg.Add(1)
 	//bg.Wait()
 	//runtime.GOMAXPROCS(24)
-	//T_Oline_N([]goex.CurrencyPair{goex.BCH_USDT, goex.MTL_USDT, goex.FIL_USDT, goex.ETC_USDT, goex.SOL_USDT, goex.PEPE_USDT, goex.CTSI_USDT, goex.ONT_USDT, goex.ETH_USDT, goex.BNB_USDT})
+	T_Oline_N([]goex.CurrencyPair{goex.BCH_USDT, goex.MTL_USDT, goex.FIL_USDT,
+		goex.ETC_USDT, goex.SOL_USDT, goex.PEPE_USDT, goex.CTSI_USDT, goex.ONT_USDT,
+		goex.ETH_USDT, goex.BNB_USDT, goex.BTC_USDT, goex.LTC_USDT})
 	//atr()
 	//rsi()
 	//asit()
@@ -104,6 +106,13 @@ func T_Oline_N(list []goex.CurrencyPair) {
 	var wg sync.WaitGroup
 	var view []*mocker.WhereCycleOne
 	Brackets := mocker.LoadBrackets(bnHttpWith)
+	var port int
+	var stop float64
+	var lever int64
+	flag.IntVar(&port, "P", 8081, "端口号,默认为空")
+	flag.Int64Var(&lever, "L", 5, "倍数")
+	flag.Float64Var(&stop, "S", 5, "止损")
+	flag.Parse()
 	for _, pair := range list {
 		wg.Add(1)
 		o := &mocker.WhereCycleOne{
@@ -114,16 +123,15 @@ func T_Oline_N(list []goex.CurrencyPair) {
 			MaxHold:      100000,
 			AtrLength:    11,
 			ProfitType:   mocker.ProfitSignal,
-			StopLossRate: -5,
+			StopLossRate: -stop,
 			OlineType:    1, //模拟交易
 			MockDetail: &goex.MockDetail{
-				Usd:        300,
-				OldUsd:     300,
-				ProfitRate: 7,
-				Type:       goex.NewOrder_UM,
-				Lever:      5,
-				FeeRate:    0.04,
-				CpUsd:      10,
+				Usd:     1000,
+				OldUsd:  1000,
+				Type:    goex.NewOrder_UM,
+				Lever:   lever,
+				FeeRate: 0.04,
+				CpUsd:   10,
 			},
 			Bn: bnHttpWith,
 		}
@@ -131,17 +139,15 @@ func T_Oline_N(list []goex.CurrencyPair) {
 		c := config
 		c.Endpoint = ""
 		go func() {
-			ticker := time.NewTicker(2 * time.Second)
+			ticker := time.NewTicker(5 * time.Second)
 			// 循环接收ticker的触发事件
 			for range ticker.C {
-				o.OnLineKline(binance.NewBinanceWs(&c), bnHttp)
+				o.OnLineKline(bnHttp)
 			}
 		}()
 	}
 	viewRun := func() {
-		var port int
-		flag.IntVar(&port, "P", 8081, "端口号,默认为空")
-		flag.Parse()
+
 		//gin.SetMode(gin.ReleaseMode)
 		r := gin.New()
 		r.LoadHTMLGlob("resource/html/*")
