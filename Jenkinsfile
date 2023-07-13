@@ -1,8 +1,8 @@
 pipeline{
     agent any
     environment{
-        HARBOR_HOST='harbor.local_100.com'
-        HARBOR_ADDR='harbor.local_100.com/mateforce'
+        HARBOR_HOST='harbor.local100.com'
+        HARBOR_ADDR='harbor.local100.com/mateforce'
         K8S_NAMESPACE='develop'
     }
     parameters {

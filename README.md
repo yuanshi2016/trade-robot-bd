@@ -5,7 +5,7 @@
 * 基于k8s编排，Jenkins持续交付
 * [配套基于Flutter开发Android、iOS、Web](https://github.com/RonadoLong/wq-fotune.git)
 * [APP体验版本:https://www.pgyer.com/gnTX](https://www.pgyer.com/gnTX)
-* [web体验版本:https://yun.local_100.com/test/web/#/](https://yun.local_100.com/test/web/#/)
+* [web体验版本:https://yun.local100.com/test/web/#/](https://yun.local100.com/test/web/#/)
 #### 简易架构图
 
 
@@ -31,8 +31,8 @@
 docker ps --format "table {{.ID}}\t{{.Names}}\t{{.Status}}\t{{.Ports}}"
 
 #镜像推送
-docker tag quote-svc:quote-svc harbor.local_100.com/mateforce/quote-svc:quote-svc
-docker push harbor.local_100.com/mateforce/trade_rebot_builder:latest
+docker tag quote-svc:quote-svc harbor.local100.com/mateforce/quote-svc:quote-svc
+docker push harbor.local100.com/mateforce/trade_rebot_builder:latest
 ```
 #### 安装rancher
 ```shell
@@ -84,12 +84,12 @@ docker-compose down -v
 # 上传证书
 scp ./resource/local_cert/*.* root@10.10.1.10:/var/local/harbor/cert
 {
-  "insecure-registries": ["10.10.1.10:8086","harbor.local_100.com","0.0.0.0","harbor.local_100.com:8086"],
+  "insecure-registries": ["10.10.1.10:8086","harbor.local100.com","0.0.0.0","harbor.local100.com:8086"],
   "registry-mirrors": ["https://fc5hpfa6.mirror.aliyuncs.com"]
 }
 sudo systemctl restart docker
 
-docker login -u admin -p QQabc123++ harbor.local_100.com
+docker login -u admin -p QQabc123++ harbor.local100.com
 ```
 #### jenkins运行
 ```shell

@@ -27,7 +27,7 @@ spec:
         - env:
           - name: GIN_MODE
             value: debug
-          image: harbor.local_100.com/mateforce/exchange-svc:VERSION_NUMBER
+          image: harbor.local100.com/mateforce/exchange-svc:VERSION_NUMBER
           imagePullPolicy: Always
           name: exchange-svc
           resources:
@@ -98,7 +98,7 @@ metadata:
     nginx.org/websocket-services: exchange-svc
 spec:
   rules:
-    - host: yun.local_100.com
+    - host: yun.local100.com
       http:
         paths:
           - path: /exchange
