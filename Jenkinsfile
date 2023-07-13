@@ -42,7 +42,7 @@ pipeline{
                 }
             }
             steps("Start Build") {
-                sh "docker login -u admin -p QQabc123++ ${HARBOR_HOST}"
+                sh "docker login -u admin -p admin ${HARBOR_HOST}"
                 sh "docker build --build-arg TARGET_PATH=${TARGET_PATH} -t ${HARBOR_ADDR}/${DOCKER_IMAGE}:${APP_VERSION} -f ${TARGET_PATH}/deploy/Dockerfile ."
 //                 sh "docker tag ${DOCKER_IMAGE}:${APP_VERSION} ${HARBOR_ADDR}/${DOCKER_IMAGE}:${APP_VERSION}"
                 sh "docker push ${HARBOR_ADDR}/${DOCKER_IMAGE}:${APP_VERSION}"

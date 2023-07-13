@@ -65,9 +65,9 @@ cp harbor.yml.tmpl harbor.yml
 hostname: 0.0.0.0
 http:
   port: 8086
-harbor_admin_password: QQabc123++
+harbor_admin_password: admin
 database:
-  password: QQabc123++
+  password: admin
 data_volume: /harbor_data
 `
 # 执行安装
@@ -81,15 +81,22 @@ docker-compose up -d
 docker-compose down -v
 
 
-# 上传证书
-scp ./resource/local_cert/*.* root@10.10.1.10:/var/local/harbor/cert
+# 配置加速
+echo > /etc/docker/daemon.json
+sudo tee /etc/docker/daemon.json <<-'EOF'
 {
-  "insecure-registries": ["10.10.1.10:8086","harbor.local100.com","0.0.0.0","harbor.local100.com:8086"],
-  "registry-mirrors": ["https://fc5hpfa6.mirror.aliyuncs.com"]
+  "insecure-registries": ["harbor.local100.com:8086","harbor.local100.com","harbor.local100.com:8086","10.10.1.100:8086","0.0.0.0"],
+  "registry-mirrors": [
+        "https://mirrors.sjtug.sjtu.edu.cn",
+        "https://mirror.ccs.tencentyun.com",
+        "https://docker.mirrors.ustc.edu.cn",
+        "https://hub-mirror.c.163.com"
+    ]
 }
-sudo systemctl restart docker
+EOF
+systemctl daemon-reload && systemctl restart docker && systemctl restart harbor
 
-docker login -u admin -p QQabc123++ harbor.local100.com
+docker login -u admin -p admin harbor.local100.com
 ```
 #### jenkins运行
 ```shell
