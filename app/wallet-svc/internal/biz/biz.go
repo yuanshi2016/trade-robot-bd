@@ -1,9 +1,15 @@
 package biz
 
 import (
+	"context"
+	"github.com/go-kratos/kratos/contrib/registry/etcd/v2"
+	"github.com/go-kratos/kratos/v2/transport/grpc"
+	clientv3 "go.etcd.io/etcd/client/v3"
+	"log"
 	pb "trade-robot-bd/api/usercenter/v1"
 	"trade-robot-bd/app/wallet-svc/cache"
 	"trade-robot-bd/app/wallet-svc/internal/dao"
+	"trade-robot-bd/libs/env"
 	"trade-robot-bd/libs/exchangeclient"
 )
 
@@ -23,6 +29,19 @@ type WalletRepo struct {
 }
 
 func NewWalletRepo() *WalletRepo {
+	client, err := clientv3.New(clientv3.Config{
+		Endpoints: []string{env.EtcdAddr},
+	})
+	if err != nil {
+		log.Fatal(err)
+	}
+	r := etcd.New(client)
+	services, err := r.GetService(context.Background(), env.UserSrvName)
+	aa := services[0]
+
+	conn, err := grpc.Dial(context.Background(), grpc.WithEndpoint(env.EtcdAddr), grpc.WithDiscovery(r))
+	log.Println(err, aa, conn, env.EtcdAddr)
+
 	return &WalletRepo{
 		dao:          dao.New(),
 		cacheService: cache.NewService(),

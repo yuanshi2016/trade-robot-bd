@@ -82,7 +82,6 @@ func (d *Dao) GetIfcGiftRecordByUid(userId string) (data []*model.WqIfcGiftRecor
 	}
 	return
 }
-
 func (d *Dao) GetIfcGiftRecordBySql(userId, inUserId, exchange string) (data []*model.WqIfcGiftRecord) {
 	query := "user_id = ? and in_user_id = ? and exchange = ?"
 	if err := d.db.Table(TableWqIfcGiftRecord).Where(query, userId, inUserId, exchange).Find(&data); err != nil {

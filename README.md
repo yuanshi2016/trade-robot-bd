@@ -84,7 +84,7 @@ docker-compose down -v
 echo > /etc/docker/daemon.json
 sudo tee /etc/docker/daemon.json <<-'EOF'
 {
-  "insecure-registries": ["10.10.1.100:8086:8086","10.10.1.100:8086","10.10.1.100:8086:8086","10.10.1.100:8086","0.0.0.0"],
+  "insecure-registries": ["10.10.1.100:8086","10.10.1.100","0.0.0.0"],
   "registry-mirrors": [
         "https://mirrors.sjtug.sjtu.edu.cn",
         "https://mirror.ccs.tencentyun.com",

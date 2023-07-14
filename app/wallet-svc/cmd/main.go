@@ -13,7 +13,6 @@ import (
 )
 
 func init() {
-	biz.NewWalletRepo().CreateWalletAtRunning()
 }
 
 var (
@@ -42,6 +41,7 @@ func main() {
 		),
 		kratos.Registrar(r),
 	)
+	biz.NewWalletRepo().CreateWalletAtRunning()
 	if err := app.Run(); err != nil {
 		log.Fatal(err)
 	}
