@@ -27,7 +27,7 @@ spec:
         - env:
           - name: GIN_MODE
             value: debug
-          image: harbor.local100.com/mateforce/usercenter-svc:VERSION_NUMBER
+          image: 10.10.1.100:8086/mateforce/usercenter-svc:VERSION_NUMBER
           imagePullPolicy: Always
           name: usercenter-svc
           resources:

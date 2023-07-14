@@ -1,8 +1,8 @@
 pipeline{
     agent any
     environment{
-        HARBOR_HOST='harbor.local100.com'
-        HARBOR_ADDR='harbor.local100.com/mateforce'
+        HARBOR_HOST='10.10.1.100:8086'
+        HARBOR_ADDR='10.10.1.100:8086/mateforce'
         K8S_NAMESPACE='develop'
     }
     parameters {
@@ -14,7 +14,6 @@ pipeline{
         stage('Initial') {
             steps{
                 script {
-                        sh "export KUBECONFIG=/root/.kube/config.yaml"
                         git branch: 'develop-kratos', credentialsId: '68dea4dd-3625-4d84-90aa-daf45f3a391a', url: 'git@github.com:yuanshi2016/trade-robot-bd.git'
                         PROJECT_NAME = env.JOB_NAME.split('/')[1]
                         DOCKER_IMAGE = env.JOB_NAME.split('/')[1]
@@ -60,7 +59,7 @@ pipeline{
                 script {
                         sh "export KUBECONFIG=${env.KUBECONFIG}"
                         sh "sed -i 's/VERSION_NUMBER/${APP_VERSION}/g' ${TARGET_PATH}/deploy/k8s-deployment.yml"
-                        sh "kubectl --kubeconfig /root/.kube/config.yaml apply -f ${TARGET_PATH}/deploy/k8s-deployment.yml --namespace=${K8S_NAMESPACE}"
+                        sh "kubectl --kubeconfig ${HOME}/.kube/config apply -f ${TARGET_PATH}/deploy/k8s-deployment.yml --namespace=${K8S_NAMESPACE}"
                 }
             }
         }

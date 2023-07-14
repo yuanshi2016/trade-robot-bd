@@ -27,7 +27,7 @@ spec:
         - env:
             - name: GIN_MODE
               value: debug
-          image: harbor.local100.com/mateforce/grid-strategy-svc:VERSION_NUMBER
+          image: 10.10.1.100:8086/mateforce/grid-strategy-svc:VERSION_NUMBER
           imagePullPolicy: Always
           name: quote-svc
           resources:

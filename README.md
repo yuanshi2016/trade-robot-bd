@@ -24,15 +24,14 @@
 
 ## 环境安装
 
-
 # docker相关
 ```shell
 #显示容器信息
 docker ps --format "table {{.ID}}\t{{.Names}}\t{{.Status}}\t{{.Ports}}"
 
 #镜像推送
-docker tag quote-svc:quote-svc harbor.local100.com/mateforce/quote-svc:quote-svc
-docker push harbor.local100.com/mateforce/trade_rebot_builder:latest
+docker tag quote-svc:quote-svc 10.10.1.100:8086/mateforce/quote-svc:quote-svc
+docker push 10.10.1.100:8086/mateforce/trade_rebot_builder:latest
 ```
 #### 安装rancher
 ```shell
@@ -46,7 +45,7 @@ systemctl stop firewalld && systemctl disable firewalld
 curl -LO https://github.com/rancherlabs/support-tools/raw/master/extended-rancher-2-cleanup/extended-cleanup-rancher2.sh
 bash extended-cleanup-rancher2.sh
 
-docker run -d --privileged --restart=unless-stopped -p 2080:80 -p 2043:443 -v /opt/rancher:/var/lib/rancher rancher/rancher:v2.7.5
+docker run -d --privileged --restart=unless-stopped -p 2080:80 -p 2043:443 -v /opt/rancher:/var/lib/rancher rancher/rancher:stable
 密码:RNntiyObLh8WB62Q
 ```
 #### 安装Harbor
@@ -85,7 +84,7 @@ docker-compose down -v
 echo > /etc/docker/daemon.json
 sudo tee /etc/docker/daemon.json <<-'EOF'
 {
-  "insecure-registries": ["harbor.local100.com:8086","harbor.local100.com","harbor.local100.com:8086","10.10.1.100:8086","0.0.0.0"],
+  "insecure-registries": ["10.10.1.100:8086:8086","10.10.1.100:8086","10.10.1.100:8086:8086","10.10.1.100:8086","0.0.0.0"],
   "registry-mirrors": [
         "https://mirrors.sjtug.sjtu.edu.cn",
         "https://mirror.ccs.tencentyun.com",
@@ -96,7 +95,7 @@ sudo tee /etc/docker/daemon.json <<-'EOF'
 EOF
 systemctl daemon-reload && systemctl restart docker && systemctl restart harbor
 
-docker login -u admin -p admin harbor.local100.com
+docker login -u admin -p admin 10.10.1.100:8086
 ```
 #### jenkins运行
 ```shell
