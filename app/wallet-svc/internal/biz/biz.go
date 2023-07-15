@@ -2,6 +2,7 @@ package biz
 
 import (
 	"context"
+	"fmt"
 	"github.com/go-kratos/kratos/contrib/registry/etcd/v2"
 	"github.com/go-kratos/kratos/v2/transport/grpc"
 	clientv3 "go.etcd.io/etcd/client/v3"
@@ -36,16 +37,16 @@ func NewWalletRepo() *WalletRepo {
 		log.Fatal(err)
 	}
 	r := etcd.New(client)
-	services, err := r.GetService(context.Background(), env.UserSrvName)
-	aa := services[0]
-
-	conn, err := grpc.Dial(context.Background(), grpc.WithEndpoint(env.EtcdAddr), grpc.WithDiscovery(r))
-	log.Println(err, aa, conn, env.EtcdAddr)
-
+	ctx := context.Background()
+	conn, err := grpc.DialInsecure(
+		ctx,
+		grpc.WithEndpoint(fmt.Sprintf("discovery:///%v", env.UserSrvName)),
+		grpc.WithDiscovery(r),
+	)
 	return &WalletRepo{
 		dao:          dao.New(),
 		cacheService: cache.NewService(),
 		binance:      exchangeclient.InitBinance(BinanceApiKey, BinanceSecret),
-		//UserSrv:      userCli.NewUserClient(env.EtcdAddr),
+		UserSrv:      pb.NewUserClient(conn),
 	}
 }

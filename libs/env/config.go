@@ -56,6 +56,8 @@ func initial() envConfig {
 		config = proEnv
 	} else if releaseMode == "release" {
 		config = releaseEnv
+	} else if releaseMode == "test" {
+		config = testEnv
 	} else {
 		config = developEnv
 	}

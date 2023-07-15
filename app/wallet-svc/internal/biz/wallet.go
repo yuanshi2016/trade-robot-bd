@@ -215,7 +215,6 @@ func (w *WalletRepo) Withdrawal(userID, Coin, Addr string, Volume float64) error
 }
 
 func (w *WalletRepo) CreateWalletAtRunning() {
-	return
 	resp, err := w.UserSrv.GetAllUserInfo(context.Background(), &empty.Empty{})
 	if err != nil {
 		logger.Warnf("获取所有用户失败 %+v", err)
