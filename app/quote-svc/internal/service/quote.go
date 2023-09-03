@@ -2,6 +2,7 @@ package service
 
 import (
 	"context"
+	"encoding/json"
 	jsoniter "github.com/json-iterator/go"
 	"time"
 	"trade-robot-bd/api/constant"
@@ -20,17 +21,17 @@ const (
 )
 
 func (s *QuoteService) GetTicksWithExchange(ctx context.Context, req *pb.GetTicksReq) (*pb.TickResp, error) {
-	var resp *pb.TickResp
+	var resp pb.TickResp
 	var tickerAll = make(map[string]map[string]interface{})
 	tickerAll[constant.BINANCE] = map[string]interface{}{
 		"usdt": cron.BinanceTickMapAll,
 	}
-	ticks, err := jsoniter.Marshal(tickerAll)
+	ticks, err := json.Marshal(tickerAll)
 	if err != nil {
 		return nil, response.NewInternalServerErrMsg(errID)
 	}
 	resp.Ticks = ticks
-	return resp, nil
+	return &resp, nil
 }
 
 func (s *QuoteService) GetTicksWithExchangeSymbol(ctx context.Context, req *pb.GetTicksSymbolReq) (*pb.TickResp, error) {

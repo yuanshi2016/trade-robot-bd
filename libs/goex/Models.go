@@ -99,11 +99,12 @@ func TradeSort(c []*Trade, actions string) []*Trade {
 }
 
 type SubAccount struct {
-	Currency     Currency
-	Amount       float64
-	ForzenAmount float64
-	LoanAmount   float64
-	Balance      float64
+	Currency      Currency
+	Amount        float64
+	ForzenAmount  float64
+	LoanAmount    float64
+	Balance       float64 //钱包余额
+	MarginBalance float64 //总权益
 }
 
 type MarginSubAccount struct {
@@ -249,15 +250,17 @@ type FutureKline struct {
 }
 
 type FutureSubAccount struct {
-	Currency          Currency
-	AccountRights     float64 //账户权益
-	KeepDeposit       float64 //保证金
-	ProfitReal        float64 //已实现盈亏
-	ProfitUnreal      float64
-	RiskRate          float64 //保证金率
-	TotalAvailBalance float64
-	MarginFrozen      float64
-	Symbol            string
+	Currency           Currency
+	AccountRights      float64 //账户权益
+	KeepDeposit        float64 //保证金
+	ProfitReal         float64 //已实现盈亏
+	ProfitUnreal       float64
+	RiskRate           float64 //保证金率
+	TotalAvailBalance  float64
+	CrossWalletBalance float64 //全仓账户余额
+	AvailableBalance   float64 //全仓账户余额
+	MarginFrozen       float64
+	Symbol             string
 }
 
 type FutureAccount struct {

@@ -45,7 +45,7 @@ systemctl stop firewalld && systemctl disable firewalld
 curl -LO https://github.com/rancherlabs/support-tools/raw/master/extended-rancher-2-cleanup/extended-cleanup-rancher2.sh
 bash extended-cleanup-rancher2.sh
 
-docker run -d --privileged --restart=unless-stopped -p 2080:80 -p 2043:443 -v /opt/rancher:/var/lib/rancher rancher/rancher:stable
+docker run -d --privileged --restart=unless-stopped -p 8061:80 -p 8461:443 -v /opt/rancher:/var/lib/rancher rancher/rancher:latest
 密码:RNntiyObLh8WB62Q
 ```
 #### 安装Harbor
@@ -96,6 +96,7 @@ EOF
 systemctl daemon-reload && systemctl restart docker && systemctl restart harbor
 
 docker login -u admin -p admin 10.10.1.100:8086
+docker login -u admin -p QQabc123++ 10.10.1.100:8086
 ```
 #### jenkins运行
 ```shell

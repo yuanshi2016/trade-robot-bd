@@ -12,7 +12,7 @@
 <body>
 <ul id="list">
     {{range $index, $element := .data}}
-    <li data-table="table{{$index}}">{{$index}}: {{$element.Symbol}} [{{$element.KlineLast.Close}}],止损率:{{$element.StopLossRate}} 初始余额:{{$element.MockDetail.OldUsd}}, 当前余额:{{$element.MockDetail.Usd}} 交易次数:{{$element.MockDetail.TradeNum}}</li>
+    <li data-table="table{{$index}}">{{$index}}: {{$element.Symbol}} [{{$element.KlineLast.Close}}],杠杆:{{$element.MockDetail.Lever}}倍 止损率:{{$element.StopLossRate}} 初始余额:{{$element.MockDetail.OldUsd}}, 当前余额:{{$element.MockDetail.Usd}} 交易次数:{{$element.MockDetail.TradeNum}}</li>
     {{end}}
 </ul>
 
@@ -78,6 +78,7 @@
             做空
             {{ end }}
         </td>
+        <td>{{$element.MockDetail.BuyOrder.Lever}}</td>
         <td>{{$item.Liquidation}}</td>
         <td>{{$item.Open}}</td>
         <td>{{$item.BidTime}}</td>
@@ -123,8 +124,8 @@
     var list = document.getElementById('list');
     var tableContainer = document.getElementById('table-container');
     function formatTimestamp(timestamp) {
-        var date = new Date(timestamp * 1000);
-        return date.format("MM-dd hh:mm");
+        var date = new Date(Number(timestamp));
+        return date.format("MM-dd hh:mm:ss");
     }
     list.addEventListener('click', function (event) {
         var clickedItem = event.target;

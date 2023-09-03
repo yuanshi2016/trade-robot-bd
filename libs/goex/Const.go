@@ -5,29 +5,30 @@ import (
 )
 
 type TradeSide int
+type ActionType int
 
 const (
-	OPEN_BUY   = 1 + iota //开多
-	OPEN_SELL             //开空
-	CLOSE_BUY             //平多
-	CLOSE_SELL            //平空
+	OPEN_BUY   ActionType = 1 + iota //开多
+	OPEN_SELL                        //开空
+	CLOSE_BUY                        //平多
+	CLOSE_SELL                       //平空
 )
 const (
-	BUY TradeSide = 1 + iota
-	SELL
+	SELL TradeSide = -1 - iota
+	BUY  TradeSide = iota
 	BUY_MARKET
 	SELL_MARKET
 )
 
 func (ts TradeSide) String() string {
 	switch ts {
-	case 1:
+	case BUY:
 		return "BUY"
-	case 2:
+	case SELL:
 		return "SELL"
-	case 3:
+	case BUY_MARKET:
 		return "BUY_MARKET"
-	case 4:
+	case SELL_MARKET:
 		return "SELL_MARKET"
 	default:
 		return "UNKNOWN"

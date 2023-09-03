@@ -144,8 +144,8 @@ func (bnWs *BinanceWs) SubscribeDepth(pair CurrencyPair, size int) error {
 	handle := func(msg []byte) error {
 		rawDepth := struct {
 			LastUpdateID int64           `json:"lastUpdateId"`
-			Bids         [][]interface{} `json:"bids"`
-			Asks         [][]interface{} `json:"asks"`
+			Bids         [][]interface{} `json:"b"`
+			Asks         [][]interface{} `json:"a"`
 		}{}
 		err := json.Unmarshal(msg, &rawDepth)
 		if err != nil {

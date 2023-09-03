@@ -1,1 +1,0 @@
-go run app/common-svc/cmd/main.go | go run app/exchange-svc/cmd/main.go | go run app/grid-strategy-svc/cmd/main.go | go run app/quote-svc/cmd/main.go | go run app/usercenter-svc/cmd/main.go

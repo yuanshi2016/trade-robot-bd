@@ -7,7 +7,7 @@ import (
 	"github.com/go-kratos/kratos/middleware/recovery/v2"
 	"github.com/go-kratos/kratos/v2/transport/http"
 	"time"
-	"trade-robot-bd/app/exchange-svc/router"
+	"trade-robot-bd/app/quote-svc/router"
 	"trade-robot-bd/libs/logger"
 )
 

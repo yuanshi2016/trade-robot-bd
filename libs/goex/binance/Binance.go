@@ -34,6 +34,7 @@ const (
 	DEPTH_URI              = "depth?symbol=%s&limit=%d"
 	ACCOUNT_URI            = "account?"
 	ORDER_URI              = "order"
+	LEVERAGE_URI           = "leverage"
 	UNFINISHED_ORDERS_INFO = "openOrders?"
 	KLINE_URI              = "klines"
 	SERVER_TIME_URL        = "time"

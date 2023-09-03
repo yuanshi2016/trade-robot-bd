@@ -14,6 +14,16 @@ import (
 )
 
 type PriceType int
+type RenKoMoveType int
+
+// 做个小级别类型 主要是处理RenKo之间的移动砖块
+const (
+	RenKoMoveTypeA   RenKoMoveType = iota + 1
+	RenKoMoveTypeAX                //avg*2
+	RenKoMoveTypeAMi               //avg + min
+	RenKoMoveTypeAMM               //avg+min+max
+	RenKoMoveTypeMM                //min+max
+)
 
 const (
 	InClose PriceType = iota + 1
@@ -43,11 +53,49 @@ func Crossover(source1, source2 []float64) bool {
 	_source2L := source2[len(source2)-2]
 	return _source1R > _source2R && _source1L <= _source2L
 }
-func KlineToRenKo(k []*Kline, atrLen int, _type PriceType, places int32) (Renko []*Kline) {
+func (c RenKoMoveType) String() string {
+	switch c {
+	case RenKoMoveTypeA:
+		return "avg - (RenKoMoveTypeA)"
+	case RenKoMoveTypeAX:
+		return "avg * 2 (RenKoMoveTypeAX)"
+	case RenKoMoveTypeAMi:
+		return "avg + min (RenKoMoveTypeAMi)"
+	case RenKoMoveTypeAMM:
+		return "avg + min + max (RenKoMoveTypeAMM)"
+	case RenKoMoveTypeMM:
+		return "max + min (RenKoMoveTypeMM)"
+	}
+	return ""
+}
+func KlineToRenKo(k []*Kline, atrLen int, _type PriceType, places int32, moveI int, renKoMoveType RenKoMoveType) (Renko []*Kline) {
 	lr := CalcAtr(k, atrLen)
-	avg := helper.AvgInArray(lr[len(lr)-helper.IfThen(len(lr) < atrLen, len(lr), atrLen):])
-	//min := helper.AvgInArray(lr)
-	Surge, _ := decimal.NewFromFloat(helper.Round(avg, helper.PlacesFloat(int(places)))).Round(places).Float64()
+	calcArr := len(lr) - helper.IfThen(len(lr) < moveI, len(lr), moveI) // 初步测试 5以内比较好  移动砖块数量取值方式
+	avg := helper.AvgInArray(lr[calcArr:])
+	min := helper.MinInArray(lr[calcArr:])
+	max := helper.MaxInArray(lr[calcArr:])
+	getMoveValue := func() float64 {
+		var moveValue = avg //默认等于平均值
+		switch renKoMoveType {
+		case RenKoMoveTypeA:
+			moveValue = avg
+			break
+		case RenKoMoveTypeAX:
+			moveValue = avg * 2
+			break
+		case RenKoMoveTypeAMi:
+			moveValue = avg + min
+			break
+		case RenKoMoveTypeAMM:
+			moveValue = avg + min + max
+			break
+		case RenKoMoveTypeMM:
+			moveValue = max + min
+			break
+		}
+		return moveValue
+	}
+	Surge, _ := decimal.NewFromFloat(helper.Round(getMoveValue(), helper.PlacesFloat(int(places)))).Round(places).Float64()
 	for i := 0; i < len(k); i++ {
 		item := k[i]
 		if i == 0 {

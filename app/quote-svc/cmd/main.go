@@ -6,6 +6,7 @@ import (
 	clientv3 "go.etcd.io/etcd/client/v3"
 	"log"
 	"os"
+	"trade-robot-bd/app/quote-svc/cron"
 	"trade-robot-bd/app/quote-svc/internal/service"
 	"trade-robot-bd/app/quote-svc/server"
 	"trade-robot-bd/libs/env"
@@ -37,6 +38,7 @@ func main() {
 		),
 		kratos.Registrar(r),
 	)
+	go cron.StoreBinanceTick()
 	if err := app.Run(); err != nil {
 		log.Fatal(err)
 	}

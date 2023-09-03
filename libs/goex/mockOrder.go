@@ -13,84 +13,79 @@ import (
 	"sort"
 	"sync"
 	"time"
-	"trade-robot-bd/app/grid-strategy-svc/util/goex"
 	"trade-robot-bd/app/grid-strategy-svc/util/utils"
 	"trade-robot-bd/libs/helper"
 )
 
+type NewOrderType int
+
 const (
-	NewOrder_CM   = -1 + iota //币本位
-	NewOrder_SPOT             //现货
-	NewOrder_UM               //U本位
-)
-const (
-	NewOrder_Sell = -1 + iota //币本位
-	NewOrder_Buy  = iota      //U本位
+	NewOrder_CM   NewOrderType = -1 + iota //卖出
+	NewOrder_SPOT                          //现货
+	NewOrder_UM                            //U本位
 )
 
 type MockOrder struct {
-	Open        float64 `json:"open"`        //开仓价
-	Close       float64 `json:"close"`       //平仓价
-	HighClose   float64 `json:"highClose"`   //平仓成本价
-	Liquidation float64 `json:"liquidation"` //爆仓价
-	Direction   int64   `json:"direction"`   //-1 空 1多
-	Type        int64   `json:"type"`        // 1 U本位 -1 币本位 0 现货
-	Lever       int64   `json:"lever"`       //杠杆
-	Quantity    float64 `json:"quantity"`    //开仓数量/张数
-	CpUsd       int64   `json:"cpUsd"`       //面值 仅币本位使用
-	FeeRate     float64 `json:"feeRate"`     //手续费比例
-	Fee         float64 `json:"fee"`         //手续费
-	FeeUsd      float64 `json:"feeUsd"`      //手续费USD - 仅币本位或现货
-	FeeDiscount float64 `json:"feeDiscount"` //手续费折扣
-	Bail        float64 `json:"bail"`        //保证金
-	Gain        float64 `json:"gain"`        //收益
-	NetGain     float64 `json:"netGain"`     //净收益
-	NetGainUSd  float64 `json:"netGainUSd"`  //收益转USD
-	Rate        float64 `json:"rate"`        //收益率
-	NetRate     float64 `json:"netRate"`     //净收益率
-	Usd         float64 //Usd快照
+	Open        float64      `json:"open"`        //开仓价
+	Close       float64      `json:"close"`       //平仓价
+	HighClose   float64      `json:"highClose"`   //平仓成本价
+	Liquidation float64      `json:"liquidation"` //爆仓价
+	Direction   TradeSide    `json:"direction"`   //-1 空 1多
+	Type        NewOrderType `json:"type"`        // 1 U本位 -1 币本位 0 现货
+	Lever       int64        `json:"lever"`       //杠杆
+	Quantity    float64      `json:"quantity"`    //开仓数量/张数
+	CpUsd       int64        `json:"cpUsd"`       //面值 仅币本位使用
+	FeeRate     float64      `json:"feeRate"`     //手续费比例
+	Fee         float64      `json:"fee"`         //手续费
+	FeeUsd      float64      `json:"feeUsd"`      //手续费USD - 仅币本位或现货
+	FeeDiscount float64      `json:"feeDiscount"` //手续费折扣
+	Bail        float64      `json:"bail"`        //保证金
+	Gain        float64      `json:"gain"`        //收益
+	NetGain     float64      `json:"netGain"`     //净收益
+	NetGainUSd  float64      `json:"netGainUSd"`  //收益转USD
+	Rate        float64      `json:"rate"`        //收益率
+	NetRate     float64      `json:"netRate"`     //净收益率
+	Usd         float64      //Usd快照
 	BidTime     int64
 	AskTime     int64
 }
 
-type MockResults []MockResult
+type MockResults []*MockResult
 type MockResult struct {
-	OldUsd        float64 `excel:"column:A;desc:初始余额;width:30"`
-	Usd           float64 `excel:"column:B;desc:当前余额;width:30"`
-	RsiMin        float64 `excel:"column:C;desc:Rsi买入;width:30"`
-	RsiMax        float64 `excel:"column:D;desc:Rsi卖出;width:30"`
-	RsiLength     int     `excel:"column:E;desc:Rsi长度;width:30"`
-	RviMin        float64 `excel:"column:F;desc:Rvi买入;width:30"`
-	RviMax        float64 `excel:"column:G;desc:Rvi买入;width:30"`
-	RviLength     int     `excel:"column:H;desc:Rvi长度;width:30"`
-	MfiMin        float64 `excel:"column:I;desc:Mfi买入;width:30"`
-	MfiMax        float64 `excel:"column:J;desc:Mfi买入;width:30"`
-	MfiLength     int     `excel:"column:K;desc:Mfi长度;width:30"`
-	AtrLength     int     `excel:"column:L;desc:Atr长度;width:30"`
-	TradeNum      int64   `excel:"column:M;desc:交易次数;width:30"`
-	ProfitRate    float64 `excel:"column:N;desc:收益率;width:30"`
-	ProfitType    string  `excel:"column:O;desc:平仓条件;width:30"`
-	StopLossRate  float64 `excel:"column:P;desc:止损率;width:30"`
-	IsLiquidation bool    `json:"isLiquidation" excel:"column:Q;desc:是否爆仓;width:30"` //是否爆仓
+	OldUsd        float64       `excel:"column:A;desc:初始余额;width:30"`
+	Usd           float64       `excel:"column:B;desc:当前余额;width:30"`
+	AtrLength     int           `excel:"column:C;desc:Atr长度;width:30"`
+	RenKoMoveI    int           `excel:"column:D;desc:RenKo移动;width:30"`
+	RenKoMoveType RenKoMoveType `excel:"column:E;desc:RenKo方式;width:30"`
+	TradeNum      int64         `excel:"column:F;desc:交易次数;width:30"`
+	ProfitRate    float64       `excel:"column:G;desc:收益率;width:30"`
+	ProfitType    string        `excel:"column:H;desc:平仓条件;width:30"`
+	StopLossRate  float64       `excel:"column:I;desc:止损率;width:30"`
+	IsLiquidation bool          `json:"isLiquidation" excel:"column:J;desc:是否爆仓;width:30"` //是否爆仓
 	Order         []*MockOrder
 }
 
 type MockDetail struct { //仅回测下使用 实盘状态下无用
-	Pair         *goex.CurrencyPair
-	Usd          float64      //模拟余额
-	OldUsd       float64      //模拟余额
-	Balance      float64      //币余额
-	TradeNum     int64        //下单次数
-	ProfitRate   int64        //累计收益率
-	BuyOrder     *MockOrder   //买入或做多
-	SellOrder    *MockOrder   //做空订单
-	HistoryOrder []*MockOrder //历史订单
-	Mutex        sync.Mutex
-	Direction    int64   `json:"direction"` //-1 空 1多
-	Type         int64   `json:"type"`      // 1 U本位 -1 币本位 0 现货
-	Lever        int64   `json:"lever"`     //杠杆
-	FeeRate      float64 `json:"feeRate"`   //手续费比例
-	CpUsd        int64   `json:"cpUsd"`     //面值 仅币本位使用
+	Pair            *CurrencyPair
+	Usd             float64      //模拟余额
+	OnlineUsd       float64      //模拟余额
+	OldUsd          float64      //模拟余额
+	OnlineBalance   float64      //币余额
+	Balance         float64      //币余额
+	TradeNum        int64        //下单次数
+	StopLossNum     int64        //止损次数
+	ProfitRate      int64        //累计收益率
+	BuyOrder        *MockOrder   //买入或做多
+	BuyOrderOnline  *Order       //实盘订单
+	BuyOrderLock    *sync.Mutex  //买入或做多
+	SellOrder       *MockOrder   //做空订单
+	SellOrderOnline *Order       //实盘订单
+	SellOrderLock   *sync.Mutex  //做空订单
+	HistoryOrder    []*MockOrder //历史订单
+	Type            NewOrderType `json:"type"`    // 1 U本位 -1 币本位 0 现货
+	Lever           int64        `json:"lever"`   //杠杆
+	FeeRate         float64      `json:"feeRate"` //手续费比例
+	CpUsd           int64        `json:"cpUsd"`   //面值 仅币本位使用
 }
 
 // ExportOrders 导出最优订单
@@ -103,7 +98,7 @@ func (c MockResult) ExportOrders(Cycle int, start, end string) {
 	ce := sheet.AddRow().AddCell()
 	ce.HMerge = 11
 	ce.SetValue(fmt.Sprintf("%v分钟[%s-%s]回测数据: 初始余额:%v 当前余额:%v 交易次数:%v Atr:%v 止损率:%v 爆仓:%v \n",
-		Cycle, start, end, c.OldUsd, decimal.NewFromFloat(c.Usd).StringFixed(2), c.TradeNum,
+		Cycle, start, end, c.OldUsd, decimal.NewFromFloat(helper.IfThen(c.Usd <= 0, 1, c.Usd)).StringFixed(2), c.TradeNum,
 		c.AtrLength,
 		c.StopLossRate,
 		helper.IfThen(c.IsLiquidation, "是", "否")))
@@ -198,7 +193,7 @@ func (conf *MockOrder) CalcCpUp() *MockOrder {
 		break
 	case NewOrder_CM:
 		conf.Bail = conf.Quantity * float64(conf.CpUsd) / (conf.Close * float64(conf.Lever))
-		conf.Gain = ((1 / conf.Open) - (1 / conf.Close)) * (helper.IfThen(conf.Direction == NewOrder_Buy, conf.Quantity, -conf.Quantity) * float64(conf.CpUsd))
+		conf.Gain = ((1 / conf.Open) - (1 / conf.Close)) * (helper.IfThen(conf.Direction == BUY, conf.Quantity, -conf.Quantity) * float64(conf.CpUsd))
 		conf.NetGain = conf.Gain - conf.Fee
 		conf.NetGainUSd = conf.NetGain * conf.Close
 		rate = (conf.Gain / conf.Bail) * 100
@@ -206,7 +201,7 @@ func (conf *MockOrder) CalcCpUp() *MockOrder {
 		break
 	case NewOrder_UM:
 		conf.Bail = conf.Quantity / float64(conf.Lever)
-		conf.Gain = ((1 / conf.Open) - (1 / conf.Close)) * (helper.IfThen(conf.Direction == NewOrder_Buy, conf.Quantity, -conf.Quantity) * conf.Close)
+		conf.Gain = ((1 / conf.Open) - (1 / conf.Close)) * (helper.IfThen(conf.Direction == BUY, conf.Quantity, -conf.Quantity) * conf.Close)
 		rate = (conf.Gain / conf.Bail) * 100
 		conf.NetGain = conf.Gain - conf.FeeUsd
 		conf.NetGainUSd = conf.NetGain
@@ -235,11 +230,24 @@ func (conf *MockOrder) CalcHithClose() {
 	}
 }
 
+// CheckLiquidation 是否爆仓
+func (order *MockOrder) CheckLiquidation(closePrice float64) bool {
+	if order == nil || order.Open == 0 {
+		return false
+	}
+	// 计算方式 做空= 当前价 >= 爆仓价   做多 当前价 <= 爆仓价
+	if helper.IfThen(order.Direction == BUY, closePrice <= order.Liquidation, closePrice >= order.Liquidation) {
+		log.Fatalln(closePrice >= order.Liquidation)
+		return true
+	}
+	return false
+}
+
 // CalcLiquidation 计算爆仓价
-func (conf *MockOrder) CalcLiquidation(WB float64, info *BracketsList) {
+func (order *MockOrder) CalcLiquidation(WB float64, info *BracketsList) {
 	var itemInfo RiskBrackets
 	for i := range info.RiskBrackets {
-		if conf.Quantity <= info.RiskBrackets[i].BracketNotionalCap {
+		if order.Quantity <= info.RiskBrackets[i].BracketNotionalCap {
 			itemInfo = info.RiskBrackets[i]
 		}
 		break
@@ -250,9 +258,9 @@ func (conf *MockOrder) CalcLiquidation(WB float64, info *BracketsList) {
 	var cumB = itemInfo.CumFastMaintenanceAmount     //单向模式下 合约1的维持保证金速算额
 	var cumL float64 = 0                             //开多合约1下的维持保证金速算额(单向持仓模式)
 	var cumS float64 = 0                             //开空合约1下的维持保证金速算额(双向持仓模式)
-	var Side1BOTH float64 = 1                        // 合约1的方向(单向持仓模式) 1=开多 -1=开空
-	var Position1BOTH = conf.Quantity / conf.Open    //合约1 的持仓大小 (单向持仓模式) 无论开多或开空 取绝对值
-	var EP1BOTH = conf.Open                          // 合约1的头寸价格 (单向持仓模式)
+	var Side1BOTH float64 = float64(order.Direction) // 合约1的方向(单向持仓模式) 1=开多 -1=开空
+	var Position1BOTH = order.Quantity / order.Open  //合约1 的持仓大小 (单向持仓模式) 无论开多或开空 取绝对值
+	var EP1BOTH = order.Open                         // 合约1的头寸价格 (单向持仓模式)
 	var Position1LONG float64 = 0                    //开多仓位大小（双向持仓模式）； 无论开多或开空 取绝对值
 	var EP1LONG float64 = 0                          //开多持仓头寸（双向持仓模式）； 无论开多或开空 取绝对值
 	var Position1SHORT float64 = 0                   //开空仓位大小 (双向持仓模式) 无论开多或开空 取绝对值
@@ -262,12 +270,12 @@ func (conf *MockOrder) CalcLiquidation(WB float64, info *BracketsList) {
 	var MMRS float64 = 0                             //开空合约的维持保证金费率(双向持仓模式)
 	lpt := WB - TMM1 + UPNL1 + cumB + cumL + cumS - Side1BOTH*Position1BOTH*EP1BOTH - Position1LONG*EP1LONG + Position1SHORT*EP1SHORT
 	lpb := Position1BOTH*MMRB + Position1LONG*MMRL + Position1SHORT*MMRS - Side1BOTH*Position1BOTH - Position1LONG + Position1SHORT
-	conf.Liquidation = lpt / lpb
-	conf.Liquidation = helper.IfThen(conf.Liquidation < 0, 0, conf.Liquidation)
+	order.Liquidation = lpt / lpb
+	order.Liquidation = helper.IfThen(order.Liquidation < 0, 0, order.Liquidation)
 }
 
-// Buy 做多/平空
-func (conf *MockOrder) Buy(price float64) *MockOrder {
+// OpenMarket 开仓- 做多/平空
+func (conf *MockOrder) OpenMarket(price float64) *MockOrder {
 	conf.Open = price
 	switch conf.Type {
 	case NewOrder_SPOT:
@@ -287,8 +295,8 @@ func (conf *MockOrder) Buy(price float64) *MockOrder {
 	return conf
 }
 
-// Sell 做空/平多
-func (conf *MockOrder) Sell(price float64) *MockOrder {
+// CloseMarket 闭仓 做空/平多
+func (conf *MockOrder) CloseMarket(price float64) *MockOrder {
 	conf.Close = price
 	switch conf.Type {
 	case NewOrder_SPOT:

@@ -2,7 +2,7 @@ package biz
 
 import (
 	"testing"
-	"wq-fotune-backend/app/wallet-srv/internal/dao"
+	"trade-robot-bd/app/wallet-svc/internal/dao"
 )
 
 func TestWalletService_AddIfcBalance(t *testing.T) {

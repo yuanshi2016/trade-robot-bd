@@ -72,6 +72,9 @@ var (
 	BNB      = Currency{"BNB", "BNB, or Binance Coin, is a cryptocurrency created by Binance."}
 	TRX      = Currency{"TRX", ""}
 	MTL      = Currency{"MTL", ""}
+	CYBER    = Currency{"CYBER", ""}
+	TRB      = Currency{"TRB", ""}
+	NMR      = Currency{"NMR", ""}
 
 	//currency pair
 
@@ -108,29 +111,32 @@ var (
 	BTG_USD       = CurrencyPair{BTG, USD}
 	BSV_USD       = CurrencyPair{BSV, USD}
 
-	MTL_USDT  = CurrencyPair{MTL, USDT}
-	BTC_USDT  = CurrencyPair{BTC, USDT}
-	LTC_USDT  = CurrencyPair{LTC, USDT}
-	BCH_USDT  = CurrencyPair{BCH, USDT}
-	FIL_USDT  = CurrencyPair{FIL, USDT}
-	PEPE_USDT = CurrencyPair{PEPE, USDT}
-	SOL_USDT  = CurrencyPair{SOL, USDT}
-	BCC_USDT  = CurrencyPair{BCC, USDT}
-	ETC_USDT  = CurrencyPair{ETC, USDT}
-	ETH_USDT  = CurrencyPair{ETH, USDT}
-	CTSI_USDT = CurrencyPair{CTSI, USDT}
-	ONT_USDT  = CurrencyPair{ONT, USDT}
-	BCD_USDT  = CurrencyPair{BCD, USDT}
-	NEO_USDT  = CurrencyPair{NEO, USDT}
-	EOS_USDT  = CurrencyPair{EOS, USDT}
-	XRP_USDT  = CurrencyPair{XRP, USDT}
-	HSR_USDT  = CurrencyPair{HSR, USDT}
-	BSV_USDT  = CurrencyPair{BSV, USDT}
-	OKB_USDT  = CurrencyPair{OKB, USDT}
-	HT_USDT   = CurrencyPair{HT, USDT}
-	BNB_USDT  = CurrencyPair{BNB, USDT}
-	PAX_USDT  = CurrencyPair{PAX, USDT}
-	TRX_USDT  = CurrencyPair{TRX, USDT}
+	MTL_USDT   = CurrencyPair{MTL, USDT}
+	CYBER_USDT = CurrencyPair{CYBER, USDT}
+	NMR_USDT   = CurrencyPair{NMR, USDT}
+	TRB_USDT   = CurrencyPair{TRB, USDT}
+	BTC_USDT   = CurrencyPair{BTC, USDT}
+	LTC_USDT   = CurrencyPair{LTC, USDT}
+	BCH_USDT   = CurrencyPair{BCH, USDT}
+	FIL_USDT   = CurrencyPair{FIL, USDT}
+	PEPE_USDT  = CurrencyPair{PEPE, USDT}
+	SOL_USDT   = CurrencyPair{SOL, USDT}
+	BCC_USDT   = CurrencyPair{BCC, USDT}
+	ETC_USDT   = CurrencyPair{ETC, USDT}
+	ETH_USDT   = CurrencyPair{ETH, USDT}
+	CTSI_USDT  = CurrencyPair{CTSI, USDT}
+	ONT_USDT   = CurrencyPair{ONT, USDT}
+	BCD_USDT   = CurrencyPair{BCD, USDT}
+	NEO_USDT   = CurrencyPair{NEO, USDT}
+	EOS_USDT   = CurrencyPair{EOS, USDT}
+	XRP_USDT   = CurrencyPair{XRP, USDT}
+	HSR_USDT   = CurrencyPair{HSR, USDT}
+	BSV_USDT   = CurrencyPair{BSV, USDT}
+	OKB_USDT   = CurrencyPair{OKB, USDT}
+	HT_USDT    = CurrencyPair{HT, USDT}
+	BNB_USDT   = CurrencyPair{BNB, USDT}
+	PAX_USDT   = CurrencyPair{PAX, USDT}
+	TRX_USDT   = CurrencyPair{TRX, USDT}
 
 	XRP_EUR = CurrencyPair{XRP, EUR}
 
@@ -329,6 +335,10 @@ func (pair CurrencyPair) AdaptBccToBch() CurrencyPair {
 func (pair CurrencyPair) ToLower() CurrencyPair {
 	return CurrencyPair{Currency{strings.ToLower(pair.CurrencyA.Symbol), pair.CurrencyA.Desc},
 		Currency{strings.ToLower(pair.CurrencyB.Symbol), pair.CurrencyB.Desc}}
+}
+func (pair CurrencyPair) ToUpper() CurrencyPair {
+	return CurrencyPair{Currency{strings.ToUpper(pair.CurrencyA.Symbol), pair.CurrencyA.Desc},
+		Currency{strings.ToUpper(pair.CurrencyB.Symbol), pair.CurrencyB.Desc}}
 }
 
 func (pair CurrencyPair) Reverse() CurrencyPair {

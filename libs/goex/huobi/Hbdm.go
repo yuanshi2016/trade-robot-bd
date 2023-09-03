@@ -227,7 +227,7 @@ func (dm *Hbdm) GetFuturePosition(currencyPair CurrencyPair, contractType string
 	return positions, nil
 }
 
-func (dm *Hbdm) PlaceFutureOrder(currencyPair CurrencyPair, contractType, price, amount string, openType, matchPrice, leverRate int) (string, error) {
+func (dm *Hbdm) PlaceFutureOrder(currencyPair CurrencyPair, contractType, price, amount string, openType ActionType, matchPrice, leverRate int) (string, error) {
 	var data struct {
 		OrderId  int64 `json:"order_id"`
 		COrderId int64 `json:"client_order_id"`
@@ -583,7 +583,7 @@ func (dm *Hbdm) adaptKLinePeriod(period int) string {
 	}
 }
 
-func (dm *Hbdm) adaptOpenType(openType int) (direction string, offset string) {
+func (dm *Hbdm) adaptOpenType(openType ActionType) (direction string, offset string) {
 	switch openType {
 	case OPEN_BUY:
 		return "buy", "open"
@@ -598,7 +598,7 @@ func (dm *Hbdm) adaptOpenType(openType int) (direction string, offset string) {
 	}
 }
 
-func (dm *Hbdm) adaptOffsetDirectionToOpenType(offset, direction string) int {
+func (dm *Hbdm) adaptOffsetDirectionToOpenType(offset, direction string) ActionType {
 	switch offset {
 	case "close":
 		if direction == "buy" {

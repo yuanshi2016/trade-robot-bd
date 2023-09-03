@@ -2,6 +2,7 @@ package router
 
 import (
 	"context"
+	"encoding/json"
 	"github.com/gin-gonic/gin"
 	"github.com/go-kratos/kratos/v2/errors"
 	"github.com/gorilla/websocket"
@@ -131,7 +132,7 @@ func GetTicks(c *gin.Context) {
 		return
 	}
 	var ticks = make(map[string]map[string]interface{})
-	if err := jsoniter.Unmarshal(resp.Ticks, &ticks); err != nil {
+	if err := json.Unmarshal(resp.Ticks, &ticks); err != nil {
 		response.NewInternalServerErr(c, nil)
 		return
 	}

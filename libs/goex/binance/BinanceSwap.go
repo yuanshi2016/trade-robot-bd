@@ -3,6 +3,8 @@ package binance
 import (
 	"errors"
 	"fmt"
+	"github.com/shopspring/decimal"
+	"log"
 	"net/url"
 	"strconv"
 	"sync"
@@ -41,6 +43,8 @@ func NewBinanceSwap(config *APIConfig) *BinanceSwap {
 			baseUrl:    config.Endpoint,
 			accessKey:  config.ApiKey,
 			apiV1:      config.Endpoint + "/" + config.ClientType + "api/v1/",
+			fapiV1:     config.Endpoint + "/fapi/v2/",
+			dapiV1:     config.Endpoint + "/dapi/v2/",
 			secretKey:  config.ApiSecretKey,
 			clientType: config.ClientType,
 			httpClient: config.HttpClient,
@@ -254,7 +258,38 @@ func (bs *BinanceSwap) GetFutureIndex(currencyPair CurrencyPair) (float64, error
 func (bs *BinanceSwap) GetFutureUserinfo(currencyPair ...CurrencyPair) (*FutureAccount, error) {
 	params := url.Values{}
 	bs.buildParamsSigned(&params)
-	path := bs.apiV1 + ACCOUNT_URI + params.Encode()
+	path := bs.fapiV1 + ACCOUNT_URI + params.Encode()
+	respmap, err := HttpGet2(bs.httpClient, path, map[string]string{"X-MBX-APIKEY": bs.accessKey})
+	if err != nil {
+		return nil, err
+	}
+	if _, isok := respmap["code"]; isok == true {
+		return nil, errors.New(respmap["msg"].(string))
+	}
+	//log.Fatalln(respmap["assets"])
+	acc := &FutureAccount{}
+	acc.FutureSubAccounts = make(map[Currency]FutureSubAccount)
+
+	balances := respmap["assets"].([]interface{})
+	for _, v := range balances {
+		vv := v.(map[string]interface{})
+		currency := NewCurrency(vv["asset"].(string), "").AdaptBccToBch()
+		acc.FutureSubAccounts[currency] = FutureSubAccount{
+			Currency:           currency,
+			AvailableBalance:   ToFloat64(vv["availableBalance"]),
+			AccountRights:      ToFloat64(vv["walletBalance"]),
+			KeepDeposit:        ToFloat64(vv["marginBalance"]),
+			ProfitUnreal:       ToFloat64(vv["unrealizedProfit"]),
+			RiskRate:           ToFloat64(vv["unrealizedProfit"]),
+			CrossWalletBalance: ToFloat64(vv["crossWalletBalance"]),
+		}
+	}
+	return acc, nil
+}
+func (bs *BinanceSwap) GetDeliveryUserinfo(currencyPair ...CurrencyPair) (*FutureAccount, error) {
+	params := url.Values{}
+	bs.buildParamsSigned(&params)
+	path := bs.dapiV1 + ACCOUNT_URI + params.Encode()
 	respmap, err := HttpGet2(bs.httpClient, path, map[string]string{"X-MBX-APIKEY": bs.accessKey})
 	if err != nil {
 		return nil, err
@@ -278,6 +313,36 @@ func (bs *BinanceSwap) GetFutureUserinfo(currencyPair ...CurrencyPair) (*FutureA
 		}
 	}
 	return acc, nil
+}
+func (bn *BinanceSwap) GetAccount() (*Account, error) {
+	params := url.Values{}
+	bn.buildParamsSigned(&params)
+	path := bn.fapiV1 + ACCOUNT_URI + params.Encode()
+	respmap, err := HttpGet2(bn.httpClient, path, map[string]string{"X-MBX-APIKEY": bn.accessKey})
+	if err != nil {
+		return nil, err
+	}
+	if _, isok := respmap["code"]; isok == true {
+		return nil, errors.New(respmap["msg"].(string))
+	}
+	acc := Account{}
+	acc.Exchange = bn.GetExchangeName()
+	acc.SubAccounts = make(map[Currency]SubAccount)
+	balances := respmap["assets"].([]interface{})
+	for _, v := range balances {
+		vv := v.(map[string]interface{})
+		currency := NewCurrency(vv["asset"].(string), "").AdaptBccToBch()
+		balance, _ := decimal.NewFromFloat(ToFloat64(vv["availableBalance"])).Float64()
+		acc.SubAccounts[currency] = SubAccount{
+			Currency:      currency,
+			Amount:        ToFloat64(vv["walletBalance"]),
+			ForzenAmount:  ToFloat64(vv["maintMargin"]),
+			MarginBalance: ToFloat64(vv["marginBalance"]),
+			Balance:       balance,
+		}
+	}
+
+	return &acc, nil
 }
 
 // Transfer Type - 1: 现货账户向合约账户划转 2: 合约账户向现货账户划转
@@ -304,6 +369,20 @@ func (bs *BinanceSwap) Transfer(currency Currency, transferType int, amount floa
 
 	return ToInt64(respmap["tranId"]), nil
 }
+func (bn *BinanceSwap) LimitBuy(amount, price decimal.Decimal, currencyPair CurrencyPair, IsClose bool) (*Order, error) {
+	return bn.PlaceFutureOrder(currencyPair, price.String(), amount.String(), BUY, IsClose)
+}
+
+func (bn *BinanceSwap) LimitSell(amount, price decimal.Decimal, currencyPair CurrencyPair, IsClose bool) (*Order, error) {
+	return bn.PlaceFutureOrder(currencyPair, price.String(), amount.String(), SELL, IsClose)
+}
+func (bn *BinanceSwap) MarketBuy(amount, price decimal.Decimal, currencyPair CurrencyPair, IsClose bool) (*Order, error) {
+	return bn.PlaceFutureOrder(currencyPair, price.String(), amount.String(), BUY_MARKET, IsClose)
+}
+
+func (bn *BinanceSwap) MarketSell(amount, price decimal.Decimal, currencyPair CurrencyPair, IsClose bool) (*Order, error) {
+	return bn.PlaceFutureOrder(currencyPair, price.String(), amount.String(), SELL_MARKET, IsClose)
+}
 
 // PlaceFutureOrder
 /*
@@ -314,48 +393,64 @@ func (bs *BinanceSwap) Transfer(currency Currency, transferType int, amount floa
  * @param price  价格
  * @param amount  委托数量
  * @param openType   1:开多   2:开空   3:平多   4:平空
- * @param matchPrice  是否为对手价 0:不是    1:是   ,当取值为1时,price无效
+ * @param IsClose  是否为平仓单 - 需要反向操作 并且IsClose设置为true
  */
-func (bs *BinanceSwap) PlaceFutureOrder(currencyPair CurrencyPair, contractType, price, amount string, openType TradeSide, matchPrice, leverRate int) (string, error) {
+func (bs *BinanceSwap) PlaceFutureOrder(currencyPair CurrencyPair, price, amount string, openType TradeSide, IsClose bool) (*Order, error) {
 
 	pair := bs.adaptCurrencyPair(currencyPair)
 	path := bs.apiV1 + ORDER_URI
 	params := url.Values{}
 	params.Set("symbol", pair.ToSymbol(""))
 	params.Set("quantity", amount)
-
 	switch openType {
 	case BUY, BUY_MARKET:
 		params.Set("side", "BUY")
+		params.Set("positionSide", "LONG")
+		if IsClose {
+			params.Set("positionSide", "SHORT")
+		}
+		break
 	case SELL, SELL_MARKET:
 		params.Set("side", "SELL")
+		params.Set("positionSide", "SHORT")
+		if IsClose {
+			params.Set("positionSide", "LONG")
+		}
+		break
 	}
-	if matchPrice == 0 {
+	if BUY_MARKET == openType || SELL_MARKET == openType {
+		params.Set("type", "MARKET")
+	} else {
 		params.Set("type", "LIMIT")
 		params.Set("price", price)
 		params.Set("timeInForce", "GTC")
-	} else {
-		params.Set("type", "MARKET")
 	}
 
 	bs.buildParamsSigned(&params)
 	resp, err := HttpPostForm2(bs.httpClient, path, params,
 		map[string]string{"X-MBX-APIKEY": bs.accessKey})
 	if err != nil {
-		return "", err
+		return nil, err
 	}
 
 	respmap := make(map[string]interface{})
 	err = json.Unmarshal(resp, &respmap)
 	if err != nil {
-		return "", err
+		return nil, err
 	}
-
 	orderId := ToInt(respmap["orderId"])
 	if orderId <= 0 {
-		return "", errors.New(string(resp))
+		return nil, errors.New(string(resp))
 	}
-	return strconv.Itoa(orderId), nil
+	return &Order{
+		Currency:  pair,
+		OrderID2:  strconv.Itoa(orderId),
+		Price:     ToFloat64(price),
+		Amount:    ToFloat64(amount),
+		AvgPrice:  ToFloat64(respmap["avgPrice"]),
+		Side:      openType,
+		Status:    ORDER_UNFINISH,
+		OrderTime: ToInt(respmap["transactTime"])}, nil
 }
 
 /*
@@ -394,6 +489,94 @@ func (bs *BinanceSwap) FutureCancelOrder(currencyPair CurrencyPair, contractType
 	return true, nil
 }
 
+// SetPositionSideDual 修改持仓模式
+func (bs *BinanceSwap) SetPositionSideDual(currencyPair CurrencyPair, dual bool) (bool, error) {
+	currencyPair = bs.adaptCurrencyPair(currencyPair)
+	path := bs.apiV1 + "positionSide/dual"
+	params := url.Values{}
+	params.Set("symbol", bs.adaptCurrencyPair(currencyPair).ToSymbol(""))
+	params.Set("dualSidePosition", strconv.FormatBool(dual))
+	bs.buildParamsSigned(&params)
+	resp, err := HttpPostForm2(bs.httpClient, path, params, map[string]string{"X-MBX-APIKEY": bs.accessKey})
+	if err != nil {
+		return false, err
+	}
+	respmap := make(map[string]interface{})
+	err = json.Unmarshal(resp, &respmap)
+	if err != nil {
+		return false, err
+	}
+	return true, nil
+}
+
+// GetPositionSideDual 持仓模式是否为双向
+func (bs *BinanceSwap) GetPositionSideDual() (bool, error) {
+	params := url.Values{}
+	bs.buildParamsSigned(&params)
+	path := bs.apiV1 + "positionSide/dual?" + params.Encode()
+	resp, err := HttpGet2(bs.httpClient, path, map[string]string{"X-MBX-APIKEY": bs.accessKey})
+	if err != nil {
+		return false, err
+	}
+	log.Fatalln(resp["dualSidePosition"])
+	return true, nil
+}
+
+// SetMultiAssetsMargin 更改联合保证金模式
+func (bs *BinanceSwap) SetMultiAssetsMargin(currencyPair CurrencyPair, dual bool) (bool, error) {
+	currencyPair = bs.adaptCurrencyPair(currencyPair)
+	path := bs.apiV1 + "multiAssetsMargin"
+	params := url.Values{}
+	params.Set("symbol", bs.adaptCurrencyPair(currencyPair).ToSymbol(""))
+	params.Set("multiAssetsMargin", strconv.FormatBool(dual))
+	bs.buildParamsSigned(&params)
+	resp, err := HttpPostForm2(bs.httpClient, path, params, map[string]string{"X-MBX-APIKEY": bs.accessKey})
+	if err != nil {
+		return false, err
+	}
+	respmap := make(map[string]interface{})
+	err = json.Unmarshal(resp, &respmap)
+	if err != nil {
+		return false, err
+	}
+	return true, nil
+}
+
+// GetPositionSideDual 查询联合保证金模式
+func (bs *BinanceSwap) GetMultiAssetsMargin() (bool, error) {
+	params := url.Values{}
+	bs.buildParamsSigned(&params)
+	path := bs.apiV1 + "multiAssetsMargin?" + params.Encode()
+	resp, err := HttpGet2(bs.httpClient, path, map[string]string{"X-MBX-APIKEY": bs.accessKey})
+	if err != nil {
+		return false, err
+	}
+	log.Fatalln(resp["multiAssetsMargin"])
+	return true, nil
+}
+
+// SetLeverage 修改币种合约倍数
+func (bs *BinanceSwap) SetLeverage(currencyPair CurrencyPair, leverage int) (bool, error) {
+	currencyPair = bs.adaptCurrencyPair(currencyPair)
+	path := bs.apiV1 + LEVERAGE_URI
+	params := url.Values{}
+	params.Set("symbol", bs.adaptCurrencyPair(currencyPair).ToSymbol(""))
+	params.Set("leverage", strconv.Itoa(leverage))
+	bs.buildParamsSigned(&params)
+	resp, err := HttpPostForm2(bs.httpClient, path, params, map[string]string{"X-MBX-APIKEY": bs.accessKey})
+	if err != nil {
+		return false, err
+	}
+	respmap := make(map[string]interface{})
+	err = json.Unmarshal(resp, &respmap)
+	if err != nil {
+		return false, err
+	}
+
+	return true, nil
+}
+
+// 取消所有挂单
 func (bs *BinanceSwap) FutureCancelAllOrders(currencyPair CurrencyPair, contractType string) (bool, error) {
 	currencyPair = bs.adaptCurrencyPair(currencyPair)
 	path := bs.apiV1 + "allOpenOrders"
@@ -458,18 +641,16 @@ func (bs *BinanceSwap) FutureCancelOrders(currencyPair CurrencyPair, contractTyp
 /**
  * 用户持仓查询
  * @param symbol   btc_usd:比特币    ltc_usd :莱特币
- * @param contractType   合约类型: this_week:当周   next_week:下周   month:当月   quarter:季度
  * @return
  */
-func (bs *BinanceSwap) GetFuturePosition(currencyPair CurrencyPair, contractType string) ([]FuturePosition, error) {
+func (bs *BinanceSwap) GetFuturePosition(currencyPair CurrencyPair) ([]FuturePosition, error) {
 	currencyPair1 := bs.adaptCurrencyPair(currencyPair)
 
 	params := url.Values{}
 	bs.buildParamsSigned(&params)
-	path := bs.apiV1 + "positionRisk?" + params.Encode()
+	path := bs.fapiV1 + "positionRisk?" + params.Encode()
 
 	result, err := HttpGet3(bs.httpClient, path, map[string]string{"X-MBX-APIKEY": bs.accessKey})
-
 	if err != nil {
 		return nil, err
 	}
@@ -751,8 +932,23 @@ func (bs *BinanceSwap) GetServerTime() (int64, error) {
 func (bs *BinanceSwap) adaptCurrencyPair(pair CurrencyPair) CurrencyPair {
 	return pair.AdaptUsdToUsdt()
 }
+func (bn *BinanceSwap) GetTradeSymbol(currencyPair CurrencyPair) (*TradeSymbol, error) {
+	if bn.ExchangeInfo == nil {
+		var err error
+		bn.ExchangeInfo, err = bn.GetExchangeInfo()
+		if err != nil {
+			return nil, err
+		}
+	}
+	for k, v := range bn.ExchangeInfo.Symbols {
+		if v.Symbol == currencyPair.ToSymbol("") {
+			return &bn.ExchangeInfo.Symbols[k], nil
+		}
+	}
+	return nil, errors.New("symbol not found")
+}
 func (bn *BinanceSwap) GetExchangeInfo() (*ExchangeInfo, error) {
-	resp, err := HttpGet5(bn.httpClient, bn.fapiV1+"exchangeInfo", nil)
+	resp, err := HttpGet5(bn.httpClient, bn.apiV1+"exchangeInfo", nil)
 	if err != nil {
 		return nil, err
 	}
