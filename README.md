@@ -5,7 +5,7 @@
 * 基于k8s编排，Jenkins持续交付
 * [配套基于Flutter开发Android、iOS、Web](https://github.com/RonadoLong/wq-fotune.git)
 * [APP体验版本:https://www.pgyer.com/gnTX](https://www.pgyer.com/gnTX)
-* [web体验版本:https://yun.local100.com/test/web/#/](https://yun.local100.com/test/web/#/)
+* [web体验版本:https://yun.yuanshi01.com/test/web/#/](https://yun.yuanshi01.com/test/web/#/)
 #### 简易架构图
 
 
@@ -89,7 +89,7 @@ docker-compose down -v
 echo > /etc/docker/daemon.json
 sudo tee /etc/docker/daemon.json <<-'EOF'
 {
-  "insecure-registries": ["103.158.36.177:8086","10.10.1.100","0.0.0.0"],
+  "insecure-registries": ["103.158.36.177:8086","103.158.36.177","0.0.0.0"],
   "registry-mirrors": [
         "https://mirrors.sjtug.sjtu.edu.cn",
         "https://mirror.ccs.tencentyun.com",
@@ -100,8 +100,7 @@ sudo tee /etc/docker/daemon.json <<-'EOF'
 EOF
 systemctl daemon-reload && systemctl restart docker && systemctl restart harbor
 
-docker login -u admin -p admin 103.158.36.177:8086
-docker login -u admin -p QQabc123++ 103.158.36.177:8086
+docker login -u admin -p Yuanshi20188 103.158.36.177:8086
 ```
 #### jenkins运行
 ```shell
