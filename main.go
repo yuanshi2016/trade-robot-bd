@@ -30,6 +30,12 @@ var bnHttp = &binance.BinanceSwap{}
 var bnHttpWith = &binance.Binance{}
 
 func init() {
+	loadAssKey(ApiKey, ApiSecretKey)
+}
+func loadAssKey(ApiKey, ApiSecretKey string) {
+	config.ApiSecretKey = ApiSecretKey
+	config.ApiKey = ApiKey
+	config.Endpoint = ""
 	bnWs = binance.NewBinanceWs(&config) //Websocket
 	config.Endpoint = ""
 	bnHttp = binance.NewBinanceSwap(&config) //合约
@@ -59,6 +65,7 @@ func rsi() {
 	log.Fatalln(len(klinData), len(c), c, time.UnixMilli(klinData[len(klinData)-1].CloseTime).Format(helper.TimeFormatYmdHis))
 }
 func catAccount() {
+	loadAssKey("Dc289rn6Os0F2G26950igEQQOYKm3LelvaaSyS081hGEBkYUMNYj3MFJoTOlQtYP", "3GgSS5Vdigtn41TfK3Bp2X27PgXEQesGsDIRw102XwfYW29hY9TGZu4OFjK3bJss")
 	Account, err := bnHttp.GetAccount()
 	if err != nil {
 		log.Fatalln(err.Error())
@@ -184,12 +191,17 @@ func T_Oline() {
 	var stop float64
 	var lever int64
 	var pair goex.CurrencyPair
+	var ASK string
+	var AK string
 	flag.IntVar(&port, "P", 8083, "端口号,默认为空")
-	flag.Int64Var(&lever, "L", 8, "倍数")
-	flag.Float64Var(&stop, "S", 48, "止损")
-	flag.StringVar(&pair.CurrencyA.Symbol, "SymA", "nmr", "止损")
+	flag.Int64Var(&lever, "L", 20, "倍数")
+	flag.Float64Var(&stop, "S", 60, "止损")
+	flag.StringVar(&pair.CurrencyA.Symbol, "SymA", "ltc", "止损")
 	flag.StringVar(&pair.CurrencyB.Symbol, "SymB", "usdt", "止损")
+	flag.StringVar(&ASK, "ASK", ApiSecretKey, "ApiSecretKey")
+	flag.StringVar(&AK, "AK", ApiKey, "ApiKey")
 	flag.Parse()
+	loadAssKey(AK, ASK)
 	pair = pair.ToUpper()
 	Account, err := bnHttp.GetFutureUserinfo()
 	if err != nil {
@@ -261,17 +273,7 @@ func T_Oline() {
 			o.OnLineKline(bnHttp)
 		}
 	}()
-	go func() {
-		bnWs.TickerCallback = func(ticker *goex.Ticker) {
-			o.Ticker = ticker
-		}
-	gol:
-		err := bnWs.SubscribeTicker(pair)
-		if err != nil {
-			log.Printf("订阅Ticker失败:%v", err.Error())
-			goto gol
-		}
-	}()
+
 	viewRun := func() {
 		//gin.SetMode(gin.ReleaseMode)
 		r := gin.New()

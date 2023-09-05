@@ -88,6 +88,7 @@ type WhereCycleOne struct {
 type Comm struct {
 	TradeType      TradeType
 	Bn             *binance.Binance
+	BnWs           *binance.BinanceWs
 	BnSwap         *binance.BinanceSwap
 	Symbol         goex.CurrencyPair       // 参与币种
 	kLineData      []*goex.Kline           //K线数据

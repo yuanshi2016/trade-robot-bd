@@ -28,10 +28,12 @@
 ```shell
 #显示容器信息
 docker ps --format "table {{.ID}}\t{{.Names}}\t{{.Status}}\t{{.Ports}}"
+# 停止所有docker容器
+docker stop $(docker ps -aq)
 
 #镜像推送
-docker tag quote-svc:quote-svc 10.10.1.100:8086/mateforce/quote-svc:quote-svc
-docker push 10.10.1.100:8086/mateforce/trade_rebot_builder:latest
+docker tag quote-svc:quote-svc 103.158.36.177:8086/mateforce/quote-svc:quote-svc
+docker push 103.158.36.177:8086/mateforce/trade_rebot_builder:latest
 ```
 #### 安装rancher
 ```shell
@@ -45,7 +47,10 @@ systemctl stop firewalld && systemctl disable firewalld
 curl -LO https://github.com/rancherlabs/support-tools/raw/master/extended-rancher-2-cleanup/extended-cleanup-rancher2.sh
 bash extended-cleanup-rancher2.sh
 
-docker run -d --privileged --restart=unless-stopped -p 8061:80 -p 8461:443 -v /opt/rancher:/var/lib/rancher rancher/rancher:latest
+#完全清除
+curl https://gist.githubusercontent.com/Ileriayo/1bef407602208911e86f42d5d208c1fb/raw/af8fa882add9c0a7ccd72b92f1cfab5c95c355ba/nuke_rancher_kube_node.sh | sh
+
+docker run -d --privileged --restart=unless-stopped -p 8061:80 -p 8461:443 -v /www/rancher:/var/lib/rancher rancher/rancher:latest
 密码:RNntiyObLh8WB62Q
 ```
 #### 安装Harbor
@@ -66,8 +71,8 @@ http:
   port: 8086
 harbor_admin_password: admin
 database:
-  password: admin
-data_volume: /harbor_data
+  password: Yuanshi20188
+data_volume: /www/harbor_data
 `
 # 执行安装
 
@@ -84,7 +89,7 @@ docker-compose down -v
 echo > /etc/docker/daemon.json
 sudo tee /etc/docker/daemon.json <<-'EOF'
 {
-  "insecure-registries": ["10.10.1.100:8086","10.10.1.100","0.0.0.0"],
+  "insecure-registries": ["103.158.36.177:8086","10.10.1.100","0.0.0.0"],
   "registry-mirrors": [
         "https://mirrors.sjtug.sjtu.edu.cn",
         "https://mirror.ccs.tencentyun.com",
@@ -95,8 +100,8 @@ sudo tee /etc/docker/daemon.json <<-'EOF'
 EOF
 systemctl daemon-reload && systemctl restart docker && systemctl restart harbor
 
-docker login -u admin -p admin 10.10.1.100:8086
-docker login -u admin -p QQabc123++ 10.10.1.100:8086
+docker login -u admin -p admin 103.158.36.177:8086
+docker login -u admin -p QQabc123++ 103.158.36.177:8086
 ```
 #### jenkins运行
 ```shell

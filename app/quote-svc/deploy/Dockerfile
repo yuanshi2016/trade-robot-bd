@@ -6,7 +6,6 @@ RUN go env -w GOPROXY="https://mirrors.aliyun.com/goproxy/,direct"
 ARG TARGET_PATH="./app/quote-svc"
 
 # 拷贝源代码
-
 COPY ./go.mod ./
 COPY ./go.sum ./
 COPY . .

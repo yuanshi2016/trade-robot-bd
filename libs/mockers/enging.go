@@ -14,12 +14,12 @@ import (
 func (m *WhereCycleOne) Res(whereS *MockCyCle) (r *goex.MockResult) {
 	for i := 0; i < len(whereS.kLineData)-1; i++ {
 		m.CalcKline(whereS.kLineData[i])
-		r = m.Run(whereS.kLineData[i])
+		r = m.Run()
 	}
 	whereS.MockResults = append(whereS.MockResults, r)
 	return
 }
-func (m *WhereCycleOne) Run(kline *goex.Kline) *goex.MockResult {
+func (m *WhereCycleOne) Run() *goex.MockResult {
 	// -- 是否有实盘订单
 	if m.TradeType == TradeTypeOline && m.MockDetail.SellOrderOnline != nil {
 		m.actionSell(m.MockDetail.SellOrderOnline.Price, time.Now().UnixNano())
@@ -42,13 +42,13 @@ func (m *WhereCycleOne) Run(kline *goex.Kline) *goex.MockResult {
 	if len(m.Renko) < 1 {
 		return m.MockResult
 	}
-	m.closeOrder(goex.BUY, kline.Close, kline.CloseTime)
-	m.closeOrder(goex.SELL, kline.Close, kline.CloseTime)
+	m.closeOrder(goex.BUY, m.KlineLast.Close, m.KlineLast.Timestamp)
+	m.closeOrder(goex.SELL, m.KlineLast.Close, m.KlineLast.CloseTime)
 	if m.Signal == goex.SELL && m.MockDetail.SellOrder == nil {
-		m.actionSell(kline.Close, kline.CloseTime)
+		m.actionSell(m.KlineLast.Close, m.KlineLast.CloseTime)
 	}
 	if m.Signal == goex.BUY && m.MockDetail.BuyOrder == nil {
-		m.actionBuy(kline.Close, kline.CloseTime)
+		m.actionBuy(m.KlineLast.Close, m.KlineLast.CloseTime)
 	}
 	m.MockResult.Usd = m.MockDetail.Usd
 	m.MockResult.TradeNum = m.MockDetail.TradeNum
@@ -106,11 +106,11 @@ func (m *WhereCycleOne) calcQuantity() float64 {
 // newOrder 创建订单
 func (m *WhereCycleOne) newOrder(direction goex.TradeSide, price float64, actionTime int64) *goex.MockOrder {
 	quantity := m.calcQuantity()
-	if quantity == 0 || m.Ticker == nil {
+	if quantity == 0 || m.KlineLast == nil {
 		return nil
 	}
 	//最新价格为0  返回空
-	if m.Ticker.Last <= 0 && m.TradeType == TradeTypeOline {
+	if m.KlineLast.Close <= 0 && m.TradeType == TradeTypeOline {
 		return nil
 	}
 	if direction == goex.BUY && (m.MockDetail.BuyOrder != nil || m.MockDetail.BuyOrderOnline != nil) {
@@ -134,7 +134,7 @@ func (m *WhereCycleOne) newOrder(direction goex.TradeSide, price float64, action
 		var onlineOrder *goex.Order
 		if err == nil && (m.MockDetail.BuyOrderOnline == nil || m.MockDetail.SellOrderOnline == nil) {
 			amount := decimal.NewFromFloat(o.Quantity)
-			_price := decimal.NewFromFloat(helper.IfThen(m.TradeType == TradeTypeOline, m.Ticker.Last, price)).Round(int32(exinfo.PricePrecision))
+			_price := decimal.NewFromFloat(helper.IfThen(m.TradeType == TradeTypeOline, m.KlineLast.Close, price)).Round(int32(exinfo.PricePrecision))
 			amount = amount.Div(_price).Round(int32(exinfo.QuantityPrecision))
 
 			switch direction {
@@ -369,11 +369,23 @@ func (m *WhereCycleOne) SignalRenko() goex.TradeSide {
 func (m *WhereCycleOne) OnLineKline(bnt *binance.BinanceSwap) {
 	var err error
 	m.kLineData, err = bnt.GetKlineRecords(m.Symbol, goex.KLINE_PERIOD_5MIN, 167, 0)
-
+	// 创建最新K线订阅 如果K线订阅基址为空 或者 启动类型不是本地回测
+	if m.BnWs.KlineCallback == nil && m.TradeType != TradeTypeLocal {
+		go func() {
+			m.BnWs.KlineCallback = func(kline *goex.Kline, period int) {
+				m.KlineLast = kline
+			}
+			err := m.BnWs.SubscribeKline(m.Symbol, 5)
+			if err != nil {
+				log.Fatalf("订阅K线失败:%v", err.Error())
+			}
+		}()
+	}
 	if err == nil && len(m.kLineData) > 0 {
-		m.KlineLast = m.kLineData[len(m.kLineData)-1]
-		m.Run(m.kLineData[len(m.kLineData)-1])
-		//m.GetSignal()
+		if m.KlineLast == nil {
+			m.KlineLast = m.kLineData[len(m.kLineData)-1]
+		}
+		//m.Run()
 	}
 }
 

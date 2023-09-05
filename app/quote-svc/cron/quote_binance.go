@@ -2,6 +2,7 @@ package cron
 
 import (
 	"fmt"
+	"log"
 	"strings"
 	"time"
 	"trade-robot-bd/libs/cache"
@@ -37,6 +38,7 @@ func storeBinanceTick() {
 		logger.Infof("storeBinanceTick GetTickers has err %v", err)
 		return
 	}
+	log.Println(len(tickers))
 	//重置为空
 	BinanceTickArrayAll = BinanceTickArrayAll[:0]
 	BinaceTickArrayBtc = BinaceTickArrayBtc[:0]
