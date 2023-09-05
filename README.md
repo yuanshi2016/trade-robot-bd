@@ -89,20 +89,36 @@ docker-compose down -v
 echo > /etc/docker/daemon.json
 sudo tee /etc/docker/daemon.json <<-'EOF'
 {
-  "insecure-registries": ["103.158.36.177:8086","103.158.36.177","0.0.0.0"],
+  "insecure-registries": ["103.158.36.177:8086","103.158.36.177","10.10.1.100:8086","10.10.1.100","0.0.0.0"],
   "registry-mirrors": [
-        "https://mirrors.sjtug.sjtu.edu.cn",
-        "https://mirror.ccs.tencentyun.com",
         "https://docker.mirrors.ustc.edu.cn",
-        "https://hub-mirror.c.163.com"
     ]
 }
 EOF
 systemctl daemon-reload && systemctl restart docker && systemctl restart harbor
 
 docker login -u admin -p Yuanshi20188 103.158.36.177:8086
+docker login 10.10.1.100:8086 -u admin -p QQabc123++
+docker login -u admin -p QQabc123++ 10.10.1.100:8086
+docker login -u admin -p QQabc123++ harbor.local100.com
 ```
 #### jenkins运行
 ```shell
-docker run -u root -d -p 18080:8080 -p 50000:50000 -v /var/jenkins:/var/jenkins_home -v /var/run/docker.sock:/var/run/docker.sock jenkins/jenkins
+docker run -u root -d -p 18080:8080 -p 50000:50000 -v /www/jenkins_data:/var/jenkins_home -v /var/run/docker.sock:/var/run/docker.sock jenkins/jenkins
+```
+
+#### MongoDb
+```shell
+mongo  127.0.0.1:38888
+use admin
+# 创建超级权限
+#db.createUser({user:"root",pwd:"Yuanshi20188",roles:["root"]})
+db.createUser({user: "roots", pwd: "Yuanshi20188", roles: [{role: "userAdminAnyDatabase", db: "admin"},"readWriteAnyDatabase"] })
+db.createUser({user: "root",pwd: "Yuanshi20188",roles: [ { role: "userAdminAnyDatabase", db: "admin" }, "readWriteAnyDatabase" ]})
+db.shutdownServer()
+db.auth('trade1','199535')
+use ifortune
+db.createUser({user: "trade", pwd: "199535", roles: [{role: "dbOwner", db: "ifortune"}] })
+db.updateUser("trade1",{pwd:"199535",roles:[{role:"dbOwner",db:"ifortune"}]})
+db.shutdownServer()
 ```

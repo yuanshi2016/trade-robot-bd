@@ -196,10 +196,10 @@ func T_Oline() {
 	flag.IntVar(&port, "P", 8083, "端口号,默认为空")
 	flag.Int64Var(&lever, "L", 20, "倍数")
 	flag.Float64Var(&stop, "S", 60, "止损")
-	flag.StringVar(&pair.CurrencyA.Symbol, "SymA", "ltc", "止损")
+	flag.StringVar(&pair.CurrencyA.Symbol, "SymA", "flm", "止损")
 	flag.StringVar(&pair.CurrencyB.Symbol, "SymB", "usdt", "止损")
-	flag.StringVar(&ASK, "ASK", ApiSecretKey, "ApiSecretKey")
 	flag.StringVar(&AK, "AK", ApiKey, "ApiKey")
+	flag.StringVar(&ASK, "ASK", ApiSecretKey, "ApiSecretKey")
 	flag.Parse()
 	loadAssKey(AK, ASK)
 	pair = pair.ToUpper()
@@ -219,6 +219,7 @@ func T_Oline() {
 			MaxHold:   100000,
 			Bn:        bnHttpWith,
 			BnSwap:    bnHttp,
+			BnWs:      bnWs,
 			TradeType: mockers.TradeTypeOline, //模拟交易
 		},
 		ProfitType:        mockers.ProfitSignal,

@@ -38,7 +38,7 @@ func (m *WhereCycleOne) Run() *goex.MockResult {
 			ProfitType:    m.ProfitType.String(),
 		}
 	}
-	m.GetSignal()
+	log.Printf("信号:%v", m.GetSignal())
 	if len(m.Renko) < 1 {
 		return m.MockResult
 	}
@@ -385,7 +385,7 @@ func (m *WhereCycleOne) OnLineKline(bnt *binance.BinanceSwap) {
 		if m.KlineLast == nil {
 			m.KlineLast = m.kLineData[len(m.kLineData)-1]
 		}
-		//m.Run()
+		m.Run()
 	}
 }
 
