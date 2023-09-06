@@ -27,7 +27,7 @@ spec:
         - env:
           - name: GIN_MODE
             value: debug
-          image: 103.158.36.177:8086/mateforce/wallet-srv:VERSION_NUMBER
+          image: 10.10.1.100:8086/mateforce/wallet-srv:VERSION_NUMBER
           imagePullPolicy: Always
           name: wallet-svc
           resources:

@@ -32,8 +32,8 @@ docker ps --format "table {{.ID}}\t{{.Names}}\t{{.Status}}\t{{.Ports}}"
 docker stop $(docker ps -aq)
 
 #镜像推送
-docker tag quote-svc:quote-svc 103.158.36.177:8086/mateforce/quote-svc:quote-svc
-docker push 103.158.36.177:8086/mateforce/trade_rebot_builder:latest
+docker tag quote-svc:quote-svc 10.10.1.100:8086/mateforce/quote-svc:quote-svc
+docker push 10.10.1.100:8086/mateforce/trade_rebot_builder:latest
 ```
 #### 安装rancher
 ```shell
@@ -89,7 +89,7 @@ docker-compose down -v
 echo > /etc/docker/daemon.json
 sudo tee /etc/docker/daemon.json <<-'EOF'
 {
-  "insecure-registries": ["103.158.36.177:8086","103.158.36.177","10.10.1.100:8086","10.10.1.100","0.0.0.0"],
+  "insecure-registries": ["10.10.1.100:8086","10.10.1.100","10.10.1.100:8086","10.10.1.100","0.0.0.0"],
   "registry-mirrors": [
         "https://docker.mirrors.ustc.edu.cn",
     ]
@@ -97,7 +97,7 @@ sudo tee /etc/docker/daemon.json <<-'EOF'
 EOF
 systemctl daemon-reload && systemctl restart docker && systemctl restart harbor
 
-docker login -u admin -p Yuanshi20188 103.158.36.177:8086
+docker login -u admin -p Yuanshi20188 10.10.1.100:8086
 docker login 10.10.1.100:8086 -u admin -p QQabc123++
 docker login -u admin -p QQabc123++ 10.10.1.100:8086
 docker login -u admin -p QQabc123++ harbor.local100.com
