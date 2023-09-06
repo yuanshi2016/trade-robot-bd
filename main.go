@@ -194,12 +194,12 @@ func T_Oline() {
 	var ASK string
 	var AK string
 	flag.IntVar(&port, "P", 8083, "端口号,默认为空")
-	flag.Int64Var(&lever, "L", 20, "倍数")
-	flag.Float64Var(&stop, "S", 60, "止损")
-	flag.StringVar(&pair.CurrencyA.Symbol, "SymA", "flm", "止损")
+	flag.Int64Var(&lever, "L", 5, "倍数")
+	flag.Float64Var(&stop, "S", 30, "止损")
+	flag.StringVar(&pair.CurrencyA.Symbol, "SymA", "ont", "止损")
 	flag.StringVar(&pair.CurrencyB.Symbol, "SymB", "usdt", "止损")
-	flag.StringVar(&AK, "AK", ApiKey, "ApiKey")
-	flag.StringVar(&ASK, "ASK", ApiSecretKey, "ApiSecretKey")
+	flag.StringVar(&AK, "AK", "Dc289rn6Os0F2G26950igEQQOYKm3LelvaaSyS081hGEBkYUMNYj3MFJoTOlQtYP", "ApiKey")
+	flag.StringVar(&ASK, "ASK", "3GgSS5Vdigtn41TfK3Bp2X27PgXEQesGsDIRw102XwfYW29hY9TGZu4OFjK3bJss", "ApiSecretKey")
 	flag.Parse()
 	loadAssKey(AK, ASK)
 	pair = pair.ToUpper()

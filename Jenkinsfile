@@ -1,8 +1,8 @@
 pipeline{
     agent any
     environment{
-        HARBOR_HOST='10.10.1.100:8086'
-        HARBOR_ADDR='10.10.1.100:8086/mateforce'
+        HARBOR_HOST='harbor.yuanshi01.com:30687'
+        HARBOR_ADDR='harbor.yuanshi01.com:30687/trade'
         K8S_NAMESPACE='develop'
     }
     parameters {
@@ -41,7 +41,7 @@ pipeline{
                 }
             }
             steps("Start Build") {
-                sh "docker login -u admin -p Yuanshi20188 ${HARBOR_HOST}"
+                sh "docker login -u admin -p Harbor12345 ${HARBOR_HOST}"
                 sh "docker build --build-arg TARGET_PATH=${TARGET_PATH} -t ${HARBOR_ADDR}/${DOCKER_IMAGE}:${APP_VERSION} -f ${TARGET_PATH}/deploy/Dockerfile ."
 //                 sh "docker tag ${DOCKER_IMAGE}:${APP_VERSION} ${HARBOR_ADDR}/${DOCKER_IMAGE}:${APP_VERSION}"
                 sh "docker push ${HARBOR_ADDR}/${DOCKER_IMAGE}:${APP_VERSION}"
