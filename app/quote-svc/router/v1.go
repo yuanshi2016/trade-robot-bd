@@ -28,6 +28,7 @@ var (
 )
 
 func v1api(group *gin.RouterGroup) {
+	group.GET("/ws", SubRealTimeTickers)
 	group.GET("/ticks", GetTicks)
 	group.GET("/ticks/realtime", SubRealTimeTickers)
 }

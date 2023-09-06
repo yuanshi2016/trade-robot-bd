@@ -43,6 +43,7 @@ registry.cn-hangzhou.aliyuncs.com
 swapoff -a
 # 关闭防火墙
 systemctl stop firewalld && systemctl disable firewalld
+systemctl start firewalld && systemctl enable firewalld
 # 完全清理脚本 - 仅在重复安装出问题后
 curl -LO https://github.com/rancherlabs/support-tools/raw/master/extended-rancher-2-cleanup/extended-cleanup-rancher2.sh
 bash extended-cleanup-rancher2.sh
@@ -104,6 +105,7 @@ docker login -u admin -p Harbor12345 harbor.yuanshi01.com:30687
 docker login -u admin -p Harbor12345 harbor.yuanshi01.com:30151
 ```
 #### jenkins运行
+
 ```shell
 docker run -u root -d -p 18080:8080 -p 50000:50000 -v /www/jenkins_data:/var/jenkins_home -v /var/run/docker.sock:/var/run/docker.sock jenkins/jenkins
 ```
