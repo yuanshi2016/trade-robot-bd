@@ -482,7 +482,7 @@ func (dm *Hbdm) GetFutureIndex(currencyPair CurrencyPair) (float64, error) {
 	return ToFloat64(index), nil
 }
 
-func (dm *Hbdm) GetKlineRecords(contract_type string, currency CurrencyPair, period, size, since int) ([]FutureKline, error) {
+func (dm *Hbdm) GetKlineRecords(contract_type string, currency CurrencyPair, period KlinePeriod, size, since int) ([]FutureKline, error) {
 	symbol := dm.adaptSymbol(currency, contract_type)
 	periodS := dm.adaptKLinePeriod(period)
 	url := fmt.Sprintf("%s/market/history/kline?symbol=%s&period=%s&size=%d", dm.config.Endpoint, symbol, periodS, size)
@@ -556,7 +556,7 @@ func (dm *Hbdm) adaptSymbol(pair CurrencyPair, contractType string) string {
 	return symbol
 }
 
-func (dm *Hbdm) adaptKLinePeriod(period int) string {
+func (dm *Hbdm) adaptKLinePeriod(period KlinePeriod) string {
 	switch period {
 	case KLINE_PERIOD_1MIN:
 		return "1min"

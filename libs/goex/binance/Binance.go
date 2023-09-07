@@ -42,7 +42,7 @@ const (
 	UserDataStream         = "userDataStream?"
 )
 
-var _INERNAL_KLINE_PERIOD_CONVERTER = map[int]string{
+var INERNAL_KLINE_PERIOD_CONVERTER = map[KlinePeriod]string{
 	KLINE_PERIOD_1MIN:   "1m",
 	KLINE_PERIOD_3MIN:   "3m",
 	KLINE_PERIOD_5MIN:   "5m",
@@ -630,10 +630,10 @@ func (bn *Binance) GetAllUnfinishOrders() ([]Order, error) {
 	return orders, nil
 }
 
-func (bn *Binance) GetKlineRecords(currency CurrencyPair, period, size, since int) ([]*Kline, error) {
+func (bn *Binance) GetKlineRecords(currency CurrencyPair, period KlinePeriod, size, since int) ([]*Kline, error) {
 	params := url.Values{}
 	params.Set("symbol", currency.ToSymbol(""))
-	params.Set("interval", _INERNAL_KLINE_PERIOD_CONVERTER[period])
+	params.Set("interval", INERNAL_KLINE_PERIOD_CONVERTER[period])
 	if since > 0 {
 		params.Set("startTime", strconv.Itoa(since))
 	}

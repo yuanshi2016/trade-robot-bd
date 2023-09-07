@@ -29,7 +29,7 @@ spec:
               value: debug
           image: harbor.yuanshi01.com:30687/trade/grid-strategy-svc:VERSION_NUMBER
           imagePullPolicy: Always
-          name: quote-svc
+          name: grid-strategy-svc
           resources:
             limits:
               cpu: 500m

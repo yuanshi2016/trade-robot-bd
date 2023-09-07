@@ -23,7 +23,7 @@ type BinanceWs struct {
 	TickerCallback  func(*Ticker)
 	DepthCallback   func(*Depth)
 	TradeCallback   func(*Trade)
-	KlineCallback   func(*Kline, int)
+	KlineCallback   func(*Kline, KlinePeriod)
 	wsConns         []*WsConn
 }
 
@@ -46,7 +46,7 @@ type DiffDepth struct {
 	FirstUpdateID int64 `json:"U"`
 }
 
-var InernalKlinePeriodReverter = map[string]int{
+var InernalKlinePeriodReverter = map[string]KlinePeriod{
 	"1m":  KLINE_PERIOD_1MIN,
 	"3m":  KLINE_PERIOD_3MIN,
 	"5m":  KLINE_PERIOD_5MIN,
@@ -105,7 +105,7 @@ func (bnWs *BinanceWs) SetCallbacks(
 	TickerCallback func(*Ticker),
 	DepthCallback func(*Depth),
 	TradeCallback func(*Trade),
-	KlineCallback func(*Kline, int),
+	KlineCallback func(*Kline, KlinePeriod),
 ) {
 	bnWs.TickerCallback = TickerCallback
 	bnWs.DepthCallback = DepthCallback
@@ -272,11 +272,11 @@ func (bnWs *BinanceWs) SubscribeTrade(pair CurrencyPair) error {
 	return nil
 }
 
-func (bnWs *BinanceWs) SubscribeKline(pair CurrencyPair, period int) error {
+func (bnWs *BinanceWs) SubscribeKline(pair CurrencyPair, period KlinePeriod) error {
 	if bnWs.KlineCallback == nil {
 		return errors.New("place set kline callback func")
 	}
-	periodS, isOk := _INERNAL_KLINE_PERIOD_CONVERTER[period]
+	periodS, isOk := INERNAL_KLINE_PERIOD_CONVERTER[period]
 	if isOk != true {
 		periodS = "M1"
 	}

@@ -187,16 +187,21 @@ func T_Oline() {
 	var wg sync.WaitGroup
 	var view []*mockers.WhereCycleOne
 	Brackets := mockers.LoadBrackets(bnHttpWith)
+	if len(Brackets) == 0 {
+		log.Fatalln("len(Brackets)为0")
+	}
 	var port int
 	var stop float64
 	var lever int64
 	var pair goex.CurrencyPair
 	var ASK string
 	var AK string
+	var Time_ string
 	flag.IntVar(&port, "P", 8083, "端口号,默认为空")
-	flag.Int64Var(&lever, "L", 5, "倍数")
-	flag.Float64Var(&stop, "S", 30, "止损")
-	flag.StringVar(&pair.CurrencyA.Symbol, "SymA", "ont", "止损")
+	flag.Int64Var(&lever, "L", 1, "倍数")
+	flag.Float64Var(&stop, "S", 6, "止损")
+	flag.StringVar(&Time_, "T", "1m", "时间")
+	flag.StringVar(&pair.CurrencyA.Symbol, "SymA", "perp", "止损")
 	flag.StringVar(&pair.CurrencyB.Symbol, "SymB", "usdt", "止损")
 	flag.StringVar(&AK, "AK", "Dc289rn6Os0F2G26950igEQQOYKm3LelvaaSyS081hGEBkYUMNYj3MFJoTOlQtYP", "ApiKey")
 	flag.StringVar(&ASK, "ASK", "3GgSS5Vdigtn41TfK3Bp2X27PgXEQesGsDIRw102XwfYW29hY9TGZu4OFjK3bJss", "ApiSecretKey")
@@ -220,6 +225,7 @@ func T_Oline() {
 			Bn:        bnHttpWith,
 			BnSwap:    bnHttp,
 			BnWs:      bnWs,
+			Period:    binance.InernalKlinePeriodReverter[Time_],
 			TradeType: mockers.TradeTypeOline, //模拟交易
 		},
 		ProfitType:        mockers.ProfitSignal,
@@ -268,7 +274,7 @@ func T_Oline() {
 	c := config
 	c.Endpoint = ""
 	go func() {
-		ticker := time.NewTicker(1 * time.Second)
+		ticker := time.NewTicker(3 * time.Second)
 		// 循环接收ticker的触发事件
 		for range ticker.C {
 			o.OnLineKline(bnHttp)

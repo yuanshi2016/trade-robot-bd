@@ -57,7 +57,7 @@ type KlinePeriod int
 
 // k线周期
 const (
-	KLINE_PERIOD_1MIN = 1 + iota
+	KLINE_PERIOD_1MIN KlinePeriod = 1 + iota
 	KLINE_PERIOD_3MIN
 	KLINE_PERIOD_5MIN
 	KLINE_PERIOD_15MIN

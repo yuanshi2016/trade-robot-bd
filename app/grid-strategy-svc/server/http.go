@@ -11,10 +11,12 @@ import (
 	"time"
 	"trade-robot-bd/app/grid-strategy-svc/router"
 	"trade-robot-bd/libs/logger"
+	"trade-robot-bd/libs/middleware"
 )
 
 func RunHttp(port string) {
 	engine := gin.Default()
+	engine.Use(middleware.CorsL())
 	engine.Use(render.InOutLog(), gin.Recovery())
 	engine.Use(ginprom.PromMiddleware(nil))
 	engine.GET("/grid/metrics", ginprom.PromHandler(promhttp.Handler()))

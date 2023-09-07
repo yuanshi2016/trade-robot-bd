@@ -416,7 +416,7 @@ func (ok *OKExSpot) GetDepth(size int, currency CurrencyPair) (*Depth, error) {
 	return dep, nil
 }
 
-func (ok *OKExSpot) GetKlineRecords(currency CurrencyPair, period, size, since int) ([]Kline, error) {
+func (ok *OKExSpot) GetKlineRecords(currency CurrencyPair, period KlinePeriod, size, since int) ([]Kline, error) {
 	urlPath := "/api/spot/v3/instruments/%s/candles?granularity=%d"
 
 	if since > 0 {

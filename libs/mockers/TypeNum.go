@@ -90,6 +90,7 @@ type Comm struct {
 	Bn             *binance.Binance
 	BnWs           *binance.BinanceWs
 	BnSwap         *binance.BinanceSwap
+	Period         goex.KlinePeriod
 	Symbol         goex.CurrencyPair       // 参与币种
 	kLineData      []*goex.Kline           //K线数据
 	Renko          []*goex.Kline           //Renko指标

@@ -246,6 +246,7 @@ func (order *MockOrder) CheckLiquidation(closePrice float64) bool {
 // CalcLiquidation 计算爆仓价
 func (order *MockOrder) CalcLiquidation(WB float64, info *BracketsList) {
 	var itemInfo RiskBrackets
+	log.Println(info)
 	for i := range info.RiskBrackets {
 		if order.Quantity <= info.RiskBrackets[i].BracketNotionalCap {
 			itemInfo = info.RiskBrackets[i]

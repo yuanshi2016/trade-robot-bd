@@ -882,11 +882,11 @@ func (bs *BinanceSwap) GetDeliveryTime() (int, int, int, int) {
 /**
  * 获取K线数据
  */
-func (bs *BinanceSwap) GetKlineRecords(currency CurrencyPair, period, size, since int) ([]*Kline, error) {
+func (bs *BinanceSwap) GetKlineRecords(currency CurrencyPair, period KlinePeriod, size, since int) ([]*Kline, error) {
 	currency2 := bs.adaptCurrencyPair(currency)
 	params := url.Values{}
 	params.Set("symbol", currency2.ToSymbol(""))
-	params.Set("interval", _INERNAL_KLINE_PERIOD_CONVERTER[period])
+	params.Set("interval", INERNAL_KLINE_PERIOD_CONVERTER[period])
 	if since > 0 {
 		params.Set("startTime", strconv.Itoa(since))
 	}

@@ -13,6 +13,7 @@ func NewGRPCServers(service *service.UserService) *grpc.Server {
 	var opts = []grpc.ServerOption{
 		grpc.Middleware(
 			recovery.Recovery(),
+
 			//tracing.Server(
 			//	tracing.WithTracerProvider(tp)),
 			//logging.Server(logger),

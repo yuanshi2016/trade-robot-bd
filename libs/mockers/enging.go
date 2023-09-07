@@ -4,7 +4,6 @@ import (
 	"github.com/shopspring/decimal"
 	"log"
 	"math"
-	"time"
 	"trade-robot-bd/app/grid-strategy-svc/util/utils"
 	"trade-robot-bd/libs/goex"
 	"trade-robot-bd/libs/goex/binance"
@@ -20,12 +19,32 @@ func (m *WhereCycleOne) Res(whereS *MockCyCle) (r *goex.MockResult) {
 	return
 }
 func (m *WhereCycleOne) Run() *goex.MockResult {
-	// -- 是否有实盘订单
-	if m.TradeType == TradeTypeOline && m.MockDetail.SellOrderOnline != nil {
-		m.actionSell(m.MockDetail.SellOrderOnline.Price, time.Now().UnixNano())
+	if m.KlineLast.Close == 0 {
+		return nil
 	}
-	if m.TradeType == TradeTypeOline && m.MockDetail.BuyOrderOnline != nil {
-		m.actionBuy(m.MockDetail.BuyOrderOnline.Price, time.Now().UnixNano())
+	m.GetSignal()
+	// -- 是否有实盘订单 - 线上的开单 转到本地
+	if m.TradeType == TradeTypeOline && m.MockDetail.SellOrderOnline != nil && m.MockDetail.SellOrder == nil {
+		m.MockDetail.SellOrder = &goex.MockOrder{
+			Direction: goex.SELL,
+			Type:      m.MockDetail.Type,
+			Lever:     m.MockDetail.Lever,
+			Quantity:  m.MockDetail.SellOrderOnline.Amount * m.MockDetail.SellOrderOnline.Price,
+			FeeRate:   m.MockDetail.FeeRate,
+			CpUsd:     m.MockDetail.CpUsd,
+		}
+		m.MockDetail.SellOrder.OpenMarket(m.MockDetail.SellOrderOnline.Price)
+	}
+	if m.TradeType == TradeTypeOline && m.MockDetail.BuyOrderOnline != nil && m.MockDetail.BuyOrder == nil {
+		m.MockDetail.BuyOrder = &goex.MockOrder{
+			Direction: goex.BUY,
+			Type:      m.MockDetail.Type,
+			Lever:     m.MockDetail.Lever,
+			Quantity:  m.MockDetail.BuyOrderOnline.Amount * m.MockDetail.BuyOrderOnline.Price,
+			FeeRate:   m.MockDetail.FeeRate,
+			CpUsd:     m.MockDetail.CpUsd,
+		}
+		m.MockDetail.BuyOrder.OpenMarket(m.MockDetail.BuyOrderOnline.Price)
 	}
 	if m.MockResult == nil {
 		m.MockResult = &goex.MockResult{
@@ -38,7 +57,7 @@ func (m *WhereCycleOne) Run() *goex.MockResult {
 			ProfitType:    m.ProfitType.String(),
 		}
 	}
-	log.Printf("信号:%v", m.GetSignal())
+
 	if len(m.Renko) < 1 {
 		return m.MockResult
 	}
@@ -113,10 +132,11 @@ func (m *WhereCycleOne) newOrder(direction goex.TradeSide, price float64, action
 	if m.KlineLast.Close <= 0 && m.TradeType == TradeTypeOline {
 		return nil
 	}
-	if direction == goex.BUY && (m.MockDetail.BuyOrder != nil || m.MockDetail.BuyOrderOnline != nil) {
+	if direction == goex.BUY && (m.MockDetail.BuyOrder != nil) {
 		return nil
 	}
-	if direction == goex.SELL && (m.MockDetail.SellOrder != nil || m.MockDetail.SellOrderOnline != nil) {
+
+	if direction == goex.SELL && (m.MockDetail.SellOrder != nil) {
 		return nil
 	}
 	o := &goex.MockOrder{
@@ -216,7 +236,7 @@ func (m *WhereCycleOne) closeOrder(direction goex.TradeSide, actionPrice float64
 		order = nil
 		return true
 	}
-
+	log.Printf("信号:%v 平仓方向:%v 模拟收益率:%v", m.GetSignal(), direction.String(), spot.NetRate)
 	//触发止损
 	if spot.NetRate <= m.StopLossRate || (spot.NetRate >= m.ProfitRate && m.ProfitType == ProfitRate) {
 		return action()
@@ -286,6 +306,7 @@ func (m *WhereCycleOne) getSpotOrder(direction goex.TradeSide, actionPrice float
 func (m *WhereCycleOne) actionBuy(actionPrice float64, actionTime int64) bool {
 	// 已爆仓
 	if m.isLiquidation(goex.BUY, actionPrice, actionTime) {
+		log.Fatalln("买单爆仓")
 		return false
 	}
 	var order = m.newOrder(goex.BUY, actionPrice, actionTime) //生成做多订单
@@ -368,14 +389,14 @@ func (m *WhereCycleOne) SignalRenko() goex.TradeSide {
 // OnLineKline 读取在线K线数据
 func (m *WhereCycleOne) OnLineKline(bnt *binance.BinanceSwap) {
 	var err error
-	m.kLineData, err = bnt.GetKlineRecords(m.Symbol, goex.KLINE_PERIOD_5MIN, 167, 0)
+	m.kLineData, err = bnt.GetKlineRecords(m.Symbol, m.Period, 167, 0)
 	// 创建最新K线订阅 如果K线订阅基址为空 或者 启动类型不是本地回测
 	if m.BnWs.KlineCallback == nil && m.TradeType != TradeTypeLocal {
 		go func() {
-			m.BnWs.KlineCallback = func(kline *goex.Kline, period int) {
+			m.BnWs.KlineCallback = func(kline *goex.Kline, period goex.KlinePeriod) {
 				m.KlineLast = kline
 			}
-			err := m.BnWs.SubscribeKline(m.Symbol, 5)
+			err := m.BnWs.SubscribeKline(m.Symbol, m.Period)
 			if err != nil {
 				log.Fatalf("订阅K线失败:%v", err.Error())
 			}

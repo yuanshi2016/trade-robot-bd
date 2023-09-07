@@ -43,6 +43,11 @@ func InputOutputLogger() gin.HandlerFunc {
 				logger.Any("url", c.Request.URL),
 			)
 		}
+
+		if method == "OPTIONS" {
+			c.AbortWithStatus(http.StatusNoContent)
+		}
+
 		c.Request.Body = ioutil.NopCloser(&buf)
 
 		//  替换writer

@@ -18,7 +18,7 @@ func AdaptTradeSide(side string) TradeSide {
 	}
 }
 
-func AdaptKlinePeriodForOKEx(period int) string {
+func AdaptKlinePeriodForOKEx(period KlinePeriod) string {
 	switch period {
 	case KLINE_PERIOD_1MIN:
 		return "1min"
