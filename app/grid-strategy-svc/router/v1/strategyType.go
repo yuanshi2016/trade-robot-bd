@@ -38,7 +38,7 @@ func CreateStrategyType(c *gin.Context) {
 	render.OK(c)
 }
 
-// DelStrategyType 删除策略类型
+// DeleteStrategyType DelStrategyType 删除策略类型
 func DeleteStrategyType(c *gin.Context) {
 	id := c.Param("id")
 	if id == "" {
@@ -70,7 +70,6 @@ func ListStrategyTypes(c *gin.Context) {
 		limitStr: c.Query("limit"),
 		sort:     c.Query("sort"),
 	}
-
 	err := form.valid()
 	if err != nil {
 		logger.Error("参数错误", logger.Err(err), logger.Any("form", form))
@@ -91,6 +90,5 @@ func ListStrategyTypes(c *gin.Context) {
 		render.Err500(c, err.Error())
 		return
 	}
-
 	render.OK(c, gin.H{"gridTypes": convert2Values(gts), "total": total})
 }
