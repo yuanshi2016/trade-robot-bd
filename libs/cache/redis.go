@@ -1,10 +1,11 @@
 package cache
 
 import (
-	"github.com/go-redis/redis"
 	"time"
 	"trade-robot-bd/libs/env"
 	"trade-robot-bd/libs/logger"
+
+	"github.com/go-redis/redis"
 )
 
 var rdb *redis.Client

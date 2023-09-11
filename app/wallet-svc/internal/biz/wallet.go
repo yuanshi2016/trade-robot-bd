@@ -3,9 +3,6 @@ package biz
 import (
 	"context"
 	"fmt"
-	"github.com/golang/protobuf/ptypes/empty"
-	"github.com/jinzhu/gorm"
-	"github.com/shopspring/decimal"
 	"strings"
 	"time"
 	"trade-robot-bd/api/response"
@@ -14,6 +11,10 @@ import (
 	"trade-robot-bd/libs/exchangeclient"
 	"trade-robot-bd/libs/helper"
 	"trade-robot-bd/libs/logger"
+
+	"github.com/golang/protobuf/ptypes/empty"
+	"github.com/jinzhu/gorm"
+	"github.com/shopspring/decimal"
 )
 
 const (
@@ -33,11 +34,10 @@ func (w *WalletRepo) CreateWallet(userID string) error {
 	} else {
 		return response.NewInternalServerErrWithMsg(ErrID, "钱包已经创建,用户id"+oldWallet.UserID)
 	}
-
 	subAccountId, err := w.binance.CreateSubAccount()
 	if err != nil {
 		logger.Warnf("用户 %s 创建子账户失败 %v", userID, err)
-		return response.NewInternalServerErrMsg(ErrID)
+		return response.NewInternalServerErrMsg("子账户创建失败")
 	}
 	err = w.binance.EnableSubAccountMargin(subAccountId)
 	if err != nil {

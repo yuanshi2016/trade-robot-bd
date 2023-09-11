@@ -27,6 +27,8 @@ spec:
         - env:
             - name: GIN_MODE
               value: debug
+          - name: MODE
+            value: production
           image: harbor.yuanshi01.com:30687/trade/grid-strategy-svc:VERSION_NUMBER
           imagePullPolicy: Always
           name: grid-strategy-svc

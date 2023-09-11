@@ -3,8 +3,6 @@ package main
 import (
 	"flag"
 	"fmt"
-	"github.com/gin-gonic/gin"
-	"github.com/shopspring/decimal"
 	"log"
 	"net/http"
 	"sync"
@@ -13,6 +11,9 @@ import (
 	"trade-robot-bd/libs/goex/binance"
 	"trade-robot-bd/libs/helper"
 	"trade-robot-bd/libs/mockers"
+
+	"github.com/gin-gonic/gin"
+	"github.com/shopspring/decimal"
 )
 
 var ApiKey = "ppJiDo1sA8jIPtJtD37a7r7slZHWKnpOWgzTJNgDbRA8zbZyxFcLU500uItwXAdZ"
@@ -198,10 +199,10 @@ func T_Oline() {
 	var AK string
 	var Time_ string
 	flag.IntVar(&port, "P", 8083, "端口号,默认为空")
-	flag.Int64Var(&lever, "L", 1, "倍数")
-	flag.Float64Var(&stop, "S", 6, "止损")
+	flag.Int64Var(&lever, "L", 10, "倍数")
+	flag.Float64Var(&stop, "S", 30, "止损")
 	flag.StringVar(&Time_, "T", "1m", "时间")
-	flag.StringVar(&pair.CurrencyA.Symbol, "SymA", "perp", "止损")
+	flag.StringVar(&pair.CurrencyA.Symbol, "SymA", "ltc", "止损")
 	flag.StringVar(&pair.CurrencyB.Symbol, "SymB", "usdt", "止损")
 	flag.StringVar(&AK, "AK", "Dc289rn6Os0F2G26950igEQQOYKm3LelvaaSyS081hGEBkYUMNYj3MFJoTOlQtYP", "ApiKey")
 	flag.StringVar(&ASK, "ASK", "3GgSS5Vdigtn41TfK3Bp2X27PgXEQesGsDIRw102XwfYW29hY9TGZu4OFjK3bJss", "ApiSecretKey")

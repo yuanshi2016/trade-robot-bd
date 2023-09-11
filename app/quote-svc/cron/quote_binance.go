@@ -2,11 +2,11 @@ package cron
 
 import (
 	"fmt"
-	"log"
 	"strings"
 	"time"
 	"trade-robot-bd/libs/cache"
 	"trade-robot-bd/libs/exchangeclient"
+	"trade-robot-bd/libs/goex"
 	"trade-robot-bd/libs/logger"
 )
 
@@ -14,6 +14,7 @@ var TickBinanceAll = "tick:binance:all"
 var BinanceTickArrayAll = make([]Ticker, 0)
 var BinanceTickMapAll = make(map[string]interface{}) //all保存所有品种
 var BinaceTickArrayBtc = make([]Ticker, 0)
+var BinanceKlineAll Klines
 
 func StoreBinanceTick() {
 	d := time.Second * 8
@@ -22,6 +23,7 @@ func StoreBinanceTick() {
 	for {
 		<-t.C
 		storeBinanceTick()
+		storeBinanceKline()
 		if len(BinanceTickMapAll) == 0 {
 			continue
 		}
@@ -30,7 +32,33 @@ func StoreBinanceTick() {
 		}
 	}
 }
-
+func storeBinanceKline() {
+	client := exchangeclient.InitBinance("", "")
+	_kline, err := client.ApiClient.GetKlineRecords(goex.BNB_USDT, goex.KLINE_PERIOD_1MIN, 1, 0)
+	if err != nil {
+		logger.Infof("storeBinanceTick GetTickers has err %v", err)
+		return
+	}
+	var klinesData []Kline
+	for _, item := range _kline {
+		klinesData = append(klinesData, Kline{
+			Open:      item.Open,
+			Close:     item.Close,
+			High:      item.High,
+			Low:       item.Low,
+			Vol:       item.Vol,
+			CloseTime: uint64(item.Timestamp),
+			QuoteVol:  item.Vol,
+		})
+	}
+	BinanceKlineAll = *new(Klines)
+	BinanceKlineAll = Klines{
+		Type:   "kline",
+		Symbol: goex.BNB_USDT.String(),
+		Fin:    0,
+		Data:   klinesData[0],
+	}
+}
 func storeBinanceTick() {
 	client := exchangeclient.InitBinance("", "")
 	tickers, err := client.ApiClient.GetTickers()
@@ -38,7 +66,6 @@ func storeBinanceTick() {
 		logger.Infof("storeBinanceTick GetTickers has err %v", err)
 		return
 	}
-	log.Println(len(tickers))
 	//重置为空
 	BinanceTickArrayAll = BinanceTickArrayAll[:0]
 	BinaceTickArrayBtc = BinaceTickArrayBtc[:0]

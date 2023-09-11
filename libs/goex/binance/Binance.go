@@ -297,6 +297,7 @@ func (bn *Binance) GetTickers() ([]*Ticker, error) {
 		ticker.Low = ToFloat64(tickerMap["lowPrice"])
 		ticker.High = ToFloat64(tickerMap["highPrice"])
 		ticker.Vol = ToFloat64(tickerMap["volume"])
+		ticker.QuoteVol = ToFloat64(tickerMap["quoteVolume"])
 		tickers = append(tickers, ticker)
 	}
 

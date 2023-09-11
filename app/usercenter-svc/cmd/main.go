@@ -2,17 +2,19 @@ package main
 
 import (
 	"context"
-	"github.com/go-kratos/kratos/contrib/registry/etcd/v2"
-	"github.com/go-kratos/kratos/v2"
-	clientv3 "go.etcd.io/etcd/client/v3"
 	"log"
 	"os"
 	"os/signal"
 	"syscall"
 	"trade-robot-bd/app/usercenter-svc/internal/service"
 	"trade-robot-bd/app/usercenter-svc/server"
+	"trade-robot-bd/libs/cache"
 	"trade-robot-bd/libs/env"
 	"trade-robot-bd/libs/logger"
+
+	"github.com/go-kratos/kratos/contrib/registry/etcd/v2"
+	"github.com/go-kratos/kratos/v2"
+	clientv3 "go.etcd.io/etcd/client/v3"
 )
 
 var (
@@ -36,7 +38,20 @@ func main() {
 		log.Fatal(err)
 	}
 	r := etcd.New(client)
-	grpcServers := server.NewGRPCServers(service.NewUserService())
+	// ctx := context.Background()
+	// w, err := r.GetService(ctx, env.WalletSrvName)
+	// if err != nil {
+	// 	log.Fatal(err)
+	// }
+
+	// var wg sync.WaitGroup
+	// wg.Add(1)
+	// for _, ve := range w {
+	// 	log.Printf("%#v", ve)
+	// }
+	// log.Println(111)
+	// wg.Wait()
+	grpcServers := server.NewGRPCServers(service.NewUserService(r))
 	httpServer := server.NewHTTPServer()
 	defer func() {
 		grpcServers.GracefulStop()
@@ -53,6 +68,7 @@ func main() {
 		),
 		kratos.Registrar(r),
 	)
+	cache.Redis() // 初始化
 	if err := app.Run(); err != nil {
 		log.Fatal(err)
 	}

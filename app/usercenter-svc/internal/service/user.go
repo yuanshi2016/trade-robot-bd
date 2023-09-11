@@ -2,10 +2,8 @@ package service
 
 import (
 	"context"
-	"github.com/golang/protobuf/ptypes"
-	"golang.org/x/crypto/bcrypt"
-	"google.golang.org/protobuf/types/known/emptypb"
-	"google.golang.org/protobuf/types/known/timestamppb"
+	"fmt"
+	"log"
 	"time"
 	"trade-robot-bd/api/response"
 	pb "trade-robot-bd/api/usercenter/v1"
@@ -13,21 +11,47 @@ import (
 	"trade-robot-bd/app/usercenter-svc/internal/dao"
 	"trade-robot-bd/app/usercenter-svc/internal/model"
 	"trade-robot-bd/libs/bcrypt2"
+	"trade-robot-bd/libs/env"
 	"trade-robot-bd/libs/logger"
 	"trade-robot-bd/libs/message"
 	validate_code "trade-robot-bd/libs/validate-code"
+
+	"github.com/go-kratos/kratos/contrib/registry/etcd/v2"
+	"github.com/go-kratos/kratos/v2/transport/grpc"
+	"github.com/golang/protobuf/ptypes"
+	"golang.org/x/crypto/bcrypt"
+	"google.golang.org/protobuf/types/known/emptypb"
+	"google.golang.org/protobuf/types/known/timestamppb"
 )
 
 type UserService struct {
 	pb.UnimplementedUserServer
 	dao       *dao.Dao
-	walletSrv walletpb.WalletClient
+	WalletSrv walletpb.WalletClient
 }
 
-func NewUserService() *UserService {
+func NewUserService(r *etcd.Registry) *UserService {
+	if r == nil {
+		return &UserService{
+			dao: dao.New(),
+		}
+	}
+	// w, err := r.GetService(context.Background(), env.WalletSrvName)
+	// en := w[0].Endpoints[1]
+	conn, err := grpc.DialInsecure(
+		context.Background(),
+		grpc.WithDiscovery(r),
+		grpc.WithEndpoint(fmt.Sprintf("discovery:///%v", env.WalletSrvName)),
+	)
+	if err != nil {
+		log.Fatalf("Wallet服务发现失败%v", err.Error())
+	}
+	// conn.Connect()
+	wall := walletpb.NewWalletClient(conn)
+	// dd, err := wall.CreateWallet(context.Background(), &walletpb.UidReq{UserId: "1"})
 	return &UserService{
-		dao: dao.New(),
-		//walletSrv: walletCli.NewWalletClient(env.EtcdAddr),
+		dao:       dao.New(),
+		WalletSrv: wall,
 	}
 }
 
@@ -83,10 +107,11 @@ func (s *UserService) Register(ctx context.Context, req *pb.RegisterReq) (*empty
 	vcode, err := validate_code.GetValidateCode(req.Phone)
 	if err != nil {
 		logger.Warnf("GetValidateCode 查验证码失败 %v", err)
-		return nil, response.NewValidateCodeExpireErrMsg(errID)
+		// return nil, response.NewValidateCodeExpireErrMsg("验证码查找失败")
 	}
 	if req.ValidateCode != vcode {
-		return nil, response.NewValidateCodeErrMsg(errID)
+		logger.Warnf("GetValidateCode [%v]验证码错误 %v", req.Phone, err)
+		// return nil, response.NewValidateCodeErrMsg(errID)
 	}
 	var userMaster *model.WqUserBase
 	if req.InvitationCode != "" {
@@ -106,10 +131,11 @@ func (s *UserService) Register(ctx context.Context, req *pb.RegisterReq) (*empty
 		return nil, response.NewUserCreateErrMsg(errID)
 	}
 	//创建钱包
-	_, err = s.walletSrv.CreateWallet(context.Background(), &walletpb.UidReq{UserId: user.UserID})
+	aaa, err := s.WalletSrv.CreateWallet(context.Background(), &walletpb.UidReq{UserId: user.UserID})
 	if err != nil {
 		logger.Warnf("用户%s 注册时,创建钱包失败 %v", user.UserID, err)
 	}
+	log.Fatalln(aaa, err)
 	if userMaster == nil {
 		dbclt.Commit()
 		return nil, nil

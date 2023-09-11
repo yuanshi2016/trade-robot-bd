@@ -2,8 +2,8 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   labels:
-    workload.user.cattle.io/workloadselector: dm-develop-exchange-svc
-  name: exchange-svc
+    workload.user.cattle.io/workloadselector: dm-develop-usercenter-svc
+  name: usercenter-svc
   namespace: develop
 spec:
   minReadySeconds: 5
@@ -12,7 +12,7 @@ spec:
   revisionHistoryLimit: 10
   selector:
     matchLabels:
-      workload.user.cattle.io/workloadselector: dm-develop-exchange-svc
+      workload.user.cattle.io/workloadselector: dm-develop-usercenter-svc
   strategy:
     rollingUpdate:
       maxSurge: 1
@@ -21,7 +21,7 @@ spec:
   template:
     metadata:
       labels:
-        workload.user.cattle.io/workloadselector: dm-develop-exchange-svc
+        workload.user.cattle.io/workloadselector: dm-develop-usercenter-svc
     spec:
       containers:
         - env:
@@ -29,23 +29,20 @@ spec:
             value: debug
           - name: MODE
             value: production
-          image: harbor.yuanshi01.com:30687/trade/exchange-svc:VERSION_NUMBER
+          image: harbor.yuanshi01.com:30687/trade/usercenter-svc:latest
           imagePullPolicy: Always
-          name: exchange-svc
+          name: usercenter-svc
           resources:
             limits:
               cpu: 500m
-            requests:
-              cpu: 200m	# CPU最小是200微核
+#            requests:
+#              cpu: 200m	# CPU最小是200微核
           ports:
             - containerPort: 9530
               name: http
               protocol: TCP
             - containerPort: 5000
               name: health
-              protocol: TCP
-            - containerPort: 8084
-              name: grpc
               protocol: TCP
           terminationMessagePolicy: File
       dnsPolicy: ClusterFirst
@@ -61,7 +58,7 @@ kind: Service
 metadata:
   labels:
     cattle.io/creator: norman
-  name: exchange-svc
+  name: usercenter-svc
   namespace: develop
 spec:
   ports:
@@ -74,7 +71,7 @@ spec:
       protocol: TCP
       targetPort: 5000
   selector:
-    workload.user.cattle.io/workloadselector: dm-develop-exchange-svc
+    workload.user.cattle.io/workloadselector: dm-develop-usercenter-svc
   sessionAffinity: None
   type: ClusterIP
 status:
@@ -85,29 +82,22 @@ status:
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
-  name: exchange-ingress
+  name: usercenter-ingress
   namespace: develop
   annotations:
     kubernetes.io/ingress.class: "nginx"
+#    nginx.ingress.kubernetes.io/enable-cors: "true"
 #    nginx.ingress.kubernetes.io/rewrite-target: /$1
-      #配置websocket 需要的配置
-    nginx.ingress.kubernetes.io/configuration-snippet: |
-       proxy_set_header Upgrade "websocket";
-       proxy_set_header Connection "Upgrade";
-    nginx.ingress.kubernetes.io/proxy-read-timeout: "3600"
-    nginx.ingress.kubernetes.io/proxy-send-timeout: "3600"
-    nginx.ingress.kubernetes.io/websocket-services: exchange-svc
-    nginx.org/websocket-services: exchange-svc
 spec:
   rules:
     - host: yun.yuanshi01.com
       http:
         paths:
-          - path: /exchange
+          - path: /user
             pathType: Prefix
             backend:
               service:
-                name: exchange-svc
+                name: usercenter-svc
                 port:
                   number: 9530
   # tls:

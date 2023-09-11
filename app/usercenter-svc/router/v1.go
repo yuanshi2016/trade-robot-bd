@@ -2,17 +2,22 @@ package router
 
 import (
 	"context"
-	"github.com/gin-gonic/gin"
-	"github.com/go-kratos/kratos/v2/errors"
-	"github.com/golang/protobuf/ptypes"
-	"github.com/golang/protobuf/ptypes/empty"
+	"log"
 	"trade-robot-bd/api/response"
 	pb "trade-robot-bd/api/usercenter/v1"
 	"trade-robot-bd/app/usercenter-svc/internal/service"
+	"trade-robot-bd/libs/env"
 	"trade-robot-bd/libs/jwt"
 	"trade-robot-bd/libs/logger"
 	"trade-robot-bd/libs/middleware"
 	"trade-robot-bd/libs/validate-code/phone"
+
+	"github.com/gin-gonic/gin"
+	"github.com/go-kratos/kratos/contrib/registry/etcd/v2"
+	"github.com/go-kratos/kratos/v2/errors"
+	"github.com/golang/protobuf/ptypes"
+	"github.com/golang/protobuf/ptypes/empty"
+	clientv3 "go.etcd.io/etcd/client/v3"
 )
 
 var (
@@ -20,7 +25,13 @@ var (
 )
 
 func apiV1(group *gin.RouterGroup) {
-	userService = service.NewUserService()
+	client, err := clientv3.New(clientv3.Config{
+		Endpoints: []string{env.EtcdAddr},
+	})
+	if err != nil {
+		log.Fatal(err)
+	}
+	userService = service.NewUserService(etcd.New(client))
 	group.POST("/login", Login)
 	group.POST("/send/validate-code", SendValidateCode)
 	group.POST("/register", Register)
@@ -49,7 +60,7 @@ func Login(c *gin.Context) {
 	if err != nil {
 		fromError := errors.FromError(err)
 		logger.Errorf("userService.Login  调用失败 %v", err.Error())
-		response.NewErrWithCodeAndMsg(c, fromError.Code, fromError.Message)
+		response.NewErrWithCodeAndMsg(c, fromError.Code, fromError.Reason)
 		return
 	}
 	token, err := middleware.NewToken(user.UserId, middleware.RoleUser)

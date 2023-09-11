@@ -20,7 +20,7 @@ func (u *UserService) GetUserInfoByPhone(phone string) (*model.WqUserBase, error
 }
 
 func (u *UserService) AddIfcBalance(userMasterId, inUserID, exchange, _type string, volume float64) error {
-	_, err := u.walletSrv.AddIfcBalance(context.Background(), &walletpb.AddIfcBalanceReq{
+	_, err := u.WalletSrv.AddIfcBalance(context.Background(), &walletpb.AddIfcBalanceReq{
 		UserMasterId: userMasterId,
 		InUserId:     inUserID,
 		Volume:       volume,   //手数

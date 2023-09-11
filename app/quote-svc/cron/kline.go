@@ -2,42 +2,26 @@ package cron
 
 import "encoding/json"
 
-var RateKey = "rate:usd-rmb"
-
-type Ticker struct {
-	Symbol   string  `json:"symbol"`
-	Last     float64 `json:"last"`
-	Buy      float64 `json:"buy"`
-	Open     float64 `json:"open"`
-	Sell     float64 `json:"sell"`
-	High     float64 `json:"high"`
-	Low      float64 `json:"low"`
-	Vol      float64 `json:"vol"`
-	QuoteVol float64 `json:"quoteVol"`
-	Change   string  `json:"change"`
-	Date     uint64  `json:"date"` // 单位:ms
-}
 type Kline struct {
-	Symbol    string  `json:"symbol"`
-	Open      float64 `json:"open"`
-	Sell      float64 `json:"sell"`
-	High      float64 `json:"high"`
-	Low       float64 `json:"low"`
-	Vol       float64 `json:"vol"`
-	CloseTime uint64  `json:"time"`
-	QuoteVol  float64 `json:"amount"`
+	Open      float64 `json:"open,string"`
+	High      float64 `json:"high,string"`
+	Low       float64 `json:"low,string"`
+	Close     float64 `json:"close,string"`
+	Vol       float64 `json:"vol,string"`
+	CloseTime uint64  `json:"time,string"`
+	QuoteVol  float64 `json:"amount,string"`
+}
+type Klines struct {
+	Type   string `json:"type,string"`
+	Symbol string `json:"symbol,string"`
+	Fin    int    `json:"fin,int"`
+	Data   Kline  `json:"data"`
 }
 
-func (tk Ticker) MarshalBinary() ([]byte, error) {
+func (tk Kline) MarshalBinary() ([]byte, error) {
 	return json.Marshal(tk)
 }
 
-type QuoteRate struct {
-	InstrumentID string `json:"instrument_id"`
-	Rate         string `json:"rate"`
-	Timestamp    string `json:"timestamp"`
-}
-
-func (rate QuoteRate) MarshalBinary() ([]byte, error) {
-	return json.Marshal(rate)
+func (tk Klines) MarshalBinary() ([]byte, error) {
+	return json.Marshal(tk)
 }

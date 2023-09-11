@@ -6,3 +6,6 @@ dist/
 /mocktest
 /.cargo
 /resource/local_cert
+*.zip
+main
+ubuntu_linux

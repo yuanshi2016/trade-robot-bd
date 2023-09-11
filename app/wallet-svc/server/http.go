@@ -1,19 +1,20 @@
 package server
 
 import (
+	"time"
+	"trade-robot-bd/app/wallet-svc/router"
+	"trade-robot-bd/libs/logger"
+	"trade-robot-bd/libs/middleware"
+
 	"github.com/gin-contrib/pprof"
 	"github.com/gin-gonic/gin"
 	kgin "github.com/go-kratos/gin"
 	"github.com/go-kratos/kratos/middleware/recovery/v2"
 	"github.com/go-kratos/kratos/v2/transport/http"
-	"time"
-	"trade-robot-bd/app/wallet-svc/router"
-	"trade-robot-bd/libs/logger"
-	"trade-robot-bd/libs/middleware"
 )
 
 const (
-	port = ":9530"
+	port = ":9531"
 )
 
 // NewHTTPServer new a HTTP server.

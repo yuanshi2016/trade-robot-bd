@@ -27,7 +27,9 @@ spec:
         - env:
             - name: GIN_MODE
               value: debug
-          image: harbor.yuanshi01.com:30687/trade/quote-svc:VERSION_NUMBER
+          - name: MODE
+            value: production
+          image: harbor.yuanshi01.com:30687/trade/quote-svc:latest
           imagePullPolicy: Always
           name: quote-svc
           resources:

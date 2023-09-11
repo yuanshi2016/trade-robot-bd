@@ -7,7 +7,6 @@ import (
 	"github.com/go-kratos/kratos/v2/errors"
 	"github.com/gorilla/websocket"
 	jsoniter "github.com/json-iterator/go"
-	"log"
 	"net/http"
 	"time"
 	"trade-robot-bd/api/constant"
@@ -27,6 +26,12 @@ var (
 	}
 )
 
+type WsMessage struct {
+	Sub      any    `json:"sub"`
+	SubType  string `json:"subType"`
+	Exchange string `json:"exchange"`
+}
+
 func v1api(group *gin.RouterGroup) {
 	group.GET("/ws", SubRealTimeTickers)
 	group.GET("/ticks", GetTicks)
@@ -44,44 +49,66 @@ func SubRealTimeTickers(c *gin.Context) {
 	go StreamHandler(conn)
 }
 
-func StreamHandler(ws1 *websocket.Conn) {
-	//即便 我们不再 期望 来自websocket 更多的请求,我们仍需要 去 websocket 读取 内容，为了能获取到 close 信号
-	run := func(ws *websocket.Conn, exchange string, ctxOut context.Context, cancelClose context.CancelFunc) {
-		for {
-			select {
-			case <-ctxOut.Done():
-				return
-			default:
-				// 1. 不断获取行情数据
-				resp := quoteService.GetTicks(ctxOut, &pb.GetTicksReq{Exchange: exchange}) //
-				if resp == nil {
-					time.Sleep(1 * time.Second)
-					continue
-				}
-				// 2. 转发到ws中
-				var ticks []cron.Ticker
-				if err := jsoniter.Unmarshal(resp.Ticks, &ticks); err != nil {
-					logger.Warnf("StreamHandler:Unmarshal数据失败")
-					errMsg := response.NewResultInternalErr("StreamHandler:Unmarshal数据失败")
-					_ = ws.WriteJSON(errMsg)
-					time.Sleep(5 * time.Second)
-					continue
-				}
-
-				err := ws.WriteJSON(response.NewResultSuccess(ticks))
-				if err != nil {
-					if isExpectedClose(err) {
-						logger.Warnf("expected close on socket")
-					}
-					logger.Warnf("ws1 writeErr: %v", err)
-					cancelClose()
-					return
-				}
-				time.Sleep(2 * time.Second)
+// SubTicker 即便 我们不再 期望 来自websocket 更多的请求,我们仍需要 去 websocket 读取 内容，为了能获取到 close 信号
+func SubTicker(ws *websocket.Conn, exchange string, ctxOut context.Context, cancelClose context.CancelFunc) {
+	for {
+		select {
+		case <-ctxOut.Done():
+			return
+		default:
+			// 1. 不断获取行情数据
+			resp := quoteService.GetTicks(ctxOut, &pb.GetTicksReq{Exchange: exchange}) //
+			if resp == nil {
+				time.Sleep(1 * time.Second)
+				continue
+			}
+			// 2. 转发到ws中
+			var ticks []cron.Ticker
+			if err := jsoniter.Unmarshal(resp.Ticks, &ticks); err != nil {
+				logger.Warnf("StreamHandler:Unmarshal数据失败")
+				errMsg := response.NewResultInternalErr("StreamHandler:Unmarshal数据失败")
+				_ = ws.WriteJSON(errMsg)
+				time.Sleep(5 * time.Second)
+				continue
 			}
 
+			err := ws.WriteJSON(response.NewResultSuccess(ticks))
+			if err != nil {
+				if isExpectedClose(err) {
+					logger.Warnf("expected close on socket")
+				}
+				logger.Warnf("ws1 writeErr: %v", err)
+				cancelClose()
+				return
+			}
+			time.Sleep(2 * time.Second)
 		}
+
 	}
+}
+func SubKline(ws *websocket.Conn, msg WsMessage, ctxOut context.Context, cancelClose context.CancelFunc) {
+	for {
+		select {
+		case <-ctxOut.Done():
+			return
+		default:
+			//aa, _ := cron.BinanceKlineAll.MarshalBinary()
+			err := ws.WriteJSON(cron.BinanceKlineAll)
+			if err != nil {
+				if isExpectedClose(err) {
+					logger.Warnf("expected close on socket")
+				}
+				logger.Warnf("ws1 writeErr: %v", err)
+				cancelClose()
+				return
+			}
+			time.Sleep(2 * time.Second)
+		}
+
+	}
+}
+func StreamHandler(ws1 *websocket.Conn) {
+
 	//todo 待优化代码
 	go func(ws1 *websocket.Conn) {
 		ctx := context.Background()
@@ -89,7 +116,7 @@ func StreamHandler(ws1 *websocket.Conn) {
 		ctxRun, cancelRun := context.WithCancel(ctx)
 		msg := []byte(constant.BINANCE)
 		var err error
-		go run(ws1, string(msg), ctxOut, cancelRun)
+		//go run(ws1, string(msg), ctxOut, cancelRun)
 		//open := true
 		time.Sleep(2 * time.Second)
 		defer ws1.Close()
@@ -100,17 +127,33 @@ func StreamHandler(ws1 *websocket.Conn) {
 			default:
 				_, msg, err = ws1.ReadMessage()
 				if err != nil {
-					log.Println(err)
 					cancelOut()
 					return
 				}
-				if string(msg) == constant.OKEX || string(msg) == constant.BINANCE || string(msg) == constant.HUOBI {
-					cancelOut()
-					time.Sleep(2 * time.Second)
-					ctxOut, cancelOut = context.WithCancel(ctx)
-					ctxRun, cancelRun = context.WithCancel(ctx)
-					go run(ws1, string(msg), ctxOut, cancelRun)
+				var message WsMessage
+				if err := jsoniter.Unmarshal(msg, &message); err != nil {
+					logger.Warnf("StreamHandler:Unmarshal Message消息失败")
+					errMsg := response.NewResultInternalErr("StreamHandler:Unmarshal Message消息失败")
+					_ = ws1.WriteJSON(errMsg)
+					continue
 				}
+				switch message.SubType {
+				case "ticker": //订阅市场
+					go SubTicker(ws1, string(msg), ctxOut, cancelRun)
+					break
+				case "kline": //订阅K线
+					go SubKline(ws1, message, ctxOut, cancelRun)
+					break
+				}
+				// 解析发送消息
+				// 这块应该是针对交易所订阅的  目前先按照币安
+				//if string(msg) == constant.OKEX || string(msg) == constant.BINANCE || string(msg) == constant.HUOBI {
+				//	cancelOut()
+				//	time.Sleep(2 * time.Second)
+				//	ctxOut, cancelOut = context.WithCancel(ctx)
+				//	ctxRun, cancelRun = context.WithCancel(ctx)
+				//	go run(ws1, string(msg), ctxOut, cancelRun)
+				//}
 			}
 		}
 	}(ws1)
